@@ -1,0 +1,12 @@
+What it does already:
+- converting the s_ file into an R data.frame with extra columns
+indicating in which isa object each sample are represented
+- reading Affymetrix data, flow cytometry data
+- reading 2 colours and 1 colour raw experiments
+- reading xcms raw, but is it useable, see with Steffen
+
+What it does not do yet:
+- reading processed microarray data
+- reading xcms processed
+
+TODO: checks at all steps, more testings
