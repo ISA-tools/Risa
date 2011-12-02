@@ -62,6 +62,9 @@ risatab = function(path = getwd())
           if(is.null(dim(dfiles[[i]])[2]))
             isa[[i]] = try(magetab2bioc(files)) else {
               raw = try(magetab2bioc(files))
+              ## The following issues an R CMD check warning,
+              ## no visible binding for global variable ‘procol’
+              ## likely to be a true issue:
               proc = try(procset(files, procol = procol))
               isa[[i]] = list(raw=raw, processed=proc)}
         }## end microarray
