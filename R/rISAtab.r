@@ -86,12 +86,19 @@ risatab = function(path = getwd())
           if("Raw.Spectral.Data.File" %in% colnames(dfiles[[i]]))
             {
               msfiles = dfiles[[i]]$Raw.Spectral.Data.File
-              pd = try(read.AnnotatedDataFrame(file.path(path, af[i]),row.names = NULL, blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote="\""))
+              pd = try(read.AnnotatedDataFrame(file.path(path, af[i]),
+                row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
+                varMetadata.char = "$", quote="\""))
               sampleNames(pd) = pd$Raw.Spectral.Data.File
-              if(length(grep("Factor.Value", colnames(metadata))) != 0)
-                {
-                  isa[[i]] = try(xcmsSet(file.path(path,msfiles), phenoData=pData(pd), sclass= metadata[which(metadata$Sample.Name %in% pd$Sample.Name),grep("Factor.Value", colnames(metadata))[1]]))
-                } else isa[[i]] = try(xcmsSet(file.path(path,msfiles), phenoData=pData(pd)))
+
+              if(length(grep("Factor.Value", colnames(metadata))) != 0) {
+                ## If there are explicit factors, use them
+                sclass=metadata[which(metadata$Sample.Name %in% pd$Sample.Name),grep("Factor.Value", colnames(metadata))[1]]
+                  isa[[i]] = xcmsSet(files=msfiles, sclass=sclass)
+                } else {
+                  ## Otherwise just use what was there
+                  isa[[i]] = try(xcmsSet(msfiles, phenoData=pData(pd)))
+                }
 
             }			
         }## end mass spectrometry
