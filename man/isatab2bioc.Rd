@@ -1,12 +1,12 @@
-\name{risatab}
-\alias{risatab}
+\name{isatab2bioc}
+\alias{isatab2bioc}
 \docType{data}
 \title{ Build R objects from ISA-tab format files }
 \description{
-  \code{risatab} reads a ISA-tab file.
+  \code{isatab2bioc} reads a ISA-tab file.
 }
 \usage{
-risatab(path = getwd())
+isatab2bioc(path = getwd())
 }
 \arguments{
   \item{path}{ the name of the directory containing ISAtab files. The
@@ -19,7 +19,7 @@ risatab(path = getwd())
   Audrey Kauffmann / 
   Maintainer: Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra, <isatools@googlegroups.com>  
 }
-\seealso{ \code{risazip} }
+\seealso{ \code{isatab2bioczip} }
 
 \examples{
      ## Example for mass spectrometry
@@ -28,5 +28,5 @@ risatab(path = getwd())
      file.copy(datafiles, temp, recursive=TRUE)
      isafiles = file.path(system.file(package="faahKO"), grep("txt",dir(system.file(package="faahKO")),value=TRUE))
      file.copy(isafiles, temp, recursive=TRUE)
-     isaset = risatab(path = temp)
+     isaset = isatab2bioc(path = temp)
 }

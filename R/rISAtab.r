@@ -1,12 +1,12 @@
-risazip = function(zip, path = getwd())
+isatab2bioczip = function(zip, path = getwd())
 {
   d = unzip(zipfile = zip, exdir = extract <- path)
-  isaobj = risatab(path)
+  isaobj = isatab2bioc(path)
   return(isaobj)
-}##end function risazip
+}##end function isatab2bioczip
 
 
-risatab = function(path = getwd())
+isatab2bioc = function(path = getwd())
 {
   d = dir(path)
 
@@ -112,4 +112,4 @@ risatab = function(path = getwd())
   names(isaobj) = c("metadata","data")
   return(isaobj)
 
-}##end function risatab
+}##end function isatab2bioc

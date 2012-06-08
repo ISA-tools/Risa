@@ -1,4 +1,4 @@
-Package: rISAtab
+Package: Risatab
 Version: 1.0.7
 Title: Converting experimental metadata from ISA-tab into
        Bioconductor data structures
@@ -11,7 +11,7 @@ Description: The Investigation / Study / Assay (ISA) tab-delimited
 	 complex metadata (i.e. sample characteristics, technologies used, type 
 	 of measurements made) from experiments employing a combination of 
 	 technologies, spanning from traditional approaches to high-throughput
-	 techniques. rISAtab allows to access metadata/data in ISA-tab format and 
+	 techniques. Risatab allows to access metadata/data in ISA-tab format and 
 	 build Bioconductor data structures. Currently, data generated from microarray 
 	 and flow cytometry assays are supported. The package is extendable, and 
 	 efforts are undergoing to support metadata associated to proteomics and 

@@ -1,12 +1,12 @@
-\name{risazip}
-\alias{risazip}
+\name{isatab2bioczip}
+\alias{isatab2bioczip}
 \docType{data}
 \title{ Build R objects from ISA-tab format files }
 \description{
-  \code{risazip} reads a ISA-tab zip file.
+  \code{isatab2bioczip} reads a ISA-tab zip file.
 }
 \usage{
-risazip(zip, path = getwd())
+isatab2bioczip(zip, path = getwd())
 }
 \arguments{
   \item{zip}{ a zip archive containing ISAtab files.}
@@ -20,9 +20,9 @@ risazip(zip, path = getwd())
 \author{
   Audrey Kauffmann / Maintainer: Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra, <isatools@googlegroups.com>  
 }
-\seealso{ \code{risatab} }
+\seealso{ \code{isatab2bioc} }
 \examples{
      ## Example for microarray and flow cytometry experiment
      isazip = system.file("extdata","Yox1.zip", package="rISAtab")
-     isaset = risazip(isazip, path = "ISAexample")
+     isaset = isatab2bioczip(isazip, path = "ISAexample")
 }
