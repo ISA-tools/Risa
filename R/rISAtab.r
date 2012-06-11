@@ -9,18 +9,24 @@ isatab2bioczip = function(zip, path = getwd())
 isatab2bioc = function(path = getwd())
 {
   d = dir(path)
+  
+  ## Investigation filename
+  ifilename = grep("i_", d, value=TRUE)
+  ## Reading in investigation file into a data frame
+  ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE)
 
-  ifi = grep("i_", d, value=TRUE)
-  ifile = read.table(file.path(path, ifi), sep="\t", fill=TRUE)
+  ## Assay filenames
+  afilenames = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1]),], function(i) grep("a_", i, value=TRUE)))
 
-  af = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1]),], function(i) grep("a_", i, value=TRUE)))
+  ## Reading in assay files into data frames
+  afiles = lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
 
-  afiles = lapply(af, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
-
-  types = ifile[grep("Study Assay Technology Type$", ifile[,1]),]      
+  ## Assay technology types
+  types = ifile[grep("Study Assay Technology Type$", ifile[,1],),]      
   types = na.omit(types[types != ""])
   types = types[-1]
 
+  ## Data filenames
   dfiles = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
 
   ## Reading study file
@@ -42,25 +48,31 @@ isatab2bioc = function(path = getwd())
 
   for(i in seq_len(length(dfiles)))
     {
+      #############################################################################
       if(types[i] == "DNA microarray")
         {
+          ## Raw and processed data filenames
           rawfiles = if("Array.Data.File" %in% colnames(dfiles[[i]])) dfiles[[i]][,"Array.Data.File"] else NULL
           procfile = if("Derived.Array.Data.File" %in% colnames(dfiles[[i]])) dfiles[[i]][,"Derived.Array.Data.File"] else NULL
 			   
+          ## URL for ADF (Array Design Format) file
           urladf = paste("http://www.ebi.ac.uk/microarray-as/ae/files/", unique(afiles[[i]][,"Array.Design.REF"]), "/", unique(afiles[[i]][,"Array.Design.REF"]), ".adf.txt", sep="")
           adffile = file.path(path,unique(afiles[[i]][,"Array.Design.REF"]))
           adf = download.file(urladf, adffile, mode="wb")
 
-
+          ## List containing rawfiles, sdrf, idf, adf & directory containing the files
+          ## as required by {ArrayExpress} magetab2bioc function
           files = list(path = path,
             rawfiles = rawfiles,
             procfile = procfile,
-            sdrf = af[[i]],
-            idf = ifi,
+            sdrf = afilenames[[i]],
+            idf = ifilename,
             adf = basename(adffile))
 			   
-          if(is.null(dim(dfiles[[i]])[2]))
-            isa[[i]] = try(magetab2bioc(files)) else {
+          if (is.null(dim(dfiles[[i]])[2]))
+            ## No processed files
+            isa[[i]] = try(magetab2bioc(files)) 
+          else {
               raw = try(magetab2bioc(files))
               ## The following issues an R CMD check warning,
               ## no visible binding for global variable ‘procol’
@@ -68,10 +80,12 @@ isatab2bioc = function(path = getwd())
               proc = try(procset(files, procol = procol))
               isa[[i]] = list(raw=raw, processed=proc)}
         }## end microarray
-
+      #############################################################################
+      
+      #############################################################################
       if(types[i] == "flow cytometry")
         {
-          pd = try(read.AnnotatedDataFrame(file.path(path, af[i]),row.names = NULL, blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote="\""))
+          pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),row.names = NULL, blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote="\""))
           sampleNames(pd) = pd$Raw.Data.File
                                         #if(all(dfiles[[i]] %in% dir(path)) && all(dfiles[[i]] %in% sampleNames(pd)))
           isa[[i]] = try(suppressWarnings(read.flowSet(dfiles[[i]], phenoData=pd, path=path)))
@@ -80,13 +94,15 @@ isatab2bioc = function(path = getwd())
                                         #if(!all(dfiles[[i]] %in% sampleNames(pd)))
                                         #isa[[i]] = try(suppressWarnings(read.flowSet(dfiles[[i]][dfiles[[i]] %in% sampleNames(pd)], phenoData=pd, path=path)))				
         }## end flow cytometry
-
+      #############################################################################
+      
+      #############################################################################
       if(types[i] == "mass spectrometry")
         {
           if("Raw.Spectral.Data.File" %in% colnames(dfiles[[i]]))
             {
               msfiles = dfiles[[i]]$Raw.Spectral.Data.File
-              pd = try(read.AnnotatedDataFrame(file.path(path, af[i]),
+              pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),
                 row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
                 varMetadata.char = "$", quote="\""))
               sampleNames(pd) = pd$Raw.Spectral.Data.File
@@ -102,7 +118,8 @@ isatab2bioc = function(path = getwd())
 
             }			
         }## end mass spectrometry
-
+      #############################################################################
+      
     }## end for on dfiles
 
 		
