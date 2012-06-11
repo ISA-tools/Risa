@@ -1,5 +1,6 @@
 isatab2bioczip = function(zip, path = getwd())
 {
+  # TODO the paths only work if the zip file does not contain a directory
   d = unzip(zipfile = zip, exdir = extract <- path)
   isaobj = isatab2bioc(path)
   return(isaobj)
@@ -29,9 +30,12 @@ isatab2bioc = function(path = getwd())
   ## Data filenames
   dfiles = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
 
-  ## Reading study file
-  sfile = read.table(file.path(path, grep("^s_", d, value=TRUE)), sep="\t", header=TRUE)
-
+  ## Study filenames (one or more)
+  sfilenames = unlist(sapply(ifile[grep("Study File Name", ifile[,1], useBytes=TRUE),], function(i) grep("s_", i, value=TRUE, useBytes=TRUE)))
+  
+  ## Reading study files
+  sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
+  
   ## Identifying what sample is studied in which assay
   assays = lapply(seq_len(length(afiles)), function(i) sfile$Sample.Name %in% afiles[[i]]$Sample.Name)
   assays = do.call(cbind, assays)
@@ -52,22 +56,22 @@ isatab2bioc = function(path = getwd())
       if(types[i] == "DNA microarray")
         {
           ## Raw and processed data filenames
-          rawfiles = if("Array.Data.File" %in% colnames(dfiles[[i]])) dfiles[[i]][,"Array.Data.File"] else NULL
-          procfile = if("Derived.Array.Data.File" %in% colnames(dfiles[[i]])) dfiles[[i]][,"Derived.Array.Data.File"] else NULL
+          rawfilenames = if("Array.Data.File" %in% colnames(dfiles[[i]])) dfiles[[i]][,"Array.Data.File"] else NULL
+          procfilenames = if("Derived.Array.Data.File" %in% colnames(dfiles[[i]])) dfiles[[i]][,"Derived.Array.Data.File"] else NULL
 			   
           ## URL for ADF (Array Design Format) file
           urladf = paste("http://www.ebi.ac.uk/microarray-as/ae/files/", unique(afiles[[i]][,"Array.Design.REF"]), "/", unique(afiles[[i]][,"Array.Design.REF"]), ".adf.txt", sep="")
-          adffile = file.path(path,unique(afiles[[i]][,"Array.Design.REF"]))
-          adf = download.file(urladf, adffile, mode="wb")
+          adffilename = file.path(path,unique(afiles[[i]][,"Array.Design.REF"]))
+          adf_download = download.file(urladf, adffilename, mode="wb")
 
           ## List containing rawfiles, sdrf, idf, adf & directory containing the files
           ## as required by {ArrayExpress} magetab2bioc function
           files = list(path = path,
-            rawfiles = rawfiles,
-            procfile = procfile,
+            rawfiles = rawfilenames,
+            procfile = procfilenames,
             sdrf = afilenames[[i]],
             idf = ifilename,
-            adf = basename(adffile))
+            adf = basename(adffilename))
 			   
           if (is.null(dim(dfiles[[i]])[2]))
             ## No processed files
