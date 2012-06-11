@@ -16,13 +16,13 @@ isatab2bioc = function(path = getwd())
   ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE)
 
   ## Assay filenames
-  afilenames = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1]),], function(i) grep("a_", i, value=TRUE)))
+  afilenames = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),], function(i) grep("a_", i, value=TRUE, useBytes=TRUE)))
 
   ## Reading in assay files into data frames
   afiles = lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
 
   ## Assay technology types
-  types = ifile[grep("Study Assay Technology Type$", ifile[,1],),]      
+  types = ifile[grep("Study Assay Technology Type$", ifile[,1], useBytes=TRUE),]    
   types = na.omit(types[types != ""])
   types = types[-1]
 
