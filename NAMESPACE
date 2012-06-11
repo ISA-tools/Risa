@@ -1,4 +1,4 @@
-importFrom("ArrayExpress", "magetab2bioc", "procset")
+importFrom("ArrayExpress", "magetab2bioc", "procset", "getcolproc")
 importFrom("affy", "ReadAffy")
 importFrom("flowCore", "read.flowSet")
 importFrom("xcms", "xcmsSet", "sampclass", "sampclass<-", "phenoData")
