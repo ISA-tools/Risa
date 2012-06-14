@@ -13,6 +13,9 @@ isatab2bioc = function(path = getwd())
   
   ## Investigation filename
   ifilename = grep("i_", d, value=TRUE)
+  if (!file.exists(file.path(path, ifilename)))
+    stop("Did not find investigation file: ", ifilename)
+  
   ## Reading in investigation file into a data frame
   ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE)
 
