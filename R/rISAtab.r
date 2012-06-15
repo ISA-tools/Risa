@@ -19,6 +19,20 @@ isatab2bioc = function(path = getwd())
   ## Reading in investigation file into a data frame
   ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE)
 
+  ## Study filenames (one or more)
+  sfilenames = unlist(sapply(ifile[grep("Study File Name", ifile[,1], useBytes=TRUE),], function(i) grep("s_", i, value=TRUE, useBytes=TRUE)))
+  
+  ## TODO pretty printing sfilenames
+  ## Validation of existance of study files
+  if (!all(sapply(sfilenames, function(i) file.exists(file.path(path, i)))))
+    stop("Did not find some of the study files: ", sfilenames)
+  
+  ## Study Identifiers
+  sidentifiers = ifile[grep("Study Identifier", ifile[,1], useBytes=TRUE),][2]
+  
+  ## Reading study files
+  sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
+  
   ## Assay filenames
   afilenames = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),], function(i) grep("a_", i, value=TRUE, useBytes=TRUE)))
 
@@ -33,14 +47,8 @@ isatab2bioc = function(path = getwd())
   ## Data filenames
   dfiles = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
 
-  ## Study filenames (one or more)
-  sfilenames = unlist(sapply(ifile[grep("Study File Name", ifile[,1], useBytes=TRUE),], function(i) grep("s_", i, value=TRUE, useBytes=TRUE)))
-  
-  ## Reading study files
-  sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
-  
   ## Identifying what sample is studied in which assay
-  assays = lapply(seq_len(length(afiles)), function(i) sfile$Sample.Name %in% afiles[[i]]$Sample.Name)
+  assays = lapply(seq_len(length(afiles)), function(i) sfiles[[i]]$Sample.Name %in% afiles[[i]]$Sample.Name)
   assays = do.call(cbind, assays)
   for(i in seq_len(ncol(assays)))
     {
