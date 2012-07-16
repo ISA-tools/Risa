@@ -9,6 +9,8 @@ isatab2bioczip = function(zip, path = getwd())
 
 isatab2bioc = function(path = getwd())
 {
+  
+  #### Parse ISATab files
   d = dir(path)
   
   ## Investigation filename
@@ -27,28 +29,36 @@ isatab2bioc = function(path = getwd())
   if (!all(sapply(sfilenames, function(i) file.exists(file.path(path, i)))))
     stop("Did not find some of the study files: ", sfilenames)
   
-  ## Study Identifiers
+  ## Study Identifiers (into a data frame)
   sidentifiers = ifile[grep("Study Identifier", ifile[,1], useBytes=TRUE),][2]
   
-  ## Reading study files
+  ## Reading study files into a list of data frames
   sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
   
-  ## Assay filenames
+  ## List of assay filenames 
   afilenames = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),], function(i) grep("a_", i, value=TRUE, useBytes=TRUE)))
 
-  ## Reading in assay files into data frames
+  ## Reading in assay files into a list of data frames
   afiles = lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
 
   ## Assay technology types
+  #data frame with types
   types = ifile[grep("Study Assay Technology Type$", ifile[,1], useBytes=TRUE),]    
+  #remove empty types - results in a list of types
   types = na.omit(types[types != ""])
-  types = types[-1]
+  #remove headers
+  types = types[ types != "Study Assay Technology Type"]
 
-  ## Data filenames
-  dfiles = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
+  ## List of data filenames 
+  dfilenames = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
 
+  ## Validate number of assay technology types == number of afiles
+  if (length(types)!=length(afiles)){
+    stop("The number of assay files mismatches the number of assay types")
+  }
+  
   ## Identifying what sample is studied in which assay
-  assays = lapply(seq_len(length(afiles)), function(i) sfiles[[i]]$Sample.Name %in% afiles[[i]]$Sample.Name)
+  assays = lapply(seq_len(length(afiles)), function(i) sfiles$Sample.Name %in% afiles[[i]]$Sample.Name)
   assays = do.call(cbind, assays)
   for(i in seq_len(ncol(assays)))
     {
@@ -57,11 +67,11 @@ isatab2bioc = function(path = getwd())
     }      
 
   ## Adding the study file content to the isa object
-  metadata = cbind(sfile, assays)
+  metadata = cbind(sfiles, assays)
 	
   isa = list()
 
-  for(i in seq_len(length(dfiles)))
+  for(i in seq_len(length(dfilenames)))
     {
       #############################################################################
       if(types[i] == "DNA microarray")
@@ -86,15 +96,15 @@ isatab2bioc = function(path = getwd())
 			   
           if (is.null(dim(dfiles[[i]])[2]))
             ## No processed files
-            isa[[i]] = try(magetab2bioc(files)) 
+            isa[[i]] = try(ae2bioc(files)) 
           else {
-              raw = try(magetab2bioc(files))
+              raw = try(ae2bioc(files))
               ## TODO more testing
               ## The following issues an R CMD check warning,
               ## no visible binding for global variable ‘procol’
               ## likely to be a true issue:
-              cn = getcolproc(files)
-              procol = cn[1]
+              #cn = getcolproc(files)
+              #procol = cn[1]
               proc = try(procset(files, procol = procol))
               isa[[i]] = list(raw=raw, processed=proc)}
         }## end microarray
@@ -114,18 +124,19 @@ isatab2bioc = function(path = getwd())
         }## end flow cytometry
       #############################################################################
       
+      
       #############################################################################
       if(types[i] == "mass spectrometry")
         {
-          if("Raw.Spectral.Data.File" %in% colnames(dfiles[[i]]))
-            {
+          if ("Raw.Spectral.Data.File" %in% colnames(dfiles[[i]]))
+          {
               msfiles = dfiles[[i]]$Raw.Spectral.Data.File
               pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),
                 row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
                 varMetadata.char = "$", quote="\""))
               sampleNames(pd) = pd$Raw.Spectral.Data.File
 
-              if(length(grep("Factor.Value", colnames(metadata))) != 0) {
+              if (length(grep("Factor.Value", colnames(metadata))) != 0) {
                 ## If there are explicit factors, use them
                 sclass=metadata[which(metadata$Sample.Name %in% pd$Sample.Name),grep("Factor.Value", colnames(metadata))[1]]
                 isa[[i]] = xcmsSet(files=msfiles, sclass=sclass)
@@ -134,7 +145,7 @@ isatab2bioc = function(path = getwd())
                   isa[[i]] = try(xcmsSet(msfiles, phenoData=pData(pd)))
                 }
 
-            }# end Raw.Spectral.Data.File			
+          }# end Raw.Spectral.Data.File			
         }## end mass spectrometry
       #############################################################################
       
@@ -151,5 +162,5 @@ isatab2bioc = function(path = getwd())
 
 ## Check wether all the files exist
 checkFilesExist = function(files){
-  all(sapply(files, msfiles))
+  all(sapply(files, files))
 }
