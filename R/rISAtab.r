@@ -29,12 +29,13 @@ isatab2bioc = function(path = getwd())
   if (!all(sapply(sfilenames, function(i) file.exists(file.path(path, i)))))
     stop("Did not find some of the study files: ", sfilenames)
   
-  ## Study Identifiers (into a data frame)
-  sidentifiers = ifile[grep("Study Identifier", ifile[,1], useBytes=TRUE),][2]
+  ## Study Identifiers  - as a list of strings
+  sidentifiers = as.character(ifile[grep("Study Identifier", ifile[,1], useBytes=TRUE),][2][[1]])
   
   ## Reading study files into a list of data frames
   sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
   
+  ###### TODO KEEP INFO ABOUT WHICH ASSAY FILES CORRESPOND TO WHICH STUDY
   ## List of assay filenames 
   afilenames = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),], function(i) grep("a_", i, value=TRUE, useBytes=TRUE)))
 
@@ -59,8 +60,18 @@ isatab2bioc = function(path = getwd())
   
   ##TODO FIX THIS
   ## Identifying what sample is studied in which assay
-  assays = lapply(seq_len(length(afiles)), function(i) sfiles$Sample.Name %in% afiles[[i]]$Sample.Name)
-  assays = do.call(cbind, assays)
+  ## assays is a matrix
+  
+  assays = lapply(seq_len(length(sfiles)), 
+                          function(j) (lapply(seq_len(length(afiles)), 
+                                              function(i) sfiles[[j]]$Sample.Name %in% afiles[[i]]$Sample.Name)))
+  
+  ##old code
+  #assays = lapply(seq_len(length(afiles)), function(i) sfiles[[1]]$Sample.Name %in% afiles[[i]]$Sample.Name)
+  
+  for (j in seq_len(assays)) 
+    assays[[j]] = do.call(cbind, assays[[j]])
+  
   for(i in seq_len(ncol(assays)))
     {
       assays[assays[,i]==TRUE,i] = paste("isa",i, sep="")
@@ -68,6 +79,7 @@ isatab2bioc = function(path = getwd())
     }      
 
   ## Adding the study file content to the isa object
+  ## metadata kept into a data.frame
   metadata = cbind(sfiles, assays)
 	
   isa = list()
@@ -78,8 +90,8 @@ isatab2bioc = function(path = getwd())
       if (types[i] == "DNA microarray")
       {
         ## Raw and processed data filenames
-        rawfilenames = if("Array.Data.File" %in% colnames(dfiles[[i]])) dfiles[[i]][,"Array.Data.File"] else NULL
-        procfilenames = if("Derived.Array.Data.File" %in% colnames(dfiles[[i]])) dfiles[[i]][,"Derived.Array.Data.File"] else NULL
+        rawfilenames = if ("Array.Data.File" %in% colnames(dfilenames[[i]])) dfilenames[[i]][,"Array.Data.File"] else NULL
+        procfilenames = if("Derived.Array.Data.File" %in% colnames(dfiles[[i]])) dfilenames[[i]][,"Derived.Array.Data.File"] else NULL
 			   
         ## URL for ADF (Array Design Format) file
         urladf = paste("http://www.ebi.ac.uk/microarray-as/ae/files/", unique(afiles[[i]][,"Array.Design.REF"]), "/", unique(afiles[[i]][,"Array.Design.REF"]), ".adf.txt", sep="")
@@ -95,7 +107,7 @@ isatab2bioc = function(path = getwd())
                   idf = ifilename,
                   adf = basename(adffilename))
 			   
-        if (is.null(dim(dfiles[[i]])[2]))
+        if (is.null(dim(dfilenames[[i]])[2]))
             ## No processed files
             isa[[i]] = try(ae2bioc(files)) 
           else {
