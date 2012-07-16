@@ -21,16 +21,19 @@ isatab2bioc = function(path = getwd())
   ## Reading in investigation file into a data frame
   ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE)
 
+  ## Study Identifiers  - as a list of strings
+  sidentifiers = ifile[grep("Study Identifier", ifile[,1], useBytes=TRUE),][2][[1]]
+  
   ## Study filenames (one or more)
   sfilenames = unlist(sapply(ifile[grep("Study File Name", ifile[,1], useBytes=TRUE),], function(i) grep("s_", i, value=TRUE, useBytes=TRUE)))
-  
+  ## Assign sidentifiers as names of the list sfilenames
+  names(sfilenames) <- sidentifiers
+     
   ## TODO pretty printing sfilenames
   ## Validation of existance of study files
   if (!all(sapply(sfilenames, function(i) file.exists(file.path(path, i)))))
     stop("Did not find some of the study files: ", sfilenames)
   
-  ## Study Identifiers  - as a list of strings
-  sidentifiers = as.character(ifile[grep("Study Identifier", ifile[,1], useBytes=TRUE),][2][[1]])
   
   ## Reading study files into a list of data frames
   sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
