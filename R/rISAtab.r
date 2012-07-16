@@ -12,7 +12,8 @@ isatab2bioc = function(path = getwd())
   
   #### Parse ISATab files
   d = dir(path)
-  
+
+  ## TODO any use case with multiple investigation files?
   ## Investigation filename
   ifilename = grep("i_", d, value=TRUE)
   if (!file.exists(file.path(path, ifilename)))
@@ -26,6 +27,10 @@ isatab2bioc = function(path = getwd())
   
   ## Study filenames (one or more)
   sfilenames = unlist(sapply(ifile[grep("Study File Name", ifile[,1], useBytes=TRUE),], function(i) grep("s_", i, value=TRUE, useBytes=TRUE)))
+  
+  if (length(sidentifiers)!=length(sfilenames))
+    stop("There are study files with no identifier assigned")
+  
   ## Assign sidentifiers as names of the list sfilenames
   names(sfilenames) <- sidentifiers
      
