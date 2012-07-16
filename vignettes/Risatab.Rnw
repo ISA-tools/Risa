@@ -1,0 +1,101 @@
+%\VignetteIndexEntry{rISAtab: converts experimental metadata from ISA-tab into Bioconductor data structures}
+%\VignetteDepends{Biobase}
+%\VignetteKeywords{ImportData}
+%\VignettePackage{rISAtab}
+
+\documentclass[a4paper]{article}
+
+\usepackage{times}
+\usepackage{a4wide}
+\usepackage{verbatim}
+
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rpackage}[1]{\textit{#1}}
+\newcommand{\Rclass}[1]{\textit{#1}}
+\newcommand{\Rfunction}[1]{{\small\texttt{#1}}}
+\clearpage
+
+\SweaveOpts{keep.source=TRUE,eps=FALSE,include=FALSE,width=4,height=4.5} 
+
+\begin{document}
+
+\title{ Building R objects from local ISA-tab files }
+
+\author{Gabriella Rustici, Philippe Rocca-Serra, Audrey Kauffmann}
+\maketitle
+
+\section{ISA-tab format} 
+
+The Investigation / Study / Assay (ISA) Tab-delimited (Tab) format is a general purpose framework with which to collect and communicate complex metadata (i.e. sample characteristics, technologies used, type of measurements made) from experiments employing a combination of technologies (http://isatab.sourceforge.net). In particular, ISA-Tab has been developed for - but not limited to - experiments using genomics, transcriptomics, proteomics or metabol/nomics techniques (the 'omics'). 
+
+ISA-Tab uses three types of file to capture the experimental metadata:
+\begin{itemize}
+\item \emph{Investigation file}
+\item \emph{Study file}
+\item \emph{Assay file} (with associated data files).
+\end{itemize}
+
+The Investigation file contains an overall description of an experiment while all experimental steps are described in the Study and in the Assay file(s). For each Investigation file there may be one or more Study files; for each Study file there may be one or more Assay files.
+         
+\subsection{Investigation file}
+
+In this file, information is reported on a per-column basis and the fields are organized and divided in sections. The Investigation file is intended to meet three needs: (i) to define key entities, such as factors, protocols, parameters, which may be referenced in the other files; (ii) to relate Assay files to Study files; and optionally, (iii) to relate each Study file to an Investigation (when two or more Study files need to be grouped). The declarative sections cover general information such as contacts, protocols and equipment, and also - where applicable - the description of terminologies (controlled vocabularies or ontologies) and other annotation resources that were used.
+
+\subsection{Study file}
+
+In this file, information is structured on a per-row basis with the first row being used for column headers. The Study file contains contextualizing information for one or more assays, for example; the subjects studied; their source(s); the sampling methodology; their characteristics; and any treatments or manipulations performed to prepare the specimens. 
+
+\subsection{Assay file}
+
+In this file, as for the Study file, fields are organized on a per-row basis with the first row being used for column headers. The Assay file represents a portion of the experimental graph (i.e., one part of the overall structure of the workflow); each Assay file must contain assays of the same type, defined by the type of measurement (i.e. gene expression) and the technology employed (i.e. DNA microarray). Assay-related information includes protocols, additional information relating to the execution of those protocols and references to data files (whether raw or processed). 
+
+For easy transfer, ISA-Tab files and associated data files can be packaged into an ISArchive, using a standalone Java application named ISAcreator (http://isatab.sourceforge.net). In order to facilitate identification of ISA-Tab components in an ISArchive, specific extensions have been created as follows:
+
+\begin{itemize}
+\item \emph{i\_name.txt} for identifying the Investigation file
+\item \emph{s\_name.txt} for identifying Study file (s)
+\item \emph{a\_name.txt} for identifying Assay file (s)
+\end{itemize}
+where 'name' is the user-given name.
+
+\section{The rISAtab package} 
+
+The rISAtab package is used to build R objects from an ISArchive. 
+The output is a list composed of a data.frame containing the metadata information originally contained in the s\_name.txt of ISAtab, followed by an object per each assay of the study. Objects might include: an \Rclass{AffyBatch} if the assay is a raw Affymetrix microarray dataset, an  \Rclass{ExpressionSet} for a raw one colour microarray dataset or for a processed microarray dataset, a  \Rclass{NChannelSet} from a raw two colour dataset, a \Rclass{flowSet} for a flow cytometry dataset and a \Rclass{xcmsSet} for a mass spectrometry dataset.
+
+These objects can then be used by downstream Bioconductor packages for data analysis and visualization (i.e, flowCore, limma or affy). 
+
+\subsection{Building an R object from local ISArchive}
+
+If you have your own ISArchive, you can use the function \Rfunction{risazip} to convert it into an R object.
+The arguments for the function \Rfunction{risazip} are:
+\begin{itemize}
+\item \emph{files}
+\item \emph{path}
+\end{itemize}
+
+As an example, we can use the \emph{Yox1.zip} ISArchive  attached to this package. The dataset contains raw and processed data files from both Affymetrix and dual channel arrays as well as flow cytometry data in LMD format.
+
+<<rISAtab>>=
+library("rISAtab")
+isazip = system.file("extdata","Yox1.zip", package="rISAtab")
+isaset = risazip(isazip, path = "ISAexample")
+@
+
+The object \Robject{isaset} contains the following:
+\begin{itemize}
+\item \emph{a metadata data.frame}, containing all the metadata information derived from the study file 
+\item an \Rclass{AffyBatch}, for the Affymetrix data
+\item an \Rclass{ExpressionSet}, for dual channel data
+\item an \Rclass{flowSet}, for flow cytometry data
+\end{itemize}
+
+\section*{Session Info}
+%
+<<pkgs, results=tex>>=
+toLatex(sessionInfo())
+@
+%
+
+
+\end{document}
