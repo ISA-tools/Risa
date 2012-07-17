@@ -39,12 +39,22 @@ isatab2bioc = function(path = getwd())
   if (!all(sapply(sfilenames, function(i) file.exists(file.path(path, i)))))
     stop("Did not find some of the study files: ", sfilenames)
   
-  
   ## Reading study files into a list of data frames
   sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
   
-  ###### TODO KEEP INFO ABOUT WHICH ASSAY FILES CORRESPOND TO WHICH STUDY
+  
   ## List of assay filenames 
+  #afilenames.df is a data frame with 'Study Assay File Name' rows
+  afilenames.df = ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),]
+  row.names(afilenames.df) <- sidentifiers[[1]]
+  afilenames.matrix = apply(afilenames.df,c(1,2),function(row) grep("a_",row, value=TRUE))
+  
+  afilenames.lists = split(afilenames.matrix, row(afilenames.matrix, as.factor=TRUE))
+  
+  #afilenames_per_study is a list of lists of assay filenames (one list for each study)
+  afilenames_per_study = lapply(seq_len(length(afilenames.lists)), function(i) Filter(function(j) !identical(character(0), j), afilenames.lists[[i]]))
+  names(afilenames_per_study) <- sidentifiers[[1]]
+  
   afilenames = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),], function(i) grep("a_", i, value=TRUE, useBytes=TRUE)))
 
   ## Reading in assay files into a list of data frames
@@ -87,7 +97,7 @@ isatab2bioc = function(path = getwd())
     }      
 
   ## Adding the study file content to the isa object
-  ## metadata kept into a data.frame
+  ## metadata kept into a data.frame - maintains study files and assay files info
   metadata = cbind(sfiles, assays)
 	
   isa = list()
@@ -151,20 +161,24 @@ isatab2bioc = function(path = getwd())
         {
           if ("Raw.Spectral.Data.File" %in% colnames(dfiles[[i]]))
           {
+              #mass spectrometry files
               msfiles = dfiles[[i]]$Raw.Spectral.Data.File
+              
               pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),
                 row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
                 varMetadata.char = "$", quote="\""))
+              
               sampleNames(pd) = pd$Raw.Spectral.Data.File
 
               if (length(grep("Factor.Value", colnames(metadata))) != 0) {
+              
                 ## If there are explicit factors, use them
-                sclass=metadata[which(metadata$Sample.Name %in% pd$Sample.Name),grep("Factor.Value", colnames(metadata))[1]]
+                sclass = metadata[ which(metadata$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(metadata))[1]]
                 isa[[i]] = xcmsSet(files=msfiles, sclass=sclass)
-                } else {
+              } else {
                   ## Otherwise just use what was there
                   isa[[i]] = try(xcmsSet(msfiles, phenoData=pData(pd)))
-                }
+              }
 
           }# end Raw.Spectral.Data.File			
         }## end mass spectrometry
