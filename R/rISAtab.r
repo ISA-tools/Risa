@@ -42,11 +42,10 @@ isatab2bioc = function(path = getwd())
   ## Reading study files into a list of data frames
   sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
   
-  
   ## List of assay filenames 
   #afilenames.df is a data frame with 'Study Assay File Name' rows
   afilenames.df = ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),]
-  row.names(afilenames.df) <- sidentifiers[[1]]
+  ###row.names(afilenames.df) <- sidentifiers[[1]]
   afilenames.matrix = apply(afilenames.df,c(1,2),function(row) grep("a_",row, value=TRUE))
   
   afilenames.lists = split(afilenames.matrix, row(afilenames.matrix, as.factor=TRUE))
@@ -55,10 +54,14 @@ isatab2bioc = function(path = getwd())
   afilenames_per_study = lapply(seq_len(length(afilenames.lists)), function(i) Filter(function(j) !identical(character(0), j), afilenames.lists[[i]]))
   names(afilenames_per_study) <- sidentifiers[[1]]
   
+  #afilenames is a list with all the assay filenames (without association to studies)
   afilenames = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),], function(i) grep("a_", i, value=TRUE, useBytes=TRUE)))
 
   ## Reading in assay files into a list of data frames
   afiles = lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
+  afiles_per_study = lapply(seq_len(length(afilenames_per_study)), 
+                            function(j) (lapply(seq_len(length(afilenames_per_study[[j]])),
+                                    function(i) read.table(file.path(path,afilenames_per_study[[j]][[i]]), sep="\t", header=TRUE, stringsAsFactors=FALSE))))
 
   ## Assay technology types
   #data frame with types
@@ -70,13 +73,14 @@ isatab2bioc = function(path = getwd())
 
   ## List of data filenames 
   dfilenames = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
+  ##TODO add dfilenames_per_assay
 
   ## Validate number of assay technology types == number of afiles
   if (length(types)!=length(afiles)){
     stop("The number of assay files mismatches the number of assay types")
   }
   
-  ##TODO FIX THIS
+  
   ## Identifying what sample is studied in which assay
   ## assays is a matrix
   
@@ -87,14 +91,15 @@ isatab2bioc = function(path = getwd())
   ##old code
   #assays = lapply(seq_len(length(afiles)), function(i) sfiles[[1]]$Sample.Name %in% afiles[[i]]$Sample.Name)
   
-  for (j in seq_len(assays)) 
-    assays[[j]] = do.call(cbind, assays[[j]])
+  ##TODO FIX THIS
+  ###for (j in seq_len(assays)) 
+  ###  assays[[j]] = do.call(cbind, assays[[j]])
   
-  for(i in seq_len(ncol(assays)))
-    {
-      assays[assays[,i]==TRUE,i] = paste("isa",i, sep="")
-      assays[assays[,i]==FALSE,i] = ""
-    }      
+  ###for(i in seq_len(ncol(assays)))
+  ###  {
+  ###    assays[assays[,i]==TRUE,i] = paste("isa",i, sep="")
+  ###    assays[assays[,i]==FALSE,i] = ""
+  ###  }      
 
   ## Adding the study file content to the isa object
   ## metadata kept into a data.frame - maintains study files and assay files info
