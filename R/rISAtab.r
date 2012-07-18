@@ -1,3 +1,11 @@
+isa_syntax <- list(
+  investigation_prefix="i_",
+  study_prefix="s_",
+  assay_prefix="a_",
+  study_identifier="Study Identifier" 
+  )
+
+
 isatab2bioczip = function(zip, path = getwd())
 {
   # TODO the paths only work if the zip file does not contain a directory
@@ -79,11 +87,8 @@ isatab2bioc = function(path = getwd())
   ### a sample name with all the data files
   ### a data file with all the sample names
   
-  ## List of data filenames 
+  ## List of data filenames with assay filenames as keys
   dfilenames = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
-  dfilenames_per_assay = lapply(afiles_per_study, 
-                                function(j) lapply(j, 
-                                            function(k) lapply(k, function(i) i[,grep("Data.File", length(i))])))
   
   ## Identifying what sample is studied in which assay
   ## assays is a list of data frames (one for each assay file)
@@ -108,9 +113,23 @@ isatab2bioc = function(path = getwd())
   ## metadata kept into a data.frame - maintains study files and assay files info
   metadata = cbind(sfiles, assays)
 	
-  isa = list()
+  isaobject <- list(
+    investigation_filename=ifilename,
+    investigation_file=ifile,
+    study_identifiers=sidentifiers,
+    study_filenames=sfilenames,
+    study_files=sfiles,
+    assay_filenames=afilenames,
+    assay_filenames_per_study=afilenames_per_study,
+    assay_types=assay_types,
+    data_filenames=dfilenames
+    )
+  return(isaobject)
   
+}
 
+processAssayType = function(isa)
+{
   for(i in seq_len(length(dfilenames)))
   {
       #############################################################################
@@ -168,10 +187,10 @@ isatab2bioc = function(path = getwd())
       #############################################################################
       else if (assay_types[i] == "mass spectrometry")
         {
-          if ("Raw.Spectral.Data.File" %in% colnames(dfiles[[i]]))
+          if ("Raw.Spectral.Data.File" %in% colnames(dfilenames[[i]]))
           {
               #mass spectrometry files
-              msfiles = dfiles[[i]]$Raw.Spectral.Data.File
+              msfiles = dfilenames[[i]]$Raw.Spectral.Data.File
               
               pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),
                 row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
