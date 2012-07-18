@@ -2,13 +2,13 @@ isa_syntax <- list(
   investigation_prefix="i_",
   study_prefix="s_",
   assay_prefix="a_",
-  study_identifier="Study Identifier" 
+  study_identifier="Study Identifier",
+  study_assay_filename="Study Assay File Name"
   )
 
-
+## This function only works if the zip file does not contain a directory (but the ISA-TAB files themselves)
 isatab2bioczip = function(zip, path = getwd())
 {
-  # TODO the paths only work if the zip file does not contain a directory
   d = unzip(zipfile = zip, exdir = extract <- path)
   isaobj = isatab2bioc(path)
   return(isaobj)
@@ -17,14 +17,15 @@ isatab2bioczip = function(zip, path = getwd())
 
 isatab2bioc = function(path = getwd())
 {
-  
   #### Parse ISATab files
   d = dir(path)
 
   ## TODO any use case with multiple investigation files?
   ## Investigation filename
   ifilename = grep("i_", d, value=TRUE)
-  if (!file.exists(file.path(path, ifilename)))
+  if (length(ifilename)==0)
+    stop("Did not find any investigation file.")
+  else if (!file.exists(file.path(path, ifilename)))
     stop("Did not find investigation file: ", ifilename)
   
   ## Reading in investigation file into a data frame
@@ -126,7 +127,7 @@ isatab2bioc = function(path = getwd())
     )
   return(isaobject)
   
-}
+}##end function isatab2bioc
 
 processAssayType = function(isa)
 {
@@ -223,7 +224,7 @@ processAssayType = function(isa)
   names(isaobj) = c("metadata","data")
   return(isaobj)
 
-}##end function isatab2bioc
+}##end function processAssayType
 
 ## Check whether all the files exist
 checkFilesExist = function(files){
