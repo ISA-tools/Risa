@@ -129,15 +129,22 @@ isatab2bioc = function(path = getwd())
   sample_to_rawdatafile <- lapply(seq_len(length(afiles)), function(i)
      merge(sample_to_rawdatafile[[i]][ !duplicated(sample_to_rawdatafile[[i]]$'Sample.Name'), ], sample_to_rawdatafile[[i]][ duplicated(sample_to_rawdatafile[[i]]$'Sample.Name'), ], all=TRUE))  
   
-  sample_to_assayname <-lapply( seq_len(length(afiles)),
-                                function(i) afiles[[i]][,c('Sample.Name',grep("Assay.Name", colnames(i))])
-  sample_to_assayname <- merge(sample_to_assayname[ !duplicated(sample_to_assayname$'Sample.Name'), ], sample_to_assayname[ duplicated(sample_to_assayname$'Sample.Name'), ], all=TRUE)
+  sample_to_assayname <-lapply( afiles,
+                                function(i) i[,c('Sample.Name',grep('Assay.Name', colnames(i), value=TRUE))])
+  sample_to_assayname <- lapply(seq_len(length(afiles)), function(i)
+          merge(sample_to_assayname[[i]][ !duplicated(sample_to_assayname[[i]]$'Sample.Name'), ], sample_to_assayname[[i]][ duplicated(sample_to_assayname[[i]]$'Sample.Name'), ], all=TRUE))
   
-  rawdatafile_to_sample <- afiles[[1]][,c('Raw.Data.File','Sample.Name')]
-  rawdatafile_to_sample <- merge(rawdatafile_to_sample[ !duplicated(rawdatafile_to_sample$'Raw.Data.File'), ], rawdatafile_to_sample[ duplicated(rawdatafile_to_sample$'Raw.Data.File'), ], all=TRUE)
+  rawdatafile_to_sample <- lapply( seq_len(length(afiles)), 
+                                   function(i) afiles[[i]][,c(data_col_names[[i]],'Sample.Name')] )
+  rawdatafile_to_sample <- lapply(seq_len(length(afiles)), function(i)
+         merge(rawdatafile_to_sample[[i]][ !duplicated(rawdatafile_to_sample[[i]][[data_col_names[[i]]]]), ], rawdatafile_to_sample[[i]][ duplicated(rawdatafile_to_sample[[i]][[data_col_names[[i]]]]), ], all=TRUE))
   
-  assayname_to_sample <- afiles[[1]][,c('Assay.Name','Sample.Name')]
-  assayname_to_sample <- merge(assayname_to_sample[ !duplicated(assayname_to_sample$'Assay.Name'), ], assayname_to_sample[ duplicated(assayname_to_sample$'Assay.Name'), ], all=TRUE)
+  assayname_to_sample <- lapply( afiles,
+                                 function(i) i[,c(grep('Assay.Name', colnames(i), value=TRUE),'Sample.Name')])
+  assayname_to_sample <- lapply(seq_len(length(afiles)), function(i)
+          merge(assayname_to_sample[[i]][ !duplicated(assayname_to_sample[[i]][,c(grep('Assay.Name', colnames(assayname_to_sample[[i]]), value=TRUE))]), ], 
+                assayname_to_sample[[i]][  duplicated(assayname_to_sample[[i]][,c(grep('Assay.Name', colnames(assayname_to_sample[[i]]), value=TRUE))]), ], 
+                all=TRUE))
   
  
 
