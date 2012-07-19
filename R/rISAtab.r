@@ -114,10 +114,23 @@ isatab2bioc = function(path = getwd())
                                                   }
                                                 )))
   
-  sample_to_rawdatafile <- afiles[[1]][,c('Sample.Name','Raw.Data.File')]
-  sample_to_rawdatafile <- merge(sample_to_rawdatafile[ !duplicated(sample_to_rawdatafile$'Sample.Name'), ], sample_to_rawdatafile[ duplicated(sample_to_rawdatafile$'Sample.Name'), ], all=TRUE)  
+  data_col_names = lapply(seq_len(length(afiles)),
+                      function(i) if ('Raw.Data.File' %in% colnames(afiles[[i]])){
+                                  'Raw.Data.File'
+                                  }else if ('Free.Induction.Decay.Data.File' %in% colnames(afiles[[i]])){
+                                    'Free.Induction.Decay.Data.File'
+                                  }else if ('Array.Data.File' %in% colnames(afiles[[i]])){
+                                    'Array.Data.File'
+                                  })
+                                    
   
-  sample_to_assayname <-afiles[[1]][,c('Sample.Name','Assay.Name')]
+  sample_to_rawdatafile <- lapply( seq_len(length(afiles)), 
+                                  function(i) afiles[[i]][,c('Sample.Name',data_col_names[[i]])] )
+  sample_to_rawdatafile <- lapply(seq_len(length(afiles)), function(i)
+     merge(sample_to_rawdatafile[[i]][ !duplicated(sample_to_rawdatafile[[i]]$'Sample.Name'), ], sample_to_rawdatafile[[i]][ duplicated(sample_to_rawdatafile[[i]]$'Sample.Name'), ], all=TRUE))  
+  
+  sample_to_assayname <-lapply( seq_len(length(afiles)),
+                                function(i) afiles[[i]][,c('Sample.Name',grep("Assay.Name", colnames(i))])
   sample_to_assayname <- merge(sample_to_assayname[ !duplicated(sample_to_assayname$'Sample.Name'), ], sample_to_assayname[ duplicated(sample_to_assayname$'Sample.Name'), ], all=TRUE)
   
   rawdatafile_to_sample <- afiles[[1]][,c('Raw.Data.File','Sample.Name')]
