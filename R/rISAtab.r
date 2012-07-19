@@ -101,13 +101,13 @@ isatab2bioc = function(path = getwd())
   
   samples_per_assay_filename = lapply(seq_len(length(afiles)), 
                                             function(i) afiles[[i]]$Sample.Name)
-  names(samples_per_assay) <- afilenames
+  names(samples_per_assay_filename) <- afilenames
   
   samples_per_study <- lapply(seq_len(length(sfiles)),
                                 function(i) sfiles[[i]]$Sample.Name)
   names(samples_per_study) <- sidentifiers
   
-  assayfilename_per_sample <- unlist(lapply(seq_len(length(samples)), 
+  assay_filenames_per_sample <- unlist(lapply(seq_len(length(samples)), 
                              function(j) lapply(seq_len(length(afilenames)), 
                                     function(i)   if (samples[[j]] %in% afiles[[i]]$Sample.Name) {
                                                           afilenames[[i]]
@@ -142,8 +142,8 @@ isatab2bioc = function(path = getwd())
     assay_filenames_per_study=afilenames_per_study,
     assay_technology_types=assay_tech_types,
     data_filenames_per_assay=dfilenames_per_assay,
-    samples_per_assay=samples_per_assay,
-    assays_per_sample=assays_per_sample,
+    samples_per_assay_filename=samples_per_assay_filename,
+    assay_filenames_per_sample=assay_filenames_per_sample,
     sample_to_rawdatafile=sample_to_rawdatafile,
     sample_to_assayname=sample_to_assayname,
     rawdatafile_to_sample=rawdatafile_to_sample,
