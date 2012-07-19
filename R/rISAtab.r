@@ -73,14 +73,14 @@ isatab2bioc = function(path = getwd())
 
   ## Assay technology types
   #data frame with types
-  assay_types = ifile[grep("Study Assay Technology Type$", ifile[,1], useBytes=TRUE),]    
+  assay_tech_types = ifile[grep("Study Assay Technology Type$", ifile[,1], useBytes=TRUE),]    
   #remove empty types - results in a list of types
-  assay_types = na.omit(assay_types[assay_types != ""])
+  assay_tech_types = na.omit(assay_tech_types[assay_tech_types != ""])
   #remove headers
-  assay_types = assay_types[ assay_types != "Study Assay Technology Type"]
+  assay_tech_types = assay_tech_types[ assay_tech_types != "Study Assay Technology Type"]
 
   ## Validate number of assay technology types == number of afiles
-  if (length(assay_types)!=length(afiles)){
+  if (length(assay_tech_types)!=length(afiles)){
     stop("The number of assay files mismatches the number of assay types")
   }
   
@@ -99,37 +99,38 @@ isatab2bioc = function(path = getwd())
   
   samples = unlist(lapply(sfiles, function(i) i[,grep("Sample.Name", colnames(i))]))
   
-  samples_per_assay = lapply(seq_len(length(afiles)), 
+  samples_per_assay_filename = lapply(seq_len(length(afiles)), 
                                             function(i) afiles[[i]]$Sample.Name)
   names(samples_per_assay) <- afilenames
   
-  samples_per_study = lapply(seq_len(length(sfiles)),
+  samples_per_study <- lapply(seq_len(length(sfiles)),
                                 function(i) sfiles[[i]]$Sample.Name)
   names(samples_per_study) <- sidentifiers
   
-  assays_per_sample = unlist(lapply(seq_len(length(samples)), 
+  assayfilename_per_sample <- unlist(lapply(seq_len(length(samples)), 
                              function(j) lapply(seq_len(length(afilenames)), 
                                     function(i)   if (samples[[j]] %in% afiles[[i]]$Sample.Name) {
                                                           afilenames[[i]]
                                                   }
                                                 )))
   
-  ##old code
-  #assays = lapply(seq_len(length(afiles)), function(i) sfiles[[1]]$Sample.Name %in% afiles[[i]]$Sample.Name)
+  sample_to_rawdatafile <- afiles[[1]][,c('Sample.Name','Raw.Data.File')]
+  sample_to_rawdatafile <- merge(sample_to_rawdatafile[ !duplicated(sample_to_rawdatafile$'Sample.Name'), ], sample_to_rawdatafile[ duplicated(sample_to_rawdatafile$'Sample.Name'), ], all=TRUE)  
   
-  ##TODO FIX THIS
-  ###for (j in seq_len(assays)) 
-  ###  assays[[j]] = do.call(cbind, assays[[j]])
+  sample_to_assayname <-afiles[[1]][,c('Sample.Name','Assay.Name')]
+  sample_to_assayname <- merge(sample_to_assayname[ !duplicated(sample_to_assayname$'Sample.Name'), ], sample_to_assayname[ duplicated(sample_to_assayname$'Sample.Name'), ], all=TRUE)
   
-  ###for(i in seq_len(ncol(assays)))
-  ###  {
-  ###    assays[assays[,i]==TRUE,i] = paste("isa",i, sep="")
-  ###    assays[assays[,i]==FALSE,i] = ""
-  ###  }      
+  rawdatafile_to_sample <- afiles[[1]][,c('Raw.Data.File','Sample.Name')]
+  rawdatafile_to_sample <- merge(rawdatafile_to_sample[ !duplicated(rawdatafile_to_sample$'Raw.Data.File'), ], rawdatafile_to_sample[ duplicated(rawdatafile_to_sample$'Raw.Data.File'), ], all=TRUE)
+  
+  assayname_to_sample <- afiles[[1]][,c('Assay.Name','Sample.Name')]
+  assayname_to_sample <- merge(assayname_to_sample[ !duplicated(assayname_to_sample$'Assay.Name'), ], assayname_to_sample[ duplicated(assayname_to_sample$'Assay.Name'), ], all=TRUE)
+  
+ 
 
   ## Adding the study file content to the isa object
   ## metadata kept into a data.frame - maintains study files and assay files info
-  metadata = cbind(sfiles, assays)
+  #metadata = cbind(sfiles, assays)
 	
   isaobject <- list(
     investigation_filename=ifilename,
@@ -139,9 +140,14 @@ isatab2bioc = function(path = getwd())
     study_files=sfiles,
     assay_filenames=afilenames,
     assay_filenames_per_study=afilenames_per_study,
-    assay_types=assay_types,
+    assay_technology_types=assay_tech_types,
     data_filenames_per_assay=dfilenames_per_assay,
-    samples_per_assay=samples_per_assay
+    samples_per_assay=samples_per_assay,
+    assays_per_sample=assays_per_sample,
+    sample_to_rawdatafile=sample_to_rawdatafile,
+    sample_to_assayname=sample_to_assayname,
+    rawdatafile_to_sample=rawdatafile_to_sample,
+    assayname_to_sample=assayname_to_sample
     )
   return(isaobject)
   
