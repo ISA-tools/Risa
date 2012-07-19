@@ -89,13 +89,30 @@ isatab2bioc = function(path = getwd())
   ### a data file with all the sample names
   
   ## List of data filenames with assay filenames as keys
-  dfilenames = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
+  dfilenames_per_assay = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
   
   ## Identifying what sample is studied in which assay
   ## assays is a list of data frames (one for each assay file)
   assays = lapply(seq_len(length(sfiles)), 
                           function(j) (lapply(seq_len(length(afiles)), 
                                               function(i) sfiles[[j]]$Sample.Name %in% afiles[[i]]$Sample.Name)))
+  
+  samples = unlist(lapply(sfiles, function(i) i[,grep("Sample.Name", colnames(i))]))
+  
+  samples_per_assay = lapply(seq_len(length(afiles)), 
+                                            function(i) afiles[[i]]$Sample.Name)
+  names(samples_per_assay) <- afilenames
+  
+  samples_per_study = lapply(seq_len(length(sfiles)),
+                                function(i) sfiles[[i]]$Sample.Name)
+  names(samples_per_study) <- sidentifiers
+  
+  assays_per_sample = unlist(lapply(seq_len(length(samples)), 
+                             function(j) lapply(seq_len(length(afilenames)), 
+                                    function(i)   if (samples[[j]] %in% afiles[[i]]$Sample.Name) {
+                                                          afilenames[[i]]
+                                                  }
+                                                )))
   
   ##old code
   #assays = lapply(seq_len(length(afiles)), function(i) sfiles[[1]]$Sample.Name %in% afiles[[i]]$Sample.Name)
@@ -123,7 +140,8 @@ isatab2bioc = function(path = getwd())
     assay_filenames=afilenames,
     assay_filenames_per_study=afilenames_per_study,
     assay_types=assay_types,
-    data_filenames=dfilenames
+    data_filenames_per_assay=dfilenames_per_assay,
+    samples_per_assay=samples_per_assay
     )
   return(isaobject)
   
