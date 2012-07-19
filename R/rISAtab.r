@@ -121,6 +121,8 @@ isatab2bioc = function(path = getwd())
                                     'Free.Induction.Decay.Data.File'
                                   }else if ('Array.Data.File' %in% colnames(afiles[[i]])){
                                     'Array.Data.File'
+                                  }else if ('Raw.Spectral.Data.File' %in% colnames(afiles[[i]])){
+                                    'Raw.Spectral.Data.File'
                                   })
                                     
   
