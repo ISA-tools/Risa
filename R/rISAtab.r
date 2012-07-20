@@ -6,6 +6,12 @@ isa_syntax <- list(
   study_assay_filename="Study Assay File Name"
   )
 
+technology_types <- list(
+  microarray="DNA microarray",
+  ms="mass spectrometry",
+  fc="flow cytometry"
+  )
+
 ## This function only works if the zip file does not contain a directory (but the ISA-TAB files themselves)
 isatab2bioczip = function(zip, path = getwd())
 {
@@ -13,7 +19,6 @@ isatab2bioczip = function(zip, path = getwd())
   isaobj = isatab2bioc(path)
   return(isaobj)
 }##end function isatab2bioczip
-
 
 isatab2bioc = function(path = getwd())
 {
@@ -60,7 +65,6 @@ isatab2bioc = function(path = getwd())
   afilenames_per_study = lapply(seq_len(length(afilenames.lists)), function(i) Filter(function(j) !identical(character(0), j), afilenames.lists[[i]]))
   names(afilenames_per_study) <- sidentifiers
   
-  
   ## Reading in assay files 
   # afiles is a list of data frames (containing all the assay files)
   afiles = lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE))
@@ -83,10 +87,6 @@ isatab2bioc = function(path = getwd())
   if (length(assay_tech_types)!=length(afiles)){
     stop("The number of assay files mismatches the number of assay types")
   }
-  
-  ####TODO build two data structures relating
-  ### a sample name with all the data files
-  ### a data file with all the sample names
   
   ## List of data filenames with assay filenames as keys
   dfilenames_per_assay = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
@@ -155,6 +155,7 @@ isatab2bioc = function(path = getwd())
   #metadata = cbind(sfiles, assays)
 	
   isaobject <- list(
+    path=path,
     investigation_filename=ifilename,
     investigation_file=ifile,
     study_identifiers=sidentifiers,
@@ -162,8 +163,10 @@ isatab2bioc = function(path = getwd())
     study_files=sfiles,
     assay_filenames=afilenames,
     assay_filenames_per_study=afilenames_per_study,
+    assay_files=afiles,
+    assay_files_per_study=afiles_per_study,
     assay_technology_types=assay_tech_types,
-    data_filenames_per_assay=dfilenames_per_assay,
+    data_filenames=dfilenames_per_assay,
     samples_per_assay_filename=samples_per_assay_filename,
     assay_filenames_per_sample=assay_filenames_per_sample,
     sample_to_rawdatafile=sample_to_rawdatafile,
@@ -177,18 +180,18 @@ isatab2bioc = function(path = getwd())
 
 processAssayType = function(isa)
 {
-  for(i in seq_len(length(dfilenames)))
+  for(i in seq_len(length(isa$data_filenames)))
   {
       #############################################################################
-      if (assay_types[i] == "DNA microarray")
+      if (isa$assay_technology_types[i] == technology_types$microarray)
       {
         ## Raw and processed data filenames
-        rawfilenames = if ("Array.Data.File" %in% colnames(dfilenames[[i]])) dfilenames[[i]][,"Array.Data.File"] else NULL
-        procfilenames = if("Derived.Array.Data.File" %in% colnames(dfiles[[i]])) dfilenames[[i]][,"Derived.Array.Data.File"] else NULL
+        rawfilenames = if ("Array.Data.File" %in% colnames(isa$data_filenames[[i]])) isa$data_filenames[[i]][,"Array.Data.File"] else NULL
+        procfilenames = if("Derived.Array.Data.File" %in% colnames(isa$data_files[[i]])) isa$data_filenames[[i]][,"Derived.Array.Data.File"] else NULL
 			   
         ## URL for ADF (Array Design Format) file
-        urladf = paste("http://www.ebi.ac.uk/microarray-as/ae/files/", unique(afiles[[i]][,"Array.Design.REF"]), "/", unique(afiles[[i]][,"Array.Design.REF"]), ".adf.txt", sep="")
-        adffilename = file.path(path,unique(afiles[[i]][,"Array.Design.REF"]))
+        urladf = paste("http://www.ebi.ac.uk/microarray-as/ae/files/", unique(isa$asay_files[[i]][,"Array.Design.REF"]), "/", unique(assay_files[[i]][,"Array.Design.REF"]), ".adf.txt", sep="")
+        adffilename = file.path(path,unique(isa$assay_files[[i]][,"Array.Design.REF"]))
         adf_download = download.file(urladf, adffilename, mode="wb")
 
         ## List containing rawfiles, sdrf, idf, adf & directory containing the files
@@ -196,8 +199,8 @@ processAssayType = function(isa)
         files = list(path = path,
                   rawfiles = rawfilenames,
                   procfile = procfilenames,
-                  sdrf = afilenames[[i]],
-                  idf = ifilename,
+                  sdrf = isa$assay_filenames[[i]],
+                  idf = isa$investigation_filename,
                   adf = basename(adffilename))
 			   
         if (is.null(dim(dfilenames[[i]])[2]))
@@ -217,36 +220,35 @@ processAssayType = function(isa)
       #############################################################################
       
       #############################################################################
-      else if (assay_types[i] == "flow cytometry")
+      #else if (isa$assay_technology_types[i] == technology_types$fc)
+      #{
+      #    pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),row.names = NULL, blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote="\""))
+      #    sampleNames(pd) = pd$Raw.Data.File
+      #                                  #if(all(dfiles[[i]] %in% dir(path)) && all(dfiles[[i]] %in% sampleNames(pd)))
+      #    isa[[i]] = try(suppressWarnings(read.flowSet(dfiles[[i]], phenoData=pd, path=path)))
+      #                                  #if(!all(dfiles[[i]] %in% dir(path)))
+      #                                  #isa[[i]] = try(suppressWarnings(read.flowSet(dfiles[[i]][dfiles[[i]] %in% dir(path)], phenoData=pd, path=path)))				
+      #                                  #if(!all(dfiles[[i]] %in% sampleNames(pd)))
+      #                                  #isa[[i]] = try(suppressWarnings(read.flowSet(dfiles[[i]][dfiles[[i]] %in% sampleNames(pd)], phenoData=pd, path=path)))				
+      #}## end flow cytometry
+      #############################################################################
+      
+      
+      #############################################################################
+      else if (isa$assay_technology_types[i] == technology_types$ms)
       {
-          pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),row.names = NULL, blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote="\""))
-          sampleNames(pd) = pd$Raw.Data.File
-                                        #if(all(dfiles[[i]] %in% dir(path)) && all(dfiles[[i]] %in% sampleNames(pd)))
-          isa[[i]] = try(suppressWarnings(read.flowSet(dfiles[[i]], phenoData=pd, path=path)))
-                                        #if(!all(dfiles[[i]] %in% dir(path)))
-                                        #isa[[i]] = try(suppressWarnings(read.flowSet(dfiles[[i]][dfiles[[i]] %in% dir(path)], phenoData=pd, path=path)))				
-                                        #if(!all(dfiles[[i]] %in% sampleNames(pd)))
-                                        #isa[[i]] = try(suppressWarnings(read.flowSet(dfiles[[i]][dfiles[[i]] %in% sampleNames(pd)], phenoData=pd, path=path)))				
-      }## end flow cytometry
-      #############################################################################
-      
-      
-      #############################################################################
-      else if (assay_types[i] == "mass spectrometry")
-        {
-          if ("Raw.Spectral.Data.File" %in% colnames(dfilenames[[i]]))
+          if ("Raw.Spectral.Data.File" %in% colnames(isa$data_filenames[[i]]))
           {
               #mass spectrometry files
-              msfiles = dfilenames[[i]]$Raw.Spectral.Data.File
+              msfiles = isa$data_filenames[[i]]$Raw.Spectral.Data.File
               
-              pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),
+              pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay_filenames[i]),
                 row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
                 varMetadata.char = "$", quote="\""))
               
               sampleNames(pd) = pd$Raw.Spectral.Data.File
 
-              if (length(grep("Factor.Value", colnames(metadata))) != 0) {
-              
+              if (length(grep("Factor.Value", colnames(isa$study_files[[i]]))) != 0) {
                 ## If there are explicit factors, use them
                 sclass = metadata[ which(metadata$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(metadata))[1]]
                 isa[[i]] = xcmsSet(files=msfiles, sclass=sclass)
@@ -259,7 +261,7 @@ processAssayType = function(isa)
         }## end mass spectrometry
       #############################################################################
       else{
-        stop("Study Assay Technology Type '", types[i], "' not yet supported in the Risatab package")
+        stop("Study Assay Technology Type '", isa$assay_tech_types[i], "' not yet supported in the Risatab package")
       }
   }## end for on dfiles
 
