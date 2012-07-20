@@ -172,7 +172,8 @@ isatab2bioc = function(path = getwd())
     sample_to_rawdatafile=sample_to_rawdatafile,
     sample_to_assayname=sample_to_assayname,
     rawdatafile_to_sample=rawdatafile_to_sample,
-    assayname_to_sample=assayname_to_sample
+    assayname_to_sample=assayname_to_sample,
+    preprocessing = list()
     )
   return(isaobject)
   
@@ -241,6 +242,7 @@ processAssayType = function(isa)
           {
               #mass spectrometry files
               msfiles = isa$data_filenames[[i]]$Raw.Spectral.Data.File
+              #msfiles = lapply(msfiles, function(i) file.path(isa$path,i))
               
               pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay_filenames[i]),
                 row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
@@ -251,11 +253,19 @@ processAssayType = function(isa)
               if (length(grep("Factor.Value", colnames(isa$study_files[[i]]))) != 0) {
                 ## If there are explicit factors, use them
                 sclass = isa$study_files[[i]][ which(isa$study_files[[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$study_files[[i]]))[1]]
-                isa[[i]] = xcmsSet(files=msfiles, sclass=sclass)
+                wd <- getwd()
+                setwd(isa$path)
+                xset = xcmsSet(files=msfiles, sclass=sclass)
+                setwd(wd)
               } else {
+                  wd <- getwd()
+                  setwd(isa$path)
                   ## Otherwise just use what was there
-                  isa[[i]] = try(xcmsSet(msfiles, phenoData=pData(pd)))
+                  xset = try(xcmsSet(msfiles, phenoData=pData(pd)))
+                  setwd(wd)
               }
+              
+              isa$preprocessing[[i]] <- xset
 
           }# end Raw.Spectral.Data.File			
         }## end mass spectrometry
@@ -266,11 +276,11 @@ processAssayType = function(isa)
   }## end for on dfiles
 
 		
-  names(isa) = do.call(paste, list("isa", seq_len(length(isa)), sep=""))
-  isaobj = list(metadata, isa)
+  #names(isa) = do.call(paste, list("isa", seq_len(length(isa)), sep=""))
+  #isaobj = list(metadata, isa)
 
-  names(isaobj) = c("metadata","data")
-  return(isaobj)
+  #names(isaobj) = c("metadata","data")
+  return(isa)
 
 }##end function processAssayType
 
