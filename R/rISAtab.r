@@ -250,7 +250,7 @@ processAssayType = function(isa)
 
               if (length(grep("Factor.Value", colnames(isa$study_files[[i]]))) != 0) {
                 ## If there are explicit factors, use them
-                sclass = metadata[ which(metadata$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(metadata))[1]]
+                sclass = isa$study_files[[i]][ which(isa$study_files[[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$study_files[[i]]))[1]]
                 isa[[i]] = xcmsSet(files=msfiles, sclass=sclass)
               } else {
                   ## Otherwise just use what was there
