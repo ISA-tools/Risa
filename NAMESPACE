@@ -1,7 +1,7 @@
 #importFrom("ArrayExpress", "ae2bioc", "procset", "getcolproc")
 #importFrom("affy", "ReadAffy")
 #importFrom("flowCore", "read.flowSet")
-#importFrom("xcms", "xcmsSet", "sampclass", "sampclass<-", "phenoData")
+importFrom("xcms", "xcmsSet", "sampclass", "sampclass<-", "phenoData")
 export("isatab2bioc")
 export("isatab2bioczip")
 export("processAssayType")
