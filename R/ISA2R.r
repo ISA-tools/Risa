@@ -172,6 +172,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
     assay_files_per_study=afiles_per_study,
     assay_technology_types=assay_tech_types,
     data_filenames=dfilenames_per_assay,
+    samples=samples,
     samples_per_assay_filename=samples_per_assay_filename,
     assay_filenames_per_sample=assay_filenames_per_sample,
     sample_to_rawdatafile=sample_to_rawdatafile,
@@ -184,7 +185,50 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   
 }##end function isatab2bioc
 
-processAssayType = function(isa, ...)
+
+
+### specific function to deal with assays whose technology type is mass spectrometry
+processAssayTypeMS = function(isa, assay_filename, ...){
+  for(i in seq_len(length(isa$assay_filenames))){
+    
+    if (isa$assay_filenames[[i]]==assay_filename){
+      
+      if ("Raw.Spectral.Data.File" %in% colnames(isa$data_filenames[[i]]))
+      {
+        #mass spectrometry files
+        msfiles = isa$data_filenames[[i]]$Raw.Spectral.Data.File
+        
+        pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay_filenames[i]),
+                                         row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
+                                         varMetadata.char = "$", quote="\""))
+        
+        sampleNames(pd) = pd$Raw.Spectral.Data.File
+        
+        if (length(grep("Factor.Value", colnames(isa$assay_files[[i]]))) != 0) {
+          ## If there are explicit factors, use them
+          sclass = isa$assay_files[[i]][ which(isa$assay_files[[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay_files[[i]]))[1]]
+          
+          wd <- getwd()
+          setwd(isa$path)
+          xset = xcmsSet(files=msfiles, sclass=sclass, ...)
+          setwd(wd)
+        } else {
+          wd <- getwd()
+          setwd(isa$path)
+          ## Otherwise just use what was there
+          xset = try(xcmsSet(msfiles, phenoData=pData(pd), ...))
+          setwd(wd)
+        }
+        
+        isa$preprocessing[[i]] <- xset
+      
+    }#if
+    
+  }#if 
+  }#for
+}#processAssayTypeMS
+
+processAssayType = function(isa)
 {
   for(i in seq_len(length(isa$assay_filenames)))
   {
@@ -260,13 +304,13 @@ processAssayType = function(isa, ...)
                 
                 wd <- getwd()
                 setwd(isa$path)
-                xset = xcmsSet(files=msfiles, sclass=sclass, ...)
+                xset = xcmsSet(files=msfiles, sclass=sclass)
                 setwd(wd)
               } else {
                   wd <- getwd()
                   setwd(isa$path)
                   ## Otherwise just use what was there
-                  xset = try(xcmsSet(msfiles, phenoData=pData(pd), ...))
+                  xset = try(xcmsSet(msfiles, phenoData=pData(pd)))
                   setwd(wd)
               }
               
