@@ -184,7 +184,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   
 }##end function isatab2bioc
 
-processAssayType = function(isa)
+processAssayType = function(isa, ...)
 {
   for(i in seq_len(length(isa$assay_filenames)))
   {
@@ -258,18 +258,15 @@ processAssayType = function(isa)
                 ## If there are explicit factors, use them
                 sclass = isa$assay_files[[i]][ which(isa$assay_files[[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay_files[[i]]))[1]]
                 
-                ### metadata = cbind(sfile, assays)
-                ### sclass=metadata[which(metadata$Sample.Name %in% pd$Sample.Name),grep("Factor.Value", colnames(metadata))[1]]
-                
                 wd <- getwd()
                 setwd(isa$path)
-                xset = xcmsSet(files=msfiles, sclass=sclass)
+                xset = xcmsSet(files=msfiles, sclass=sclass, ...)
                 setwd(wd)
               } else {
                   wd <- getwd()
                   setwd(isa$path)
                   ## Otherwise just use what was there
-                  xset = try(xcmsSet(msfiles, phenoData=pData(pd)))
+                  xset = try(xcmsSet(msfiles, phenoData=pData(pd), ...))
                   setwd(wd)
               }
               
