@@ -221,7 +221,7 @@ processAssayTypeMS = function(isa, assay_filename, ...){
         }
         
         isa$preprocessing[[i]] <- xset
-      
+        return(xset)
     }#if
     
   }#if 
