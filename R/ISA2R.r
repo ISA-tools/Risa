@@ -13,14 +13,19 @@ technology_types <- list(
   )
 
 ## This function only works if the zip file does not contain a directory (but the ISA-TAB files themselves)
-isatab2bioczip = function(zip, path = getwd())
+isatab2bioczip = function(zip, path = getwd(), verbose=FALSE)
 {
+  
+  if (verbose)
+    writeLines("Unzipping file...")
   d = unzip(zipfile = zip, exdir = extract <- path)
+  if (verbose)
+    writeLines("Converting ISA-Tab dataset into R objects")
   isaobj = isatab2bioc(path)
   return(isaobj)
 }##end function isatab2bioczip
 
-isatab2bioc = function(path = getwd())
+isatab2bioc = function(path = getwd(), verbose=FALSE)
 {
   #### Parse ISATab files
   d = dir(path)
@@ -29,7 +34,7 @@ isatab2bioc = function(path = getwd())
   ## Investigation filename
   ifilename = grep("i_", d, value=TRUE)
   if (length(ifilename)==0)
-    stop("Did not find any investigation file.")
+    stop("Did not find any investigation file at folder ", path)
   else if (!file.exists(file.path(path, ifilename)))
     stop("Did not find investigation file: ", ifilename)
   
@@ -181,7 +186,7 @@ isatab2bioc = function(path = getwd())
 
 processAssayType = function(isa)
 {
-  for(i in seq_len(length(isa$data_filenames)))
+  for(i in seq_len(length(isa$assay_filenames)))
   {
       #############################################################################
       if (isa$assay_technology_types[i] == technology_types$microarray)
@@ -249,9 +254,13 @@ processAssayType = function(isa)
               
               sampleNames(pd) = pd$Raw.Spectral.Data.File
 
-              if (length(grep("Factor.Value", colnames(isa$study_files[[i]]))) != 0) {
+              if (length(grep("Factor.Value", colnames(isa$assay_files[[i]]))) != 0) {
                 ## If there are explicit factors, use them
-                sclass = isa$study_files[[i]][ which(isa$study_files[[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$study_files[[i]]))[1]]
+                sclass = isa$assay_files[[i]][ which(isa$assay_files[[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay_files[[i]]))[1]]
+                
+                ### metadata = cbind(sfile, assays)
+                ### sclass=metadata[which(metadata$Sample.Name %in% pd$Sample.Name),grep("Factor.Value", colnames(metadata))[1]]
+                
                 wd <- getwd()
                 setwd(isa$path)
                 xset = xcmsSet(files=msfiles, sclass=sclass)
