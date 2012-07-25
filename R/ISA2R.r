@@ -178,7 +178,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
     sample_to_rawdatafile=sample_to_rawdatafile,
     sample_to_assayname=sample_to_assayname,
     rawdatafile_to_sample=rawdatafile_to_sample,
-    assayname_to_sample=assayname_to_sample,
+    assayname_to_sample=assayname_to_sample
     )
   return(isaobject)
   
