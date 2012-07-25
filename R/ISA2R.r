@@ -179,7 +179,6 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
     sample_to_assayname=sample_to_assayname,
     rawdatafile_to_sample=rawdatafile_to_sample,
     assayname_to_sample=assayname_to_sample,
-    preprocessing = list()
     )
   return(isaobject)
   
@@ -187,8 +186,9 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
 
 
 
-### specific function to deal with assays whose technology type is mass spectrometry
-processAssayTypeMS = function(isa, assay_filename, ...){
+### specific function to deal with assays whose technology type is mass spectrometry using the xcms package
+### it returns an xcmsSet
+processAssayXcmsSet = function(isa, assay_filename, ...){
   for(i in seq_len(length(isa$assay_filenames))){
     
     if (isa$assay_filenames[[i]]==assay_filename){
@@ -219,8 +219,6 @@ processAssayTypeMS = function(isa, assay_filename, ...){
           xset = try(xcmsSet(msfiles, phenoData=pData(pd), ...))
           setwd(wd)
         }
-        
-        isa$preprocessing[[i]] <- xset
         return(xset)
     }#if
     
