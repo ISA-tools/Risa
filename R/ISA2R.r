@@ -234,6 +234,27 @@ addAssayMetadata = function(isa, assay_filename, col_name, values){
   return(isa)
 }
 
+### TODO fix quotes when writing files
+write.isatab = function(isa){
+  write.table(isa$investigation_file, 
+              file=isa$investigation_filename, 
+              row.names=FALSE, col.names=FALSE, 
+              quote=FALSE, sep="\t", na="\"\"")
+  for(i in seq_len(length(isa$study_filenames))){
+    write.table(isa$study_files[[i]], 
+                file=isa$study_filenames[[i]], 
+                row.names=FALSE, col.names=FALSE, 
+                quote=FALSE, sep="\t", na="\"\"")
+  }
+  for(i in seq_len(length(isa$assay_filenames))){
+    write.table(isa$assay_files[[i]], 
+                file=isa$assay_filenames[[i]], 
+                row.names=FALSE, col.names=FALSE, 
+                quote=FALSE, sep="\t", na="\"\"")
+  }
+  
+}
+
 processAssayType = function(isa)
 {
   for(i in seq_len(length(isa$assay_filenames)))
