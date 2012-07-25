@@ -6,7 +6,7 @@ Title: Converting experimental metadata from ISA-tab into
 Author: Audrey Kauffmann 
 Maintainer: Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra <isatools@googlegroups.com>
 Depends: R (>= 2.9.0), Biobase (>= 2.4.0)
-Imports: affy, flowCore, ArrayExpress (>= 1.9.1), xcms
+Imports: xcms
 Description: The Investigation / Study / Assay (ISA) tab-delimited 
 	 format is a general purpose framework with which to collect and communicate 
 	 complex metadata (i.e. sample characteristics, technologies used, type 
