@@ -226,6 +226,14 @@ processAssayXcmsSet = function(isa, assay_filename, ...){
   }#for
 }#processAssayTypeMS
 
+
+addAssayMetadata = function(isa, assay_filename, col_name, values){
+  assay_file <- isa$assay_files [[ assay_filename ]]
+  assay_file [ colnames(assay_file) == col_name ] <- values
+  isa$assay_files [[ assay_filename ]] <- assay_file
+  return(isa)
+}
+
 processAssayType = function(isa)
 {
   for(i in seq_len(length(isa$assay_filenames)))
