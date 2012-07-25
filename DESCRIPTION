@@ -5,7 +5,7 @@ Title: Converting experimental metadata from ISA-tab into
        Bioconductor data structures
 Author: Audrey Kauffmann 
 Maintainer: Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra <isatools@googlegroups.com>
-Depends: R (>= 2.9.0), Biobase (>= 2.4.0)
+Depends: R (>= 2.0.9), Rcpp
 Imports: xcms
 Description: The Investigation / Study / Assay (ISA) tab-delimited 
 	 format is a general purpose framework with which to collect and communicate 
