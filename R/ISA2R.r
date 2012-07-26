@@ -1,3 +1,5 @@
+
+
 isa_syntax <- list(
   investigation_prefix="i_",
   study_prefix="s_",
@@ -39,10 +41,13 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
     stop("Did not find investigation file: ", ifilename)
   
   ## Reading in investigation file into a data frame
-  ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE)
+  ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE, na.strings = "NA")
+  #row.names(ifile) <- ifile[[1]]
+  #ifile <- ifile[,2:length(ifile)]
 
   ## Study Identifiers  - as a list of strings
   sidentifiers = ifile[grep("Study Identifier", ifile[,1], useBytes=TRUE),][2][[1]]
+                 #ifile["Study Identifier",]
   
   ## Study filenames (one or more)
   sfilenames = unlist(sapply(ifile[grep("Study File Name", ifile[,1], useBytes=TRUE),], function(i) grep("s_", i, value=TRUE, useBytes=TRUE)))
@@ -224,10 +229,12 @@ processAssayXcmsSet = function(isa, assay_filename, ...){
     
   }#if 
   }#for
-}#processAssayTypeMS
+}#get.assay.xcmsSet
 
 
-addAssayMetadata = function(isa, assay_filename, col_name, values){
+### ADD COMMENT - written with R
+### ADD validation for samples
+add.assay.metadata = function(isa, assay_filename, col_name, values){
   assay_file <- isa$assay_files [[ assay_filename ]]
   assay_file [ colnames(assay_file) == col_name ] <- values
   isa$assay_files [[ assay_filename ]] <- assay_file
@@ -235,11 +242,9 @@ addAssayMetadata = function(isa, assay_filename, col_name, values){
 }
 
 ### TODO fix quotes when writing files
+### ADD COMMENT - written with R 
 write.isatab = function(isa){
-  write.table(isa$investigation_file, 
-              file=isa$investigation_filename, 
-              row.names=FALSE, col.names=FALSE, 
-              quote=FALSE, sep="\t", na="\"\"")
+  write.investigation.file(isa)
   for(i in seq_len(length(isa$study_filenames))){
     write.table(isa$study_files[[i]], 
                 file=isa$study_filenames[[i]], 
@@ -253,6 +258,20 @@ write.isatab = function(isa){
                 quote=FALSE, sep="\t", na="\"\"")
   }
   
+}
+
+write.investigation.file = function(isa){
+  write.table(isa$investigation_file, 
+              file=isa$investigation_filename, 
+              row.names=FALSE, col.names=FALSE, 
+              quote=TRUE, sep="\t", na="\"\"")
+}
+
+write.assay.file = function(isa, assay_filename){
+  write.table(isa$assay_files[[assay_filename ]], 
+              file=isa$assay_filenames[[ assay_filename ]], 
+              row.names=FALSE, col.names=FALSE, 
+              quote=FALSE, sep="\t", na="\"\"")
 }
 
 processAssayType = function(isa)
