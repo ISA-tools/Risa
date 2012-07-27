@@ -133,7 +133,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   data_col_names = lapply(seq_len(length(afiles)),
                       function(i) if ('Raw Data File' %in% colnames(afiles[[i]])){
                                   'Raw Data File'
-                                  }else if ('Free.Induction.Decay.Data.File' %in% colnames(afiles[[i]])){
+                                  }else if ('Free Induction Decay Data File' %in% colnames(afiles[[i]])){
                                     'Free Induction Decay Data File'
                                   }else if ('Array.Data.File' %in% colnames(afiles[[i]])){
                                     'Array Data File'
@@ -264,10 +264,7 @@ write.isatab = function(isa){
                 quote=FALSE, sep="\t", na="\"\"")
   }
   for(i in seq_len(length(isa$assay_filenames))){
-    write.table(isa$assay_files[[i]], 
-                file=isa$assay_filenames[[i]], 
-                row.names=FALSE, col.names=TRUE, 
-                quote=FALSE, sep="\t", na="\"\"")
+    write.assay.file(isa, isa$assay_files[[i]])
   }
   
 }
