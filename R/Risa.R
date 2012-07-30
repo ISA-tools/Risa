@@ -116,15 +116,15 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   
   samples = unlist(lapply(sfiles, function(i) i[,grep(isatab.syntax$sample.name, colnames(i))]))
   
-  samples_per_assay_filename = lapply(seq_len(length(afiles)), 
+  samples.per.assay.filename = lapply(seq_len(length(afiles)), 
                                             function(i) afiles[[i]][[isatab.syntax$sample.name]])
-  names(samples_per_assay_filename) <- afilenames
+  names(samples.per.assay.filename) <- afilenames
   
   samples_per_study <- lapply(seq_len(length(sfiles)),
                                 function(i) sfiles[[i]][[isatab.syntax$sample.name]])
   names(samples_per_study) <- sidentifiers
   
-  assay_filenames_per_sample <- unlist(lapply(seq_len(length(samples)), 
+  assay.filenames.per.sample <- unlist(lapply(seq_len(length(samples)), 
                              function(j) lapply(seq_len(length(afilenames)), 
                                     function(i)   if (samples[[j]] %in% afiles[[i]][[isatab.syntax$sample.name]]) {
                                                           afilenames[[i]]
@@ -143,26 +143,26 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
                                   })
                                     
   
-  sample_to_rawdatafile <- lapply( seq_len(length(afiles)), 
+  sample.to.rawdatafile <- lapply( seq_len(length(afiles)), 
                                   function(i) afiles[[i]][,c('Sample Name',data_col_names[[i]])] )
-  sample_to_rawdatafile <- lapply(seq_len(length(afiles)), function(i)
-     merge(sample_to_rawdatafile[[i]][ !duplicated(sample_to_rawdatafile[[i]]$'Sample Name'), ], sample_to_rawdatafile[[i]][ duplicated(sample_to_rawdatafile[[i]]$'Sample Name'), ], all=TRUE))  
+  sample.to.rawdatafile <- lapply(seq_len(length(afiles)), function(i)
+     merge(sample.to.rawdatafile[[i]][ !duplicated(sample.to.rawdatafile[[i]]$'Sample Name'), ], sample.to.rawdatafile[[i]][ duplicated(sample.to.rawdatafile[[i]]$'Sample Name'), ], all=TRUE))  
   
-  sample_to_assayname <-lapply( afiles,
+  sample.to.assayname <-lapply( afiles,
                                 function(i) i[,c('Sample Name',grep('Assay Name', colnames(i), value=TRUE))])
-  sample_to_assayname <- lapply(seq_len(length(afiles)), function(i)
-          merge(sample_to_assayname[[i]][ !duplicated(sample_to_assayname[[i]]$'Sample Name'), ], sample_to_assayname[[i]][ duplicated(sample_to_assayname[[i]]$'Sample Name'), ], all=TRUE))
+  sample.to.assayname <- lapply(seq_len(length(afiles)), function(i)
+          merge(sample.to.assayname[[i]][ !duplicated(sample.to.assayname[[i]]$'Sample Name'), ], sample.to.assayname[[i]][ duplicated(sample.to.assayname[[i]]$'Sample Name'), ], all=TRUE))
   
-  rawdatafile_to_sample <- lapply( seq_len(length(afiles)), 
+  rawdatafile.to.sample <- lapply( seq_len(length(afiles)), 
                                    function(i) afiles[[i]][,c(data_col_names[[i]],'Sample Name')] )
-  rawdatafile_to_sample <- lapply(seq_len(length(afiles)), function(i)
-         merge(rawdatafile_to_sample[[i]][ !duplicated(rawdatafile_to_sample[[i]][[data_col_names[[i]]]]), ], rawdatafile_to_sample[[i]][ duplicated(rawdatafile_to_sample[[i]][[data_col_names[[i]]]]), ], all=TRUE))
+  rawdatafile.to.sample <- lapply(seq_len(length(afiles)), function(i)
+         merge(rawdatafile.to.sample[[i]][ !duplicated(rawdatafile.to.sample[[i]][[data_col_names[[i]]]]), ], rawdatafile.to.sample[[i]][ duplicated(rawdatafile.to.sample[[i]][[data_col_names[[i]]]]), ], all=TRUE))
   
-  assayname_to_sample <- lapply( afiles,
+  assayname.to.sample <- lapply( afiles,
                                  function(i) i[,c(grep('Assay Name', colnames(i), value=TRUE),'Sample Name')])
-  assayname_to_sample <- lapply(seq_len(length(afiles)), function(i)
-          merge(assayname_to_sample[[i]][ !duplicated(assayname_to_sample[[i]][,c(grep('Assay Name', colnames(assayname_to_sample[[i]]), value=TRUE))]), ], 
-                assayname_to_sample[[i]][  duplicated(assayname_to_sample[[i]][,c(grep('Assay Name', colnames(assayname_to_sample[[i]]), value=TRUE))]), ], 
+  assayname.to.sample <- lapply(seq_len(length(afiles)), function(i)
+          merge(assayname.to.sample[[i]][ !duplicated(assayname.to.sample[[i]][,c(grep('Assay Name', colnames(assayname.to.sample[[i]]), value=TRUE))]), ], 
+                assayname.to.sample[[i]][  duplicated(assayname.to.sample[[i]][,c(grep('Assay Name', colnames(assayname.to.sample[[i]]), value=TRUE))]), ], 
                 all=TRUE))
   
  
@@ -173,24 +173,24 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
 	
   isaobject <- list(
     path=path,
-    investigation_filename=ifilename,
-    investigation_file=ifile,
-    study_identifiers=sidentifiers,
-    study_filenames=sfilenames,
-    study_files=sfiles,
-    assay_filenames=afilenames,
-    assay_filenames_per_study=afilenames_per_study,
+    investigation.filename=ifilename,
+    investigation.file=ifile,
+    study.identifiers=sidentifiers,
+    study.filenames=sfilenames,
+    study.files=sfiles,
+    assay.filenames=afilenames,
+    assay.filenames.per.study=afilenames_per_study,
     assay_files=afiles,
-    assay_files_per_study=afiles_per_study,
-    assay_technology_types=assay_tech_types,
-    data_filenames=dfilenames_per_assay,
+    assay.files.per.study=afiles_per_study,
+    assay.technology.types=assay_tech_types,
+    data.filenames=dfilenames_per_assay,
     samples=samples,
-    samples_per_assay_filename=samples_per_assay_filename,
-    assay_filenames_per_sample=assay_filenames_per_sample,
-    sample_to_rawdatafile=sample_to_rawdatafile,
-    sample_to_assayname=sample_to_assayname,
-    rawdatafile_to_sample=rawdatafile_to_sample,
-    assayname_to_sample=assayname_to_sample
+    samples.per.assay.filename=samples.per.assay.filename,
+    assay.filenames.per.sample=assay.filenames.per.sample,
+    sample.to.rawdatafile=sample.to.rawdatafile,
+    sample.to.assayname=sample.to.assayname,
+    rawdatafile.to.sample=rawdatafile.to.sample,
+    assayname.to.sample=assayname.to.sample
     )
   return(isaobject)
   
@@ -201,24 +201,24 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
 ### specific function to deal with assays whose technology type is mass spectrometry using the xcms package
 ### it returns an xcmsSet
 processAssayXcmsSet = function(isa, assay_filename, ...){
-  for(i in seq_len(length(isa$assay_filenames))){
+  for(i in seq_len(length(isa$assay.filenames))){
     
-    if (isa$assay_filenames[[i]]==assay_filename){
+    if (isa$assay.filenames[[i]]==assay_filename){
       
-      if ("Raw Spectral Data File" %in% colnames(isa$data_filenames[[i]]))
+      if ("Raw Spectral Data File" %in% colnames(isa$data.filenames[[i]]))
       {
         #mass spectrometry files
-        msfiles = isa$data_filenames[[i]][["Raw Spectral Data File" ]]
+        msfiles = isa$data.filenames[[i]][["Raw Spectral Data File" ]]
         
-        pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay_filenames[i]),
+        pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay.filenames[i]),
                                          row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
                                          varMetadata.char = "$", quote="\""))
         
         sampleNames(pd) = pd$Raw.Spectral.Data.File
         
-        if (length(grep("Factor.Value", colnames(isa$assay_files[[i]]))) != 0) {
+        if (length(grep("Factor.Value", colnames(isa$assay.files[[i]]))) != 0) {
           ## If there are explicit factors, use them
-          sclass = isa$assay_files[[i]][ which(isa$assay_files[[i]][[isatab.syntax$sample.name]] %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay_files[[i]]))[1]]
+          sclass = isa$assay.files[[i]][ which(isa$assay.files[[i]][[isatab.syntax$sample.name]] %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay.files[[i]]))[1]]
           
           wd <- getwd()
           setwd(isa$path)
@@ -241,16 +241,16 @@ processAssayXcmsSet = function(isa, assay_filename, ...){
 
 ### ADD COMMENT - written with R
 ### ADD validation for samples
-addAssayMetadata = function(isa, assay_filename, col_name, values){
+addAssayMetadata = function(isa, assay.filename, col.name, values){
   
-  assay_file <- isa$assay_files [[ assay_filename ]]
+  assay_file <- isa$assay.files [[ assay.filename ]]
   if (length(values)==1){
     values <- c(rep(values,nrow(assay_file)))
   }else if (length(values)!=nrow(assay_file)){
     stop("Wrong number of values to be added to the assay file")
   }
-  assay_file [ colnames(assay_file) == col_name ] <- values
-  isa$assay_files [[ assay_filename ]] <- assay_file
+  assay_file [ colnames(assay_file) == col.name ] <- values
+  isa$assay.files [[ assay.filename ]] <- assay_file
   return(isa)
 }
 
@@ -258,48 +258,48 @@ addAssayMetadata = function(isa, assay_filename, col_name, values){
 ### ADD COMMENT - written with R 
 write.isatab = function(isa){
   write.investigation.file(isa)
-  for(i in seq_len(length(isa$study_filenames))){
-    write.table(isa$study_files[[i]], 
-                file=isa$study_filenames[[i]], 
+  for(i in seq_len(length(isa$study.filenames))){
+    write.table(isa$study.files[[i]], 
+                file=isa$study.filenames[[i]], 
                 row.names=FALSE, col.names=FALSE, 
                 quote=FALSE, sep="\t", na="\"\"")
   }
-  for(i in seq_len(length(isa$assay_filenames))){
-    write.assay.file(isa, isa$assay_files[[i]])
+  for(i in seq_len(length(isa$assay.filenames))){
+    write.assay.file(isa, isa$assay.files[[i]])
   }
   
 }
 
 write.investigation.file = function(isa){
-  write.table(isa$investigation_file, 
-              file=isa$investigation_filename, 
+  write.table(isa$investigation.file, 
+              file=isa$investigation.filename, 
               row.names=FALSE, col.names=FALSE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
 
 write.assay.file = function(isa, assay_filename){
-  i <- which(names(isa$assay_files)==assay_filename)
-  assay_file <- isa$assay_files[[assay_filename ]]
+  i <- which(names(isa$assay.files)==assay_filename)
+  assay_file <- isa$assay.files[[assay_filename ]]
   write.table(assay_file, 
-              file=isa$assay_filenames[[i]], 
+              file=isa$assay.filenames[[i]], 
               row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
 
 processAssayType = function(isa)
 {
-  for(i in seq_len(length(isa$assay_filenames)))
+  for(i in seq_len(length(isa$assay.filenames)))
   {
       #############################################################################
-      if (isa$assay_technology_types[i] == technology_types$microarray)
+      if (isa$assay.technology.types[i] == technology_types$microarray)
       {
       #  ## Raw and processed data filenames
-      #  rawfilenames = if ("Array.Data.File" %in% colnames(isa$data_filenames[[i]])) isa$data_filenames[[i]][,"Array.Data.File"] else NULL
-      #  procfilenames = if("Derived.Array.Data.File" %in% colnames(isa$data_files[[i]])) isa$data_filenames[[i]][,"Derived.Array.Data.File"] else NULL
+      #  rawfilenames = if ("Array.Data.File" %in% colnames(isa$data.filenames[[i]])) isa$data.filenames[[i]][,"Array.Data.File"] else NULL
+      #  procfilenames = if("Derived.Array.Data.File" %in% colnames(isa$data_files[[i]])) isa$data.filenames[[i]][,"Derived.Array.Data.File"] else NULL
 			   
         ## URL for ADF (Array Design Format) file
-      #  urladf = paste("http://www.ebi.ac.uk/microarray-as/ae/files/", unique(isa$asay_files[[i]][,"Array.Design.REF"]), "/", unique(assay_files[[i]][,"Array.Design.REF"]), ".adf.txt", sep="")
-      #  adffilename = file.path(path,unique(isa$assay_files[[i]][,"Array.Design.REF"]))
+      #  urladf = paste("http://www.ebi.ac.uk/microarray-as/ae/files/", unique(isa$asay_files[[i]][,"Array.Design.REF"]), "/", unique(assay.files[[i]][,"Array.Design.REF"]), ".adf.txt", sep="")
+      #  adffilename = file.path(path,unique(isa$assay.files[[i]][,"Array.Design.REF"]))
       #  adf_download = download.file(urladf, adffilename, mode="wb")
 
         ## List containing rawfiles, sdrf, idf, adf & directory containing the files
@@ -307,8 +307,8 @@ processAssayType = function(isa)
        # files = list(path = path,
        #            rawfiles = rawfilenames,
        #          procfile = procfilenames,
-       #           sdrf = isa$assay_filenames[[i]],
-       #            idf = isa$investigation_filename,
+       #           sdrf = isa$assay.filenames[[i]],
+       #            idf = isa$investigation.filename,
        #            adf = basename(adffilename))
 			   
        #if (is.null(dim(dfilenames[[i]])[2]))
@@ -328,7 +328,7 @@ processAssayType = function(isa)
       #############################################################################
       
       #############################################################################
-      #else if (isa$assay_technology_types[i] == technology_types$fc)
+      #else if (isa$assay.technology.types[i] == technology_types$fc)
       #{
       #    pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),row.names = NULL, blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote="\""))
       #    sampleNames(pd) = pd$Raw.Data.File
@@ -343,22 +343,22 @@ processAssayType = function(isa)
       
       
       #############################################################################
-      else if (isa$assay_technology_types[i] == technology_types$ms)
+      else if (isa$assay.technology.types[i] == technology_types$ms)
       {
-          if ("Raw.Spectral.Data.File" %in% colnames(isa$data_filenames[[i]]))
+          if ("Raw.Spectral.Data.File" %in% colnames(isa$data.filenames[[i]]))
           {
               #mass spectrometry files
-              msfiles = isa$data_filenames[[i]]$Raw.Spectral.Data.File
+              msfiles = isa$data.filenames[[i]]$Raw.Spectral.Data.File
               
-              pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay_filenames[i]),
+              pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay.filenames[i]),
                 row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
                 varMetadata.char = "$", quote="\""))
               
               sampleNames(pd) = pd$Raw.Spectral.Data.File
 
-              if (length(grep("Factor.Value", colnames(isa$assay_files[[i]]))) != 0) {
+              if (length(grep("Factor.Value", colnames(isa$assay.files[[i]]))) != 0) {
                 ## If there are explicit factors, use them
-                sclass = isa$assay_files[[i]][ which(isa$assay_files[[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay_files[[i]]))[1]]
+                sclass = isa$assay.files[[i]][ which(isa$assay.files[[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay.files[[i]]))[1]]
                 
                 wd <- getwd()
                 setwd(isa$path)
