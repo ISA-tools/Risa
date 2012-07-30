@@ -255,38 +255,38 @@ addAssayMetadata = function(isa, assay.filename, col.name, values){
 
 ### TODO fix quotes when writing files
 ### ADD COMMENT - written with R 
-write.isatab = function(isa){
-  write.investigation.file(isa)
+write.isatab = function(isa, path = getwd()){
+  write.investigation.file(isa, path)
   for(i in seq_len(length(isa$study.filenames))){
-    write.study.file(isa, isa$study.files[[i]])
+    write.study.file(isa, isa$study.files[[i]], path)
   }
   for(i in seq_len(length(isa$assay.filenames))){
-    write.assay.file(isa, isa$assay.files[[i]])
+    write.assay.file(isa, isa$assay.files[[i]], path)
   }
   
 }
 
-write.investigation.file = function(isa){
+write.investigation.file = function(isa, path = getwd()){
   write.table(isa$investigation.file, 
-              file=isa$investigation.filename, 
+              file=file.path(path,isa$investigation.filename), 
               row.names=FALSE, col.names=FALSE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
 
-write.study.file = function(isa, study_filename){
+write.study.file = function(isa, study_filename, path = getwd()){
   i <- which(names(isa$study.files)==study_filename)
   study_file <- isa$study.files[[study_filename ]]
   write.table(study_file, 
-              file=isa$study.filenames[[i]], 
+              file=file.path(path,isa$study.filenames[[i]]), 
               row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
 
-write.assay.file = function(isa, assay_filename){
+write.assay.file = function(isa, assay_filename, path = getwd()){
   i <- which(names(isa$assay.files)==assay_filename)
   assay_file <- isa$assay.files[[assay_filename ]]
   write.table(assay_file, 
-              file=isa$assay.filenames[[i]], 
+              file=file.path(path,isa$assay.filenames[[i]]), 
               row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
