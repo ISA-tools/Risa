@@ -1,10 +1,10 @@
-\name{ISA2R}
-\alias{ISA2R}
-\alias{ISA2R-package}
+\name{Risa}
+\alias{Risa}
+\alias{Risa-package}
 \docType{package}
-\title{ ISA2R package overview }
+\title{ Risa package overview }
 \description{
-  The ISA2R package builds R objects from ISA-tab format files. The package contains two functions:  \code{isatab2bioczip} reads ISA-tab files from a local zip archive; and \code{isatab2bioc} reads ISA-tab files from a local folder.
+  The Risa package builds R objects from ISA-tab format files. The package contains two functions:  \code{isatab2bioczip} reads ISA-tab files from a local zip archive; and \code{isatab2bioc} reads ISA-tab files from a local folder.
 }
 \author{
   Audrey Kauffmann / 
@@ -13,7 +13,7 @@
 \seealso{ \code{isatab2bioczip}, \code{isatab2bioc} }
 \examples{
      ## Example of isatab2bioczip for microarray and flow cytometry experiment
-     #isazip = system.file("extdata","Yox1.zip", package="ISA2R")
+     #isazip = system.file("extdata","Yox1.zip", package="Risa")
      #isaset = isatab2bioczip(isazip, path = "ISAexample")
 
      ## Example of isatab2bioc for mass spectrometry data

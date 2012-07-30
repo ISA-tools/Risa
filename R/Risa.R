@@ -378,7 +378,7 @@ processAssayType = function(isa)
         }## end mass spectrometry
       #############################################################################
       else{
-        stop("Study Assay Technology Type '", isa$assay_tech_types[i], "' not yet supported in the ISA2R package")
+        stop("Study Assay Technology Type '", isa$assay_tech_types[i], "' not yet supported in the Risa package")
       }
   }## end for on dfiles
 
