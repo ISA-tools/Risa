@@ -1,11 +1,18 @@
+### Risa package
 
-
-isa_syntax <- list(
-  investigation_prefix="i_",
-  study_prefix="s_",
-  assay_prefix="a_",
-  study_identifier="Study Identifier",
-  study_assay_filename="Study Assay File Name"
+isatab.syntax <- list(
+  investigation.prefix="i_",
+  study.prefix="s_",
+  assay.prefix="a_",
+  study.identifier="Study Identifier",
+  study.file.name="Study File Name",
+  study.assay.file.name="Study Assay File Name",
+  study.assay.technology.type="Study Assay Technology Type",
+  sample.name="Sample Name",
+  raw.data.file="Raw Data File",
+  free.induction.decay.data.file="Free Induction Decay Data File",
+  array.data.file="Array.Data.File",
+  raw.spectral.data.file="Raw Spectral Data File"
   )
 
 technology_types <- list(
@@ -34,7 +41,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
 
   ## TODO any use case with multiple investigation files?
   ## Investigation filename
-  ifilename = grep("i_", d, value=TRUE)
+  ifilename = grep(isatab.syntax$investigation.prefix, d, value=TRUE)
   if (length(ifilename)==0)
     stop("Did not find any investigation file at folder ", path)
   else if (!file.exists(file.path(path, ifilename)))
@@ -42,15 +49,15 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   
   ## Reading in investigation file into a data frame
   ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE, na.strings = "NA")
-  #row.names(ifile) <- ifile[[1]]
+  row.names(ifile) <- ifile[[1]]
   #ifile <- ifile[,2:length(ifile)]
 
   ## Study Identifiers  - as a list of strings
-  sidentifiers = ifile[grep("Study Identifier", ifile[,1], useBytes=TRUE),][2][[1]]
-                 #ifile["Study Identifier",]
+  sidentifiers = ifile[grep(isatab.syntax$study.identifier, ifile[,1], useBytes=TRUE),][2][[1]]
+                 #ifile[isatab.syntax$study.identifier,]
   
   ## Study filenames (one or more)
-  sfilenames = unlist(sapply(ifile[grep("Study File Name", ifile[,1], useBytes=TRUE),], function(i) grep("s_", i, value=TRUE, useBytes=TRUE)))
+  sfilenames = unlist(sapply(ifile[grep(isatab.syntax$study.file.name, ifile[,1], useBytes=TRUE),], function(i) grep(isatab.syntax$study.prefix, i, value=TRUE, useBytes=TRUE)))
   if (length(sidentifiers)!=length(sfilenames))
     stop("There are study files with no identifier assigned")
   ## Assign sidentifiers as names of the list sfilenames
@@ -66,11 +73,11 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   
   ## List of assay filenames 
   #afilenames is a list with all the assay filenames (without association to studies)
-  afilenames = unlist(sapply(ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),], function(i) grep("a_", i, value=TRUE, useBytes=TRUE)))
+  afilenames = unlist(sapply(ifile[grep(isatab.syntax$study.assay.file.name, ifile[,1], useBytes=TRUE),], function(i) grep(isatab.syntax$assay.prefix, i, value=TRUE, useBytes=TRUE)))
   
   #getting afilenames associated with studies
-  afilenames.df = ifile[grep("Study Assay File Name", ifile[,1], useBytes=TRUE),]
-  afilenames.matrix = apply(afilenames.df,c(1,2),function(row) grep("a_",row, value=TRUE))  
+  afilenames.df = ifile[grep(isatab.syntax$study.assay.file.name, ifile[,1], useBytes=TRUE),]
+  afilenames.matrix = apply(afilenames.df,c(1,2),function(row) grep(isatab.syntax$assay.prefix,row, value=TRUE))  
   afilenames.lists = split(afilenames.matrix, row(afilenames.matrix, as.factor=TRUE))
   afilenames_per_study = lapply(seq_len(length(afilenames.lists)), function(i) Filter(function(j) !identical(character(0), j), afilenames.lists[[i]]))
   names(afilenames_per_study) <- sidentifiers
@@ -78,12 +85,6 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   ## Reading in assay files 
   # afiles is a list of data frames (containing all the assay files)
   afiles <- lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE,  check.names=FALSE))
-  
-  #afiles_headers <- lapply(afilenames, function(i) read.table(file.path(path, i), check.names=FALSE, sep='\t', header=TRUE, 
-  #                                 stringsAsFactors=FALSE))
-  #afiles_headers <- lapply(afiles_headers, function(i) colnames(i))
-  #afiles_headers
-  
   names(afiles) <- afilenames
   # afiles_per_study is a list (one element per study) of lists (one element per assay) 
   afiles_per_study = lapply(seq_len(length(afilenames_per_study)), 
@@ -93,11 +94,11 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
 
   ## Assay technology types
   #data frame with types
-  assay_tech_types = ifile[grep("Study Assay Technology Type$", ifile[,1], useBytes=TRUE),]    
+  assay_tech_types = ifile[isatab.syntax$study.assay.technology.type, ] 
   #remove empty types - results in a list of types
   assay_tech_types = na.omit(assay_tech_types[assay_tech_types != ""])
   #remove headers
-  assay_tech_types = assay_tech_types[ assay_tech_types != "Study Assay Technology Type"]
+  assay_tech_types = assay_tech_types[ assay_tech_types != isatab.syntax$study.assay.technology.type]
 
   ## Validate number of assay technology types == number of afiles
   if (length(assay_tech_types)!=length(afiles)){
@@ -113,32 +114,32 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
                           function(j) (lapply(seq_len(length(afiles)), 
                                               function(i) sfiles[[j]]$Sample.Name %in% afiles[[i]]$Sample.Name)))
   
-  samples = unlist(lapply(sfiles, function(i) i[,grep("Sample.Name", colnames(i))]))
+  samples = unlist(lapply(sfiles, function(i) i[,grep(isatab.syntax$sample.name, colnames(i))]))
   
   samples_per_assay_filename = lapply(seq_len(length(afiles)), 
-                                            function(i) afiles[[i]][["Sample Name"]])
+                                            function(i) afiles[[i]][[isatab.syntax$sample.name]])
   names(samples_per_assay_filename) <- afilenames
   
   samples_per_study <- lapply(seq_len(length(sfiles)),
-                                function(i) sfiles[[i]][["Sample Name"]])
+                                function(i) sfiles[[i]][[isatab.syntax$sample.name]])
   names(samples_per_study) <- sidentifiers
   
   assay_filenames_per_sample <- unlist(lapply(seq_len(length(samples)), 
                              function(j) lapply(seq_len(length(afilenames)), 
-                                    function(i)   if (samples[[j]] %in% afiles[[i]][["Sample Name"]]) {
+                                    function(i)   if (samples[[j]] %in% afiles[[i]][[isatab.syntax$sample.name]]) {
                                                           afilenames[[i]]
                                                   }
                                                 )))
   
   data_col_names = lapply(seq_len(length(afiles)),
-                      function(i) if ('Raw Data File' %in% colnames(afiles[[i]])){
-                                  'Raw Data File'
-                                  }else if ('Free Induction Decay Data File' %in% colnames(afiles[[i]])){
-                                    'Free Induction Decay Data File'
-                                  }else if ('Array.Data.File' %in% colnames(afiles[[i]])){
-                                    'Array Data File'
-                                  }else if ('Raw Spectral Data File' %in% colnames(afiles[[i]])){
-                                    'Raw Spectral Data File'
+                      function(i) if (isatab.syntax$raw.data.file %in% colnames(afiles[[i]])){
+                                     isatab.syntax$raw.data.file
+                                  }else if (isatab.syntax$free.induction.decay.data.file %in% colnames(afiles[[i]])){
+                                    isatab.syntax$free.induction.decay.data.file
+                                  }else if (isatab.syntax$array.data.file %in% colnames(afiles[[i]])){
+                                    isatab.syntax$array.data.file
+                                  }else if (isatab.syntax$raw.spectral.data.file %in% colnames(afiles[[i]])){
+                                    isatab.syntax$raw.spectral.data.file
                                   })
                                     
   
@@ -217,7 +218,7 @@ processAssayXcmsSet = function(isa, assay_filename, ...){
         
         if (length(grep("Factor.Value", colnames(isa$assay_files[[i]]))) != 0) {
           ## If there are explicit factors, use them
-          sclass = isa$assay_files[[i]][ which(isa$assay_files[[i]][["Sample Name"]] %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay_files[[i]]))[1]]
+          sclass = isa$assay_files[[i]][ which(isa$assay_files[[i]][[isatab.syntax$sample.name]] %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay_files[[i]]))[1]]
           
           wd <- getwd()
           setwd(isa$path)
