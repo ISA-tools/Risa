@@ -39,7 +39,6 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   #### Parse ISATab files
   d = dir(path)
 
-  ## TODO any use case with multiple investigation files?
   ## Investigation filename
   ifilename = grep(isatab.syntax$investigation.prefix, d, value=TRUE)
   if (length(ifilename)==0)
@@ -243,14 +242,14 @@ processAssayXcmsSet = function(isa, assay_filename, ...){
 ### ADD validation for samples
 addAssayMetadata = function(isa, assay.filename, col.name, values){
   
-  assay_file <- isa$assay.files [[ assay.filename ]]
+  assay.file <- isa$assay.files [[ assay.filename ]]
   if (length(values)==1){
-    values <- c(rep(values,nrow(assay_file)))
-  }else if (length(values)!=nrow(assay_file)){
+    values <- c(rep(values,nrow(assay.file)))
+  }else if (length(values)!=nrow(assay.file)){
     stop("Wrong number of values to be added to the assay file")
   }
-  assay_file [ colnames(assay_file) == col.name ] <- values
-  isa$assay.files [[ assay.filename ]] <- assay_file
+  assay.file [ colnames(assay.file) == col.name ] <- values
+  isa$assay.files [[ assay.filename ]] <- assay.file
   return(isa)
 }
 
@@ -259,10 +258,7 @@ addAssayMetadata = function(isa, assay.filename, col.name, values){
 write.isatab = function(isa){
   write.investigation.file(isa)
   for(i in seq_len(length(isa$study.filenames))){
-    write.table(isa$study.files[[i]], 
-                file=isa$study.filenames[[i]], 
-                row.names=FALSE, col.names=FALSE, 
-                quote=FALSE, sep="\t", na="\"\"")
+    write.study.file(isa, isa$study.files[[i]])
   }
   for(i in seq_len(length(isa$assay.filenames))){
     write.assay.file(isa, isa$assay.files[[i]])
@@ -274,6 +270,15 @@ write.investigation.file = function(isa){
   write.table(isa$investigation.file, 
               file=isa$investigation.filename, 
               row.names=FALSE, col.names=FALSE, 
+              quote=TRUE, sep="\t", na="\"\"")
+}
+
+write.study.file = function(isa, study_filename){
+  i <- which(names(isa$study.files)==study_filename)
+  study_file <- isa$study.files[[study_filename ]]
+  write.table(study_file, 
+              file=isa$study.filenames[[i]], 
+              row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
 
