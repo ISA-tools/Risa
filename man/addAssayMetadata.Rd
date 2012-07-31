@@ -6,7 +6,7 @@
   \code{addAssayMetadata} Adds metadata into the assay file.
 }
 \usage{
-function(isa, assay.filename, col.name, values)
+addAssayMetadata(isa, assay.filename, col.name, values)
 }
 \arguments{
   \item{isa}{ An isatab object, as retrieved by the isatab2bioc function.}

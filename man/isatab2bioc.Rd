@@ -23,7 +23,7 @@ isatab2bioc(path = getwd(),verbose=FALSE)
     study.files - a list of data frames wiht the contents of the study files
     assay.filenames - the names of the assay files
     assay.filenames.per.study - the names of the assay files according to the study they belong to
-    assay_files - a list of data frames with the contents of the assay files
+    assay.files - a list of data frames with the contents of the assay files
     assay.files.per.study - a list of data frames with the contents of the assay files divided per study they belong to
     assay.technology.types - a list with the technology types corresponding to each assay
     data.filenames - a list with the names of the data files
