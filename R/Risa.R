@@ -273,10 +273,10 @@ write.investigation.file = function(isa, path = getwd()){
               quote=TRUE, sep="\t", na="\"\"")
 }
 
-write.study.file = function(isa, study_filename, path = getwd()){
-  i <- which(names(isa$study.files)==study_filename)
-  study_file <- isa$study.files[[study_filename ]]
-  write.table(study_file, 
+write.study.file = function(isa, study.filename, path = getwd()){
+  i <- which(isa$study.filenames==study.filename)
+  study.file <- isa$study.files[[ i ]]
+  write.table(study.file, 
               file=file.path(path,isa$study.filenames[[i]]), 
               row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")
