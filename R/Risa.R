@@ -1,4 +1,3 @@
-### Risa package
 
 isatab.syntax <- list(
   investigation.prefix="i_",
@@ -179,7 +178,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
     study.files=sfiles,
     assay.filenames=afilenames,
     assay.filenames.per.study=afilenames_per_study,
-    assay_files=afiles,
+    assay.files=afiles,
     assay.files.per.study=afiles_per_study,
     assay.technology.types=assay_tech_types,
     data.filenames=dfilenames_per_assay,
