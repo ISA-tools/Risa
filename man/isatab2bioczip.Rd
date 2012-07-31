@@ -1,7 +1,7 @@
 \name{isatab2bioczip}
 \alias{isatab2bioczip}
 \docType{data}
-\title{ Build R objects from ISA-tab format files }
+\title{ Build R objects from a zipped ISA-tab dataset}
 \description{
   \code{isatab2bioczip} reads a ISA-tab zip file.
 }
@@ -11,15 +11,15 @@ isatab2bioczip(zip, path = getwd(),verbose=FALSE)
 \arguments{
   \item{zip}{ a zip archive containing ISAtab files.}
   \item{path}{ the name of the directory in which the files
-    from the zip archive will be extracted. The
-    default is the working directory.}
+    from the zip archive will be extracted. The default is the working directory.}
   \item{verbose}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
   }
 \value{
-  The output is a list composed, from a data.frame containing the metadata information originally contained in the s_ file of ISAtab, followed by an object per assay of the study which will be an \code{\link[affy:AffyBatch-class]{AffyBatch}} if the assay is a raw Affymetrix microarray dataset, an \code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} for a raw one colour microarray dataset or for a processed microarray dataset, a \code{\link[Biobase:class.NChannelSet]{NChannelSet}} from a raw two colour dataset, a \code{\link[flowCore:flowSet-class]{flowSet}} for a flow cytometry dataset and a \code{\link[xcms:xcmsSet-class]{xcmsSet}} for a mass spectrometry dataset.
+  The output is as in the function isatab2bioc.
 }
 \author{
-  Audrey Kauffmann / Maintainer: Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra, <isatools@googlegroups.com>  
+  Alejandra Gonzalez-Beltran, Audrey Kauffmann / 
+  Maintainer: Alejandra Gonzalez-Beltran, ISA Team <isatools@googlegroups.com> 
 }
 \seealso{ \code{isatab2bioc} }
 \examples{

@@ -14,16 +14,35 @@ isatab2bioc(path = getwd(),verbose=FALSE)
   \item{verbose}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
   }
 \value{
-  The output is a list composed, from a data.frame containing the metadata information originally contained in the s_ file of ISAtab, followed by an object per assay of the study which will be an \code{\link[affy:AffyBatch-class]{AffyBatch}} if the assay is a raw Affymetrix microarray dataset, an \code{\link[Biobase:class.ExpressionSet]{ExpressionSet}} for a raw one colour microarray dataset or for a processed microarray dataset, a \code{\link[Biobase:class.NChannelSet]{NChannelSet}} from a raw two colour dataset, a \code{\link[flowCore:flowSet-class]{flowSet}} for a flow cytometry dataset and a \code{\link[xcms:xcmsSet-class]{xcmsSet}} for a mass spectrometry dataset.
+  The output is a list composed of R objects corresponding to elements of the ISA-Tab dataset, such as:
+    path - the path of the ISA-Tab dataset, 
+    investigation.filename - the name of the Investigation file
+    investigation.file - a data frame with the contents of the Investigation file
+    study.identifiers - the list of study identifiers
+    study.filenames - the names of the study files
+    study.files - a list of data frames wiht the contents of the study files
+    assay.filenames - the names of the assay files
+    assay.filenames.per.study - the names of the assay files according to the study they belong to
+    assay_files - a list of data frames with the contents of the assay files
+    assay.files.per.study - a list of data frames with the contents of the assay files divided per study they belong to
+    assay.technology.types - a list with the technology types corresponding to each assay
+    data.filenames - a list with the names of the data files
+    samples - a list with the names of the samples
+    samples.per.assay.filename - the samples classified according to the assay filename they belong to
+    assay.filenames.per.sample - the names of the assay files classified per sample name
+    sample.to.rawdatafile 
+    sample.to.assayname
+    rawdatafile.to.sample
+    assayname.to.sample
 }
 \author{
-  Audrey Kauffmann / 
-  Maintainer: Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra, <isatools@googlegroups.com>  
+  Alejandra Gonzalez-Beltran, Audrey Kauffmann / 
+  Maintainer: Alejandra Gonzalez-Beltran, ISA Team <isatools@googlegroups.com>
 }
 \seealso{ \code{isatab2bioczip} }
 
 \examples{
-     ## Example for mass spectrometry
+     ## Example for mass spectrometry dataset
      temp = tempdir()
      datafiles = c(file.path(system.file("cdf/KO", package="faahKO"), grep("CDF",dir(system.file("cdf/KO", package="faahKO")),ignore.case=TRUE,value=TRUE)), file.path(system.file("cdf/WT", package="faahKO"), grep("CDF",dir(system.file("cdf/WT", package="faahKO")),value=TRUE)))
      file.copy(datafiles, temp, recursive=TRUE)

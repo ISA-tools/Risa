@@ -4,13 +4,13 @@
 \docType{package}
 \title{ Risa package overview }
 \description{
-  The Risa package builds R objects from ISA-tab format files. The package contains two functions:  \code{isatab2bioczip} reads ISA-tab files from a local zip archive; and \code{isatab2bioc} reads ISA-tab files from a local folder.
+  The Risa package builds R objects from ISA-tab format files. The package contains two functions:\code{isatab2bioczip} reads ISA-tab files from a local zip archive; and \code{isatab2bioc} reads ISA-tab files from a local folder.
 }
 \author{
   Audrey Kauffmann / 
   Maintainer: Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra, <isatools@googlegroups.com>  
 }
-\seealso{ \code{isatab2bioczip}, \code{isatab2bioc} }
+\seealso{ \code{isatab2bioczip}, \code{isatab2bioc}, \code{processAssayXcmsSet}, \code{addAssayMetadata}, \code{write.isatab} }
 \examples{
      ## Example of isatab2bioczip for microarray and flow cytometry experiment
      #isazip = system.file("extdata","Yox1.zip", package="Risa")
