@@ -1,7 +1,7 @@
-%\VignetteIndexEntry{rISAtab: converts experimental metadata from ISA-tab into Bioconductor data structures}
+%\VignetteIndexEntry{Risa: converts experimental metadata from ISA-tab into Bioconductor data structures}
 %\VignetteDepends{Biobase}
 %\VignetteKeywords{ImportData}
-%\VignettePackage{rISAtab}
+%\VignettePackage{Risa}
 
 \documentclass[a4paper]{article}
 
@@ -21,7 +21,7 @@
 
 \title{ Building R objects from local ISA-tab files }
 
-\author{Gabriella Rustici, Philippe Rocca-Serra, Audrey Kauffmann}
+\author{Alejandra Gonzalez-Beltran, Steffen Neumann, Gabriella Rustici, Philippe Rocca-Serra, Audrey Kauffmann, ISA Team}
 \maketitle
 
 \section{ISA-tab format} 
@@ -58,31 +58,31 @@ For easy transfer, ISA-Tab files and associated data files can be packaged into 
 \end{itemize}
 where 'name' is the user-given name.
 
-\section{The rISAtab package} 
+\section{The Risa package} 
 
-The rISAtab package is used to build R objects from an ISArchive. 
-The output is a list composed of a data.frame containing the metadata information originally contained in the s\_name.txt of ISAtab, followed by an object per each assay of the study. Objects might include: an \Rclass{AffyBatch} if the assay is a raw Affymetrix microarray dataset, an  \Rclass{ExpressionSet} for a raw one colour microarray dataset or for a processed microarray dataset, a  \Rclass{NChannelSet} from a raw two colour dataset, a \Rclass{flowSet} for a flow cytometry dataset and a \Rclass{xcmsSet} for a mass spectrometry dataset.
+The Risa package is used to build R objects from an ISA archive or dataset. 
+The output is a list of objects containing, for example, the investigation, studies and assays filenames, the contents of their files, the list of samples, among other things.
 
-These objects can then be used by downstream Bioconductor packages for data analysis and visualization (i.e, flowCore, limma or affy). 
+These objects can then be used by downstream Bioconductor packages for data analysis and visualization (i.e, xcms). The package includes the function processAssayXcmsSet that, for a specific mass spectrometry assay, builds an xcmsSet object.
 
 \subsection{Building an R object from local ISArchive}
 
-If you have your own ISArchive, you can use the function \Rfunction{risazip} to convert it into an R object.
-The arguments for the function \Rfunction{risazip} are:
+If you have your own ISA archive, you can use the function \Rfunction{isatab2bioc} to convert it into an R object.
+The arguments for the function \Rfunction{isatab2bioc} are:
 \begin{itemize}
 \item \emph{files}
 \item \emph{path}
 \end{itemize}
 
-As an example, we can use the \emph{Yox1.zip} ISArchive  attached to this package. The dataset contains raw and processed data files from both Affymetrix and dual channel arrays as well as flow cytometry data in LMD format.
+As an example, we can use the \emph{faahKO} dataset, whose latest version contains an ISA dataset describing the experiment. 
 
-<<rISAtab>>=
-library("rISAtab")
-isazip = system.file("extdata","Yox1.zip", package="rISAtab")
-isaset = risazip(isazip, path = "ISAexample")
+<<Risa>>=
+library("Risa")
+library("faahKO")
+isaobject = isatab2bioc(find.package("faahKO"))
 @
 
-The object \Robject{isaset} contains the following:
+The object \Robject{isaobject} contains the following:
 \begin{itemize}
 \item \emph{a metadata data.frame}, containing all the metadata information derived from the study file 
 \item an \Rclass{AffyBatch}, for the Affymetrix data
