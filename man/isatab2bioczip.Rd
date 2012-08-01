@@ -23,7 +23,7 @@ isatab2bioczip(zip, path = getwd(),verbose=FALSE)
 }
 \seealso{ \code{isatab2bioc} }
 \examples{
-     ## Example for microarray and flow cytometry experiment
-     isazip = system.file("extdata","Yox1.zip", package="rISAtab")
-     isaset = isatab2bioczip(isazip, path = "ISAexample")
+  ## Example of isatab2bioczip for a mass spectrometry experiment
+     isazip = system.file("extdata","faahKO-metadata.zip", package="Risa")
+     isaset = isatab2bioczip(isazip, path = file.path(system.file("extdata", package="Risa"),"ISAexample"), verbose =TRUE)
 }

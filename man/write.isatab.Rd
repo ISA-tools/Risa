@@ -19,7 +19,7 @@ write.isatab(isa, path = getwd())
 \seealso{ \code{write.investigation.file}, \code{write.study.file}, \code{write.assay.file} }
 \examples{
     ### Example of writing the study file of faahKO ISA-Tab dataset into the temp director
-    faahkoISA <- isatab2bioc(find.package("faahKO"))
+    faahkoISA <- isatab2bioc(system.file("extdata","faahKO-metadata", package="Risa"))
     temp = tempdir()
     write.isatab(faahkoISA, temp)
 }

@@ -26,11 +26,13 @@ isatab2bioczip = function(zip, path = getwd(), verbose=FALSE)
 {
   
   if (verbose)
-    writeLines("Unzipping file...")
+    message("Unzipping file in directory ",path)
   d = unzip(zipfile = zip, exdir = extract <- path)
   if (verbose)
-    writeLines("Converting ISA-Tab dataset into R objects")
+    message("Converting ISA-Tab dataset into R objects...")
   isaobj = isatab2bioc(path)
+  if (verbose)
+    message("... done.")
   return(isaobj)
 }##end function isatab2bioczip
 
@@ -258,10 +260,10 @@ updateAssayMetadata = function(isa, assay.filename, col.name, values){
 write.isatab = function(isa, path = getwd()){
   write.investigation.file(isa, path)
   for(i in seq_len(length(isa$study.filenames))){
-    write.study.file(isa, isa$study.files[[i]], path)
+    write.study.file(isa, isa$study.filenames[[i]], path)
   }
   for(i in seq_len(length(isa$assay.filenames))){
-    write.assay.file(isa, isa$assay.files[[i]], path)
+    write.assay.file(isa, isa$assay.filenames[[i]], path)
   }
   
 }
