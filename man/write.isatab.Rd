@@ -3,25 +3,23 @@
 \docType{data}
 \title{ Write an ISA-Tab dataset }
 \description{
-  \code{write.isatab} reads a ISA-tab file.
+  \code{write.isatab} writes a ISA-Tab dataset.
 }
 \usage{
-write.isatab(path = getwd(),verbose=FALSE)
+write.isatab(isa, path = getwd())
 }
 \arguments{
-  \item{path}{ the name of the directory containing ISAtab files. The
-    default is the working directory.}
-  \item{verbose}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
+  \item{isa}{ the ISA-Tab object as built with the functions \code{isatab2bioc} or \code{isatab2bioczip}.}
+  \item{path}{ the directory where the files are going to be written, by default is the working directory}
   }
-\value{
-  
-}
 \author{
   Alejandra Gonzalez-Beltran / 
   Maintainer: Alejandra Gonzalez-Beltran, ISA Team <isatools@googlegroups.com> 
 }
-\seealso{ \code{write.isatab} }
-
+\seealso{ \code{write.investigation.file}, \code{write.study.file}, \code{write.assay.file} }
 \examples{
-   
+    ### Example of writing the study file of faahKO ISA-Tab dataset into the temp director
+    faahkoISA <- isatab2bioc(find.package("faahKO"))
+    temp = tempdir()
+    write.isatab(faahkoISA, temp)
 }

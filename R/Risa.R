@@ -240,7 +240,7 @@ processAssayXcmsSet = function(isa, assay.filename, ...){
 
 ### ADD COMMENT - written with R
 ### ADD validation for samples
-addAssayMetadata = function(isa, assay.filename, col.name, values){
+updateAssayMetadata = function(isa, assay.filename, col.name, values){
   
   assay.file <- isa$assay.files [[ assay.filename ]]
   if (length(values)==1){
@@ -282,10 +282,10 @@ write.study.file = function(isa, study.filename, path = getwd()){
               quote=TRUE, sep="\t", na="\"\"")
 }
 
-write.assay.file = function(isa, assay_filename, path = getwd()){
-  i <- which(names(isa$assay.files)==assay_filename)
-  assay_file <- isa$assay.files[[assay_filename ]]
-  write.table(assay_file, 
+write.assay.file = function(isa, assay.filename, path = getwd()){
+  i <- which(names(isa$assay.files)==assay.filename)
+  assay.file <- isa$assay.files[[assay.filename ]]
+  write.table(assay.file, 
               file=file.path(path,isa$assay.filenames[[i]]), 
               row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")

@@ -30,7 +30,7 @@ isatab2bioc(path = getwd(),verbose=FALSE)
     samples - a list with the names of the samples
     samples.per.assay.filename - the samples classified according to the assay filename they belong to
     assay.filenames.per.sample - the names of the assay files classified per sample name
-    sample.to.rawdatafile 
+    sample.to.rawdatafile - a list of data frames with samples associated with raw data files
     sample.to.assayname
     rawdatafile.to.sample
     assayname.to.sample
