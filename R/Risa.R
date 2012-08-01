@@ -7,6 +7,7 @@ isatab.syntax <- list(
   study.file.name="Study File Name",
   study.assay.file.name="Study Assay File Name",
   study.assay.technology.type="Study Assay Technology Type",
+  study.assay.measurement.type="Study Assay Measurement Type",
   sample.name="Sample Name",
   raw.data.file="Raw Data File",
   free.induction.decay.data.file="Free Induction Decay Data File",
@@ -95,16 +96,21 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
 
   ## Assay technology types
   #data frame with types
-  assay_tech_types = ifile[isatab.syntax$study.assay.technology.type, ] 
+  assay.tech.types = ifile[isatab.syntax$study.assay.technology.type, ] 
   #remove empty types - results in a list of types
-  assay_tech_types = na.omit(assay_tech_types[assay_tech_types != ""])
+  assay.tech.types = na.omit(assay.tech.types[assay.tech.types != ""])
   #remove headers
-  assay_tech_types = assay_tech_types[ assay_tech_types != isatab.syntax$study.assay.technology.type]
+  assay.tech.types = assay.tech.types[ assay.tech.types != isatab.syntax$study.assay.technology.type]
 
   ## Validate number of assay technology types == number of afiles
-  if (length(assay_tech_types)!=length(afiles)){
+  if (length(assay.tech.types)!=length(afiles)){
     stop("The number of assay files mismatches the number of assay types")
   }
+  
+  ## Assay measurement types
+  assay.meas.types = ifile[isatab.syntax$study.assay.measurement.type, ]
+  assay.meas.types = na.omit(assay.meas.types[assay.meas.types != ""])
+  assay.meas.types = assay.meas.types[ assay.meas.types != isatab.syntax$study.assay.measurement.type]
   
   ## List of data filenames with assay filenames as keys
   dfilenames_per_assay = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
@@ -183,7 +189,8 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
     assay.filenames.per.study=afilenames_per_study,
     assay.files=afiles,
     assay.files.per.study=afiles_per_study,
-    assay.technology.types=assay_tech_types,
+    assay.technology.types=assay.tech.types,
+    assay.measurement.types=assay.meas.types,
     data.filenames=dfilenames_per_assay,
     samples=samples,
     samples.per.assay.filename=samples.per.assay.filename,
@@ -385,7 +392,7 @@ processAssayType = function(isa)
         }## end mass spectrometry
       #############################################################################
       else{
-        stop("Study Assay Technology Type '", isa$assay_tech_types[i], "' not yet supported in the Risa package")
+        stop("Study Assay Technology Type '", isa$assay.technology.types[i], "' not yet supported in the Risa package")
       }
   }## end for on dfiles
 
