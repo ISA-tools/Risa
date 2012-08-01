@@ -11,7 +11,8 @@ isatab.syntax <- list(
   raw.data.file="Raw Data File",
   free.induction.decay.data.file="Free Induction Decay Data File",
   array.data.file="Array.Data.File",
-  raw.spectral.data.file="Raw Spectral Data File"
+  raw.spectral.data.file="Raw Spectral Data File",
+  factor.name="Factor Name"
   )
 
 technology_types <- list(
@@ -198,15 +199,15 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
 
 ### specific function to deal with assays whose technology type is mass spectrometry using the xcms package
 ### it returns an xcmsSet
-processAssayXcmsSet = function(isa, assay_filename, ...){
+processAssayXcmsSet = function(isa, assay.filename, ...){
   for(i in seq_len(length(isa$assay.filenames))){
     
-    if (isa$assay.filenames[[i]]==assay_filename){
+    if (isa$assay.filenames[[i]]==assay.filename){
       
       if ("Raw Spectral Data File" %in% colnames(isa$data.filenames[[i]]))
       {
         #mass spectrometry files
-        msfiles = isa$data.filenames[[i]][["Raw Spectral Data File" ]]
+        msfiles = isa$data.filenames[[i]][[ isatab.syntax$raw.spectral.data.file ]]
         
         pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay.filenames[i]),
                                          row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,

@@ -7,7 +7,7 @@ Author: Alejandra Gonzalez-Beltran, Audrey Kauffmann, Steffen Neumann, Gabriella
 Maintainer: Alejandra Gonzalez-Beltran, ISA Team <isatools@googlegroups.com>
 Depends: R (>= 2.0.9), Biobase (>= 2.4.0), Rcpp (>= 0.9.13)
 Imports: xcms
-Suggests: faahKO (>= 1.2.11)
+Suggests: faahKO (>= 1.2.10)
 Description: The Investigation / Study / Assay (ISA) tab-delimited 
 	 format is a general purpose framework with which to collect and communicate 
 	 complex metadata (i.e. sample characteristics, technologies used, type 
