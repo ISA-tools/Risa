@@ -1,4 +1,3 @@
-
 isatab.syntax <- list(
   investigation.prefix="i_",
   study.prefix="s_",
@@ -11,12 +10,12 @@ isatab.syntax <- list(
   sample.name="Sample Name",
   raw.data.file="Raw Data File",
   free.induction.decay.data.file="Free Induction Decay Data File",
-  array.data.file="Array.Data.File",
+  array.data.file="Array Data File",
   raw.spectral.data.file="Raw Spectral Data File",
   factor.name="Factor Name"
   )
 
-technology_types <- list(
+technology.types <- list(
   microarray="DNA microarray",
   ms="mass spectrometry",
   fc="flow cytometry"
@@ -51,7 +50,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   
   ## Reading in investigation file into a data frame
   ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE, na.strings = "NA")
-  row.names(ifile) <- ifile[[1]]
+  #row.names(ifile) <- ifile[[1]]
   #ifile <- ifile[,2:length(ifile)]
 
   ## Study Identifiers  - as a list of strings
@@ -81,22 +80,22 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   afilenames.df = ifile[grep(isatab.syntax$study.assay.file.name, ifile[,1], useBytes=TRUE),]
   afilenames.matrix = apply(afilenames.df,c(1,2),function(row) grep(isatab.syntax$assay.prefix,row, value=TRUE))  
   afilenames.lists = split(afilenames.matrix, row(afilenames.matrix, as.factor=TRUE))
-  afilenames_per_study = lapply(seq_len(length(afilenames.lists)), function(i) Filter(function(j) !identical(character(0), j), afilenames.lists[[i]]))
-  names(afilenames_per_study) <- sidentifiers
+  afilenames.per.study = lapply(seq_len(length(afilenames.lists)), function(i) Filter(function(j) !identical(character(0), j), afilenames.lists[[i]]))
+  names(afilenames.per.study) <- sidentifiers
   
   ## Reading in assay files 
   # afiles is a list of data frames (containing all the assay files)
   afiles <- lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE,  check.names=FALSE))
   names(afiles) <- afilenames
-  # afiles_per_study is a list (one element per study) of lists (one element per assay) 
-  afiles_per_study = lapply(seq_len(length(afilenames_per_study)), 
-                            function(j) (lapply(seq_len(length(afilenames_per_study[[j]])),
-                                    function(i) read.table(file.path(path,afilenames_per_study[[j]][[i]]), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))))
-  names(afiles_per_study) <- sidentifiers
+  # afiles.per.study is a list (one element per study) of lists (one element per assay) 
+  afiles.per.study = lapply(seq_len(length(afilenames.per.study)), 
+                            function(j) (lapply(seq_len(length(afilenames.per.study[[j]])),
+                                    function(i) read.table(file.path(path,afilenames.per.study[[j]][[i]]), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))))
+  names(afiles.per.study) <- sidentifiers
 
   ## Assay technology types
   #data frame with types
-  assay.tech.types = ifile[isatab.syntax$study.assay.technology.type, ] 
+  assay.tech.types = ifile[which(ifile[[1]]==isatab.syntax$study.assay.technology.type),] 
   #remove empty types - results in a list of types
   assay.tech.types = na.omit(assay.tech.types[assay.tech.types != ""])
   #remove headers
@@ -108,12 +107,12 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   }
   
   ## Assay measurement types
-  assay.meas.types = ifile[isatab.syntax$study.assay.measurement.type, ]
+  assay.meas.types = ifile[which(ifile[[1]]==isatab.syntax$study.assay.measurement.type),] 
   assay.meas.types = na.omit(assay.meas.types[assay.meas.types != ""])
   assay.meas.types = assay.meas.types[ assay.meas.types != isatab.syntax$study.assay.measurement.type]
   
   ## List of data filenames with assay filenames as keys
-  dfilenames_per_assay = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
+  dfilenames.per.assay = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
   
   ## Identifying what sample is studied in which assay
   ## assays is a list of data frames (one for each assay file)
@@ -153,7 +152,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   sample.to.rawdatafile <- lapply( seq_len(length(afiles)), 
                                   function(i) afiles[[i]][,c('Sample Name',data_col_names[[i]])] )
   sample.to.rawdatafile <- lapply(seq_len(length(afiles)), function(i)
-     merge(sample.to.rawdatafile[[i]][ !duplicated(sample.to.rawdatafile[[i]]$'Sample Name'), ], sample.to.rawdatafile[[i]][ duplicated(sample.to.rawdatafile[[i]]$'Sample Name'), ], all=TRUE))  
+     merge(sample.to.rawdatafile[[i]][ !duplicated(sample.to.rawdatafile[[i]] [['Sample Name']]), ], sample.to.rawdatafile[[i]][ duplicated(sample.to.rawdatafile[[i]][['Sample Name']]), ], all=TRUE))  
   
   sample.to.assayname <-lapply( afiles,
                                 function(i) i[,c('Sample Name',grep('Assay Name', colnames(i), value=TRUE))])
@@ -186,12 +185,12 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
     study.filenames=sfilenames,
     study.files=sfiles,
     assay.filenames=afilenames,
-    assay.filenames.per.study=afilenames_per_study,
+    assay.filenames.per.study=afilenames.per.study,
     assay.files=afiles,
-    assay.files.per.study=afiles_per_study,
+    assay.files.per.study=afiles.per.study,
     assay.technology.types=assay.tech.types,
     assay.measurement.types=assay.meas.types,
-    data.filenames=dfilenames_per_assay,
+    data.filenames=dfilenames.per.assay,
     samples=samples,
     samples.per.assay.filename=samples.per.assay.filename,
     assay.filenames.per.sample=assay.filenames.per.sample,
@@ -305,7 +304,7 @@ processAssayType = function(isa)
   for(i in seq_len(length(isa$assay.filenames)))
   {
       #############################################################################
-      if (isa$assay.technology.types[i] == technology_types$microarray)
+      if (isa$assay.technology.types[i] == technology.types$microarray)
       {
       #  ## Raw and processed data filenames
       #  rawfilenames = if ("Array.Data.File" %in% colnames(isa$data.filenames[[i]])) isa$data.filenames[[i]][,"Array.Data.File"] else NULL
@@ -342,7 +341,7 @@ processAssayType = function(isa)
       #############################################################################
       
       #############################################################################
-      #else if (isa$assay.technology.types[i] == technology_types$fc)
+      #else if (isa$assay.technology.types[i] == technology.types$fc)
       #{
       #    pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),row.names = NULL, blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote="\""))
       #    sampleNames(pd) = pd$Raw.Data.File
@@ -357,7 +356,7 @@ processAssayType = function(isa)
       
       
       #############################################################################
-      else if (isa$assay.technology.types[i] == technology_types$ms)
+      else if (isa$assay.technology.types[i] == technology.types$ms)
       {
           if ("Raw.Spectral.Data.File" %in% colnames(isa$data.filenames[[i]]))
           {
