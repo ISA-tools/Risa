@@ -2,7 +2,6 @@
 %\VignetteDepends{Biobase}
 %\VignetteKeywords{ImportData}
 %\VignettePackage{Risa}
-
 \documentclass[a4paper]{article}
 
 \usepackage{times}
@@ -20,16 +19,18 @@
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 
-\title{ Building R objects from local ISA-tab files }
+\title{Risa: Building R objects from local ISA-Tab files}
 
-\author{Alejandra Gonzalez-Beltran, Steffen Neumann, Audrey Kauffmann,\\
-Gabriella Rustici, ISA Team\\
- <isatools@googlegroups.com>}
+\author{Alejandra Gonzalez-Beltran and Steffen Neumann and Audrey Kauffmann\\ and
+Gabriella Rustici and Philippe Rocca-Serra and Eamonn Maguire \\
+and Susanna-Asunta Sansone\\
+isatools@googlegroups.com
+}
 \maketitle
 
-\section{ISA-tab format} 
+\section{ISA-Tab format} 
 
-The Investigation / Study / Assay (ISA) Tab-delimited (Tab) format is a general purpose framework with which to collect and communicate complex metadata (i.e. sample characteristics, technologies used, type of measurements made) from experiments employing a combination of technologies (http://isatab.sourceforge.net). In particular, ISA-Tab has been developed for - but not limited to - experiments using genomics, transcriptomics, proteomics or metabol/nomics techniques (the 'omics'). 
+The Investigation / Study / Assay (ISA) Tab-delimited (Tab) format is a general purpose framework with which to collect and communicate complex metadata (i.e. sample characteristics, technologies used, type of measurements made) from experiments employing a combination of technologies (http://isa-tools.org). In particular, ISA-Tab has been developed for - but not limited to - experiments using genomics, transcriptomics, proteomics or metabol/nomics techniques (the 'omics'). 
 
 ISA-Tab uses three types of file to capture the experimental metadata:
 \begin{itemize}
@@ -42,7 +43,13 @@ The Investigation file contains an overall description of an experiment while al
          
 \subsection{Investigation file}
 
-In this file, information is reported on a per-column basis and the fields are organized and divided in sections. The Investigation file is intended to meet three needs: (i) to define key entities, such as factors, protocols, parameters, which may be referenced in the other files; (ii) to relate Assay files to Study files; and optionally, (iii) to relate each Study file to an Investigation (when two or more Study files need to be grouped). The declarative sections cover general information such as contacts, protocols and equipment, and also - where applicable - the description of terminologies (controlled vocabularies or ontologies) and other annotation resources that were used.
+In this file, information is reported on a per-column basis and the fields are organized and divided in sections. The Investigation file is intended to meet three needs: 
+\begin{itemize}
+\item to define key entities, such as factors, protocols, parameters, which may be referenced in the other files; 
+\item to relate Assay files to Study files; and optionally, 
+\item to relate each Study file to an Investigation (when two or more Study files need to be grouped). 
+The declarative sections cover general information such as contacts, protocols and equipment, and also - where applicable - the description of terminologies (controlled vocabularies or ontologies) and other annotation resources that were used.
+\end{itemize}
 
 \subsection{Study file}
 
@@ -55,20 +62,20 @@ In this file, as for the Study file, fields are organized on a per-row basis wit
 For easy transfer, ISA-Tab files and associated data files can be packaged into an ISArchive, using a standalone Java application named ISAcreator (http://isatab.sourceforge.net). In order to facilitate identification of ISA-Tab components in an ISArchive, specific extensions have been created as follows:
 
 \begin{itemize}
-\item \emph{i\_name.txt} for identifying the Investigation file
-\item \emph{s\_name.txt} for identifying Study file (s)
-\item \emph{a\_name.txt} for identifying Assay file (s)
+\item \emph{i\_iname.txt} for identifying the Investigation file
+\item \emph{s\_sname.txt} for identifying Study file (s)
+\item \emph{a\_aname.txt} for identifying Assay file (s)
 \end{itemize}
-where 'name' is the user-given name.
+where 'iname', 'sname', 'aname' are the user-given names for the investigation, study/ies, assay(s), respectively.
 
 \section{The Risa package} 
 
 The Risa package is used to build R objects from an ISA archive or dataset. 
 The output is a list of objects containing, for example, the investigation, studies and assays filenames, the contents of their files, the list of samples, among other things.
 
-These objects can then be used by downstream Bioconductor packages for data analysis and visualization (i.e, xcms). The package includes the function processAssayXcmsSet that, for a specific mass spectrometry assay, builds an xcmsSet object.
+These objects can then be used by downstream Bioconductor packages for data analysis and visualization (i.e, xcms). The package currently includes the function processAssayXcmsSet that, for a specific mass spectrometry assay, builds an xcmsSet object.
 
-\subsection{Building an R object from local ISArchive}
+\subsection{Building an R object from a local ISA dataset}
 
 If you have your own ISA archive, you can use the function \Rfunction{isatab2bioc} to convert it into an R object.
 The arguments for the function \Rfunction{isatab2bioc} are:
@@ -98,6 +105,7 @@ The object \Robject{isaobject} contains the following:
 \item assay.files - a list of data frames with the contents of the assay files
 \item assay.files.per.study - a list of data frames with the contents of the assay files divided per study they belong to
 \item assay.technology.types - a list with the technology types corresponding to each assay
+\item assay.measurement.types - a list with the measurement types corresponding to each assay
 \item data.filenames - a list with the names of the data files
 \item samples - a list with the names of the samples
 \item samples.per.assay.filename - the samples classified according to the assay filename they belong to
@@ -106,6 +114,16 @@ The object \Robject{isaobject} contains the following:
 \item sample.to.assayname
 \item rawdatafile.to.sample
 \item assayname.to.sample
+\end{itemize}
+
+Additionally, the ISA dataset could be compressed in a .zip file. If that is the case, the function \Rfunction{isatab2bioczip} can be used instead. The only condition is that the ISA-Tab files are contained directly into the zip file, i.e. not inside additional folders.
+
+The parameters for the \Rfunction{isatab2bioczip} function are:
+\begin{itemize}
+  \item{zip}{ a zip archive containing ISAtab files.}
+  \item{path}{ the name of the directory in which the files
+    from the zip archive will be extracted. The default is the working directory.}
+  \item{verbose}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
 \end{itemize}
 
 \section*{Augmenting the ISA-Tab dataset after analysis}
@@ -120,6 +138,18 @@ The arguments are:
 \item{col.name}{ the name of the column of the assay file to be modified}
 \item{values}{ the values to be added to the column of the assay file: it could be a single value, and in this case the value is repeated across the column, or it could be a list of values (whose length must match the number of rows of the assay file) }
 \end{itemize}
+
+\section*{Building xcmsSets for mass spectrometry assays}
+
+The function \Rfunction{processAssayXcmsSet} allows to build an xcmsSet (object defined in the xcms package) from the information in an assay file.
+
+The parameters for this function are:
+\begin{itemize}
+\item isa: an ISA object, as retrieved by the functions \Rfunction{isatab2bioc} and \Rfunction{isatab2bioczip}
+\item{assay.filename} a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE
+\item{...} extra arguments that can be pass down to the xcmsSet function from the xcms package
+\end{itemize}
+
 
 \section*{Session Info}
 %
