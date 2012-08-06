@@ -126,9 +126,9 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
                                             function(i) afiles[[i]][[isatab.syntax$sample.name]])
   names(samples.per.assay.filename) <- afilenames
   
-  samples_per_study <- lapply(seq_len(length(sfiles)),
+  samples.per.study <- lapply(seq_len(length(sfiles)),
                                 function(i) sfiles[[i]][[isatab.syntax$sample.name]])
-  names(samples_per_study) <- sidentifiers
+  names(samples.per.study) <- sidentifiers
   
   assay.filenames.per.sample <- unlist(lapply(seq_len(length(samples)), 
                              function(j) lapply(seq_len(length(afilenames)), 
@@ -137,7 +137,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
                                                   }
                                                 )))
   
-  data_col_names = lapply(seq_len(length(afiles)),
+  data.col.names = lapply(seq_len(length(afiles)),
                       function(i) if (isatab.syntax$raw.data.file %in% colnames(afiles[[i]])){
                                      isatab.syntax$raw.data.file
                                   }else if (isatab.syntax$free.induction.decay.data.file %in% colnames(afiles[[i]])){
@@ -150,7 +150,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
                                     
   
   sample.to.rawdatafile <- lapply( seq_len(length(afiles)), 
-                                  function(i) afiles[[i]][,c('Sample Name',data_col_names[[i]])] )
+                                  function(i) afiles[[i]][,c('Sample Name',data.col.names[[i]])] )
   sample.to.rawdatafile <- lapply(seq_len(length(afiles)), function(i)
      merge(sample.to.rawdatafile[[i]][ !duplicated(sample.to.rawdatafile[[i]] [['Sample Name']]), ], sample.to.rawdatafile[[i]][ duplicated(sample.to.rawdatafile[[i]][['Sample Name']]), ], all=TRUE))  
   
@@ -160,9 +160,9 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
           merge(sample.to.assayname[[i]][ !duplicated(sample.to.assayname[[i]]$'Sample Name'), ], sample.to.assayname[[i]][ duplicated(sample.to.assayname[[i]]$'Sample Name'), ], all=TRUE))
   
   rawdatafile.to.sample <- lapply( seq_len(length(afiles)), 
-                                   function(i) afiles[[i]][,c(data_col_names[[i]],'Sample Name')] )
+                                   function(i) afiles[[i]][,c(data.col.names[[i]],'Sample Name')] )
   rawdatafile.to.sample <- lapply(seq_len(length(afiles)), function(i)
-         merge(rawdatafile.to.sample[[i]][ !duplicated(rawdatafile.to.sample[[i]][[data_col_names[[i]]]]), ], rawdatafile.to.sample[[i]][ duplicated(rawdatafile.to.sample[[i]][[data_col_names[[i]]]]), ], all=TRUE))
+         merge(rawdatafile.to.sample[[i]][ !duplicated(rawdatafile.to.sample[[i]][[data.col.names[[i]]]]), ], rawdatafile.to.sample[[i]][ duplicated(rawdatafile.to.sample[[i]][[data.col.names[[i]]]]), ], all=TRUE))
   
   assayname.to.sample <- lapply( afiles,
                                  function(i) i[,c(grep('Assay Name', colnames(i), value=TRUE),'Sample Name')])
@@ -192,6 +192,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
     assay.measurement.types=assay.meas.types,
     data.filenames=dfilenames.per.assay,
     samples=samples,
+    samples.per.study=samples.per.study,
     samples.per.assay.filename=samples.per.assay.filename,
     assay.filenames.per.sample=assay.filenames.per.sample,
     sample.to.rawdatafile=sample.to.rawdatafile,
