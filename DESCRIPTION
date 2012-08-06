@@ -1,5 +1,5 @@
 Package: Risa
-Version: 1.0.7
+Version: 0.99.0
 Date: 2012-mm-dd
 Title: Converting experimental metadata from ISA-tab into
        Bioconductor data structures
