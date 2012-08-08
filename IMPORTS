@@ -1,6 +1,0 @@
-importFrom("ArrayExpress", "magetab2bioc", "procset")
-importFrom("affy", "ReadAffy")
-importFrom("flowCore", "read.flowSet")
-importFrom("xcms", "xcmsSet", "sampclass", "sampclass<-", "phenoData")
-export("risatab")
-export("risazip")
