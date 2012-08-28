@@ -50,6 +50,17 @@ ISAtab <- setClass("ISAtab",
            rawdatafile.to.sample="list",
            assayname.to.sample="list"))
 
+## getters 
+setGeneric("getPath",function(object){standardGeneric("getPath")})
+setMethod("getPath","ISAtab", function(object) return(object@path) ) 
+
+setGeneric("getInvestigationFilename",function(object){standardGeneric("getInvestigationFilename")})
+setMethod("getInvestigationFilename","ISAtab", function(object) return(object@investigation.filename) )
+
+setGeneric("getAssayFilenames",function(object){standardGeneric("getAssayFilenames")})
+setMethod("getAssayFilenames","ISAtab", function(object) return(object@investigation.filename) )
+
+
 ## This function only works if the zip file does not contain a directory (but the ISA-TAB files themselves)
 isatab2bioczip = function(zip, path = getwd(), verbose=FALSE)
 {
@@ -238,9 +249,9 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
 ### specific function to deal with assays whose technology type is mass spectrometry using the xcms package
 ### it returns an xcmsSet
 processAssayXcmsSet = function(isa, assay.filename, ...){
-  for(i in seq_len(length(isa$assay.filenames))){
+  for(i in seq_len(length(getAssayFilenames(isa)))){
     
-    if (isa$assay.filenames[[i]]==assay.filename){
+    if (getAssayFilenames(isa)[[i]]==assay.filename){
       
       if ("Raw Spectral Data File" %in% colnames(isa$data.filenames[[i]]))
       {
