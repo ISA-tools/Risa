@@ -23,5 +23,5 @@
      file.copy(datafiles, temp, recursive=TRUE)
      isafiles = file.path(system.file(package="faahKO"), grep("txt",dir(system.file(package="faahKO")),value=TRUE))
      file.copy(isafiles, temp, recursive=TRUE)
-     isaset = isatab2bioc(path = temp)
+     isatab.object = isatab2bioc(path = temp)
 }

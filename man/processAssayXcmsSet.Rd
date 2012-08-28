@@ -21,3 +21,7 @@ processAssayXcmsSet(isa, assay.filename, ...)
   Maintainer: Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra, <isatools@googlegroups.com>  
 }
 \seealso{ \code{isatab2bioc}, \code{isatab2bioczip} }
+\examples{
+ faahko = isatab2bioc(find.package("faahKO"))
+ xset = processAssayXcmsSet(faahko,"a_metabolite.txt")
+}

@@ -22,5 +22,5 @@ write.study.file(isa, study.filename, path = getwd())
     ### Example of writing the study file of faahKO ISA-Tab dataset into the temp director
     faahkoISA <- isatab2bioc(find.package("faahKO"))
     temp = tempdir()
-    write.study.file(faahkoISA, faahkoISA$study.filenames[[1]], temp)
+    write.study.file(faahkoISA, faahkoISA["study.filenames"][[1]], temp)
 }

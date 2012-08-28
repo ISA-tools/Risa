@@ -92,7 +92,7 @@ library("faahKO")
 isaobject = isatab2bioc(find.package("faahKO"))
 @
 
-The object \Robject{isaobject} contains the following:
+The object \Robject{isaobject} contains the following elements:
 \begin{itemize}
 \item path - the path of the ISA-Tab dataset, 
 \item investigation.filename - the name of the Investigation file
