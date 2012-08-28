@@ -24,6 +24,32 @@ technology.types <- list(
   fc="flow cytometry"
   )
 
+
+### class to hold ISATab information
+ISAtab <- setClass("ISAtab",
+         representation(
+           path="character",
+           investigation.filename="character",
+           investigation.file="data.frame",
+           study.identifiers="factor",
+           study.filenames="character",
+           study.files="list",
+           assay.filenames="character",
+           assay.filenames.per.study="list",
+           assay.files="list",
+           assay.files.per.study="list",
+           assay.technology.types="character",
+           assay.measurement.types="character",
+           data.filenames="list",
+           samples="character",
+           samples.per.study="list",
+           samples.per.assay.filename="list",
+           assay.filenames.per.sample="character",
+           sample.to.rawdatafile="list",
+           sample.to.assayname="list",
+           rawdatafile.to.sample="list",
+           assayname.to.sample="list"))
+
 ## This function only works if the zip file does not contain a directory (but the ISA-TAB files themselves)
 isatab2bioczip = function(zip, path = getwd(), verbose=FALSE)
 {
@@ -180,7 +206,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
   ## metadata kept into a data.frame - maintains study files and assay files info
   #metadata = cbind(sfiles, assays)
 	
-  isaobject <- list(
+  isaobject <- new("ISAtab",
     path=path,
     investigation.filename=ifilename,
     investigation.file=ifile,
