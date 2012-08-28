@@ -51,15 +51,30 @@ ISAtab <- setClass("ISAtab",
            assayname.to.sample="list"))
 
 ## getters 
-setGeneric("getPath",function(object){standardGeneric("getPath")})
-setMethod("getPath","ISAtab", function(object) return(object@path) ) 
-
-setGeneric("getInvestigationFilename",function(object){standardGeneric("getInvestigationFilename")})
-setMethod("getInvestigationFilename","ISAtab", function(object) return(object@investigation.filename) )
-
-setGeneric("getAssayFilenames",function(object){standardGeneric("getAssayFilenames")})
-setMethod("getAssayFilenames","ISAtab", function(object) return(object@investigation.filename) )
-
+setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
+      if (i=="path") { return(x@path) } else {}
+      if (i=="investigation.filename") { return(x@investigation.filename) } else {}
+      if (i=="investigation.file") { return(x@investigation.file) } else {}
+      if (i=="study.identifiers") { return(x@study.identifiers) } else {}
+      if (i=="study.filenames") { return(x@study.filenames) } else {}
+      if (i=="study.files") { return(x@study.files) } else {}   
+      if (i=="assay.filenames") { return(x@assay.filenames) } else {}
+      if (i=="assay.filenames.per.study") { return(x@assay.filenames.per.study) } else {}
+      if (i=="assay.files") { return(x@assay.files) } else {}
+      if (i=="assay.files.per.study") { return(x@assay.files.per.study) } else {}
+      if (i=="assay.technology.types") { return(x@assay.technology.types) } else {}
+      if (i=="assay.measurement.types") { return(x@assay.measurement.types) } else {}
+      if (i=="data.filenames") { return(x@data.filenames) } else {}
+      if (i=="samples") { return(x@samples) } else {}
+      if (i=="samples.per.study") { return(x@samples.per.study) } else {}
+      if (i=="samples.per.assay.filename") { return(x@samples.per.assay.filename) } else {}
+      if (i=="assay.filenames.per.sample") { return(x@assay.filenames.per.sample) } else {}
+      if (i=="sample.to.rawdatafile") { return(x@sample.to.rawdatafile) } else {}
+      if (i=="sample.to.assayname") { return(x@sample.to.assayname) } else {}
+      if (i=="rawdatafile.to.sample") { return(x@rawdatafile.to.sample) } else {}
+      if (i=="assayname.to.sample") { return(x@assayname.to.sample) } else {}
+        }
+          ) 
 
 ## This function only works if the zip file does not contain a directory (but the ISA-TAB files themselves)
 isatab2bioczip = function(zip, path = getwd(), verbose=FALSE)
@@ -249,32 +264,32 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
 ### specific function to deal with assays whose technology type is mass spectrometry using the xcms package
 ### it returns an xcmsSet
 processAssayXcmsSet = function(isa, assay.filename, ...){
-  for(i in seq_len(length(getAssayFilenames(isa)))){
+  for(i in seq_len(length(isa["assay.filenames"]))){
     
-    if (getAssayFilenames(isa)[[i]]==assay.filename){
+    if (isa["assay.filenames"][[i]]==assay.filename){
       
-      if ("Raw Spectral Data File" %in% colnames(isa$data.filenames[[i]]))
+      if (isatab.syntax$raw.spectral.data.file %in% colnames(isa["data.filenames"][[i]]))
       {
         #mass spectrometry files
-        msfiles = isa$data.filenames[[i]][[ isatab.syntax$raw.spectral.data.file ]]
+        msfiles = isa["data.filenames"][[i]][[ isatab.syntax$raw.spectral.data.file ]]
         
-        pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay.filenames[i]),
+        pd = try(read.AnnotatedDataFrame(file.path(isa["path"], isa["assay.filenames"][i]),
                                          row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
                                          varMetadata.char = "$", quote="\""))
         
         sampleNames(pd) = pd$Raw.Spectral.Data.File
         
-        if (length(grep("Factor.Value", colnames(isa$assay.files[[i]]))) != 0) {
+        if (length(grep("Factor.Value", colnames(isa["assay.files"][[i]]))) != 0) {
           ## If there are explicit factors, use them
-          sclass = isa$assay.files[[i]][ which(isa$assay.files[[i]][[isatab.syntax$sample.name]] %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay.files[[i]]))[1]]
+          sclass = isa["assay.files"][[i]][ which(isa["assay.files"][[i]][[isatab.syntax$sample.name]] %in% pd$Sample.Name), grep("Factor.Value", colnames(isa["assay.files"][[i]]))[1]]
           
           wd <- getwd()
-          setwd(isa$path)
+          setwd(isa["path"])
           xset = xcmsSet(files=msfiles, sclass=sclass, ...)
           setwd(wd)
         } else {
           wd <- getwd()
-          setwd(isa$path)
+          setwd(isa["path"])
           ## Otherwise just use what was there
           xset = try(xcmsSet(msfiles, phenoData=pData(pd), ...))
           setwd(wd)
@@ -306,36 +321,36 @@ updateAssayMetadata = function(isa, assay.filename, col.name, values){
 ### ADD COMMENT - written with R 
 write.isatab = function(isa, path = getwd()){
   write.investigation.file(isa, path)
-  for(i in seq_len(length(isa$study.filenames))){
-    write.study.file(isa, isa$study.filenames[[i]], path)
+  for(i in seq_len(length(isa["study.filenames"]))){
+    write.study.file(isa, isa["study.filenames"][[i]], path)
   }
-  for(i in seq_len(length(isa$assay.filenames))){
-    write.assay.file(isa, isa$assay.filenames[[i]], path)
+  for(i in seq_len(length(isa["assay.filenames"]))){
+    write.assay.file(isa, isa["assay.filenames"][[i]], path)
   }
   
 }
 
 write.investigation.file = function(isa, path = getwd()){
-  write.table(isa$investigation.file, 
-              file=file.path(path,isa$investigation.filename), 
+  write.table(isa["investigation.file"], 
+              file=file.path(path,isa["investigation.filename"]), 
               row.names=FALSE, col.names=FALSE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
 
 write.study.file = function(isa, study.filename, path = getwd()){
-  i <- which(isa$study.filenames==study.filename)
-  study.file <- isa$study.files[[ i ]]
+  i <- which(isa["study.filenames"]==study.filename)
+  study.file <- isa["study.files"][[ i ]]
   write.table(study.file, 
-              file=file.path(path,isa$study.filenames[[i]]), 
+              file=file.path(path,isa["study.filenames"][[i]]), 
               row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
 
 write.assay.file = function(isa, assay.filename, path = getwd()){
-  i <- which(names(isa$assay.files)==assay.filename)
-  assay.file <- isa$assay.files[[assay.filename ]]
+  i <- which(names(isa["assay.files"])==assay.filename)
+  assay.file <- isa["assay.files"][[assay.filename ]]
   write.table(assay.file, 
-              file=file.path(path,isa$assay.filenames[[i]]), 
+              file=file.path(path,isa["assay.filenames"][[i]]), 
               row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
