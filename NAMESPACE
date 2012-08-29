@@ -1,6 +1,5 @@
 importFrom("xcms", "xcmsSet")
-export("isatab2bioc")
-export("isatab2bioczip")
+export("readISAtab")
 export("processAssayXcmsSet")
 export("updateAssayMetadata")
 export("write.isatab")

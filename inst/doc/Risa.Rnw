@@ -77,8 +77,8 @@ These objects can then be used by downstream Bioconductor packages for data anal
 
 \subsection{Building an R object from a local ISA dataset}
 
-If you have your own ISA archive, you can use the function \Rfunction{isatab2bioc} to convert it into an R object.
-The arguments for the function \Rfunction{isatab2bioc} are:
+If you have your own ISA archive, you can use the function \Rfunction{readISAtab} to convert it into an R object.
+The arguments for the function \Rfunction{readISAtab} are:
 \begin{itemize}
  \item{path}{ the name of the directory containing ISAtab files. The default is the working directory.}
   \item{verbose}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
@@ -89,7 +89,7 @@ As an example, we can use the \emph{faahKO} dataset, whose latest version contai
 <<Risa>>=
 library("Risa")
 library("faahKO")
-isaobject = isatab2bioc(find.package("faahKO"))
+isaobject = readISAtab(find.package("faahKO"))
 @
 
 The object \Robject{isaobject} contains the following elements:
@@ -116,11 +116,11 @@ The object \Robject{isaobject} contains the following elements:
 \item assayname.to.sample
 \end{itemize}
 
-Additionally, the ISA dataset could be compressed in a .zip file. If that is the case, the function \Rfunction{isatab2bioczip} can be used instead. The only condition is that the ISA-Tab files are contained directly into the zip file, i.e. not inside additional folders.
+Additionally, the ISA dataset could be compressed in a .zip file. If that is the case, the function \Rfunction{readISAtab} can be used, passing the \Robject{zipfile} as parameter. The only condition is that the ISA-Tab files are contained directly into the zip file, i.e. not inside additional folders.
 
-The parameters for the \Rfunction{isatab2bioczip} function are:
+In this case, the parameters for the function \Rfunction{readISAtab} will be:
 \begin{itemize}
-  \item{zip}{ a zip archive containing ISAtab files.}
+  \item{zipfile}{ a zip archive containing ISAtab files.}
   \item{path}{ the name of the directory in which the files
     from the zip archive will be extracted. The default is the working directory.}
   \item{verbose}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
@@ -130,10 +130,10 @@ The parameters for the \Rfunction{isatab2bioczip} function are:
 
 The Risa package also provides the functionality to augment the original ISA-Tab dataset with more information after analysis. 
 
-The function \Rfunction{addAssayMetadata} allows to modify the metadata in a particular assay file.
+The function \Rfunction{updateAssayMetadata} allows to modify the metadata in a particular assay file.
 The arguments are:
 \begin{itemize}
-\item{isa}{ An isatab object, as retrieved by the isatab2bioc function.}
+\item{isa}{ An isatab object, as retrieved by the \Rfunction{readISAtab} function.}
 \item{assay.filename}{ the filename of the assay file to be augmented/modified}
 \item{col.name}{ the name of the column of the assay file to be modified}
 \item{values}{ the values to be added to the column of the assay file: it could be a single value, and in this case the value is repeated across the column, or it could be a list of values (whose length must match the number of rows of the assay file) }
@@ -145,7 +145,7 @@ The function \Rfunction{processAssayXcmsSet} allows to build an xcmsSet (object 
 
 The parameters for this function are:
 \begin{itemize}
-\item isa: an ISA object, as retrieved by the functions \Rfunction{isatab2bioc} and \Rfunction{isatab2bioczip}
+\item isa: an ISA object, as retrieved by the function \Rfunction{readISAtab}
 \item{assay.filename} a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE
 \item{...} extra arguments that can be pass down to the xcmsSet function from the xcms package
 \end{itemize}

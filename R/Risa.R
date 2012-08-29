@@ -24,12 +24,19 @@ technology.types <- list(
   fc="flow cytometry"
   )
 
-
+readISAtab = function(path = getwd(), zipfile = NULL, verbose = FALSE)
+{
+  if (!is.null(zipfile)){
+    isatab2bioczip(zipfile, path, verbose)
+  }
+  else{
+    isatab2bioc(path, verbose)
+  }
+}
 
 ## This function only works if the zip file does not contain a directory (but the ISA-TAB files themselves)
 isatab2bioczip = function(zip, path = getwd(), verbose=FALSE)
-{
-  
+{ 
   if (verbose)
     message("Unzipping file in directory ",path)
   d = unzip(zipfile = zip, exdir = extract <- path)
