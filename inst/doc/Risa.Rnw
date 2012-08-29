@@ -30,7 +30,8 @@ isatools@googlegroups.com
 
 \section{Introduction}
 
-The Risa package is part of the ISA infrastructure software suite (http://isa-tools.org). It provides funcitonality to read ISA-Tab datasets, described in the following section. 
+The Risa package is part of the ISA infrastructure software suite (http://isa-tools.org). It provides funcitonality to read ISA-Tab datasets, described in the following section. The source code and latest version can be found in the GitHub repository https://github.com/ISA-tools/Risa. Please, submit all 'bugs' and feature requests through https://github.com/ISA-tools/Risa/issues.
+
 
 \section{ISA-Tab format} 
 
@@ -97,7 +98,7 @@ library(CAMERA)
 library(faahKO)
 @
 
-<<Risa>>=
+<<Risa-readISAtab>>=
 faahkoISA <- readISAtab(find.package("faahKO"))
 @
 
@@ -168,7 +169,7 @@ The arguments are:
 
 To continue with our example using the \emph{faahKO} data package, we will use the \emph{xcms} and \emph{CAMERA} packages and follow a typical workflow for the analysis of mass spectrometry in metabolomics. Finally, we will update the ISA-Tab dataset adding the result file into the "Metabolite Assingment File" column of the assay file.
 
-<<Grouping>>=
+<<Risa-update>>=
 faahkoXset <- group(faahkoXset, minfrac=0.75, bw=2)
 retcor(faahkoXset, plottype="mdevden")
 faahkoXset <- fillPeaks(faahkoXset)
@@ -181,8 +182,6 @@ an <- groupFWHM(an)
 
 an <- findIsotopes(an)  # optional but recommended.
 
-@
-<<>>=
 
 #an <- groupCorr(an,
 #                graphMethod="lpc",
@@ -221,8 +220,7 @@ maf <- data.frame(identifier = character(l),
                   smallmolecule_abundance_stdev_sub = character(l), 
                   smallmolecule_abundance_std_error_sub = character(l),
                   abundance, stringsAsFactors=FALSE)
-@
-<<>>=
+
 maf_character <- apply(maf, 2, as.character)
 
 ##
@@ -257,7 +255,7 @@ For more details in a similar workflow, please refer to https://github.com/sneum
 
 The Risa package offers functions to write the whole ISA-Tab dataset or part of it back to disk. These functions are \Rfunction{write.isatab}, \Rfunction{write.investigation.file}, \Rfunction{write.study.file}, \Rfunction{write.assay.file}.
 
-<<Risa>>=
+<<Risa-write.assay.file>>=
 write.assay.file(faahkoISA, assay.filename)
 @
 
