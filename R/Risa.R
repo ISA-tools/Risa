@@ -263,14 +263,14 @@ processAssayXcmsSet = function(isa, assay.filename, ...){
 ### ADD validation for samples
 updateAssayMetadata = function(isa, assay.filename, col.name, values){
   
-  assay.file <- isa$assay.files [[ assay.filename ]]
+  assay.file <- isa["assay.files"][[ assay.filename ]]
   if (length(values)==1){
     values <- c(rep(values,nrow(assay.file)))
   }else if (length(values)!=nrow(assay.file)){
     stop("Wrong number of values to be added to the assay file")
   }
   assay.file [ colnames(assay.file) == col.name ] <- values
-  isa$assay.files [[ assay.filename ]] <- assay.file
+  isa["assay.files"][[ assay.filename ]] <- assay.file
   return(isa)
 }
 
