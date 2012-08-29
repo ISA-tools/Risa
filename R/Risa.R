@@ -270,7 +270,7 @@ updateAssayMetadata = function(isa, assay.filename, col.name, values){
     stop("Wrong number of values to be added to the assay file")
   }
   assay.file [ colnames(assay.file) == col.name ] <- values
-  isa["assay.files"][[ assay.filename ]] <- assay.file
+  setAssayFile(isa,assay.filename) <- assay.file
   return(isa)
 }
 

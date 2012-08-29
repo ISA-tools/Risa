@@ -29,3 +29,13 @@ setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
   if (i=="assayname.to.sample") { return(x@assayname.to.sample) } else {}
 }
 ) 
+
+setGeneric("setAssayFile<-",function(object,index,value){standardGeneric("setAssayFile<-")})
+setReplaceMethod(
+  f="setAssayFile",
+  signature="ISAtab",
+  definition=function(object,index,value){
+    object@assay.files[index] <-value
+    return (object)
+    }
+  )
