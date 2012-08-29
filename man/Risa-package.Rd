@@ -4,7 +4,7 @@
 \docType{package}
 \title{ Risa package overview }
 \description{
-  The Risa package builds R objects from ISA-tab format files and it is a component of the ISA software infrastructure \url{http://isa-tools.org/}. The source code and latest version can be found in the GitHub repository \url{https://github.com/ISA-tools/Risa}. Please, submit all ‘bugs’ and feature requests through \url{https://github.com/ISA-tools/Risa/issues}.
+  The Risa package builds R objects from ISA-tab format files and it is a component of the ISA software infrastructure \url{http://isa-tools.org/}. The source code and latest version can be found in the GitHub repository \url{https://github.com/ISA-tools/Risa}. Please, submit all 'bugs' and feature requests through \url{https://github.com/ISA-tools/Risa/issues}.
   
   The Risa package contains two functions:\code{isatab2bioczip} reads ISA-tab files from a local zip archive; and \code{isatab2bioc} reads ISA-tab files from a local folder.
 }
