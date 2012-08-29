@@ -22,6 +22,7 @@ processAssayXcmsSet(isa, assay.filename, ...)
 }
 \seealso{ \code{readISAtab} }
 \examples{
- faahko = readISAtab(find.package("faahKO"))
- xset = processAssayXcmsSet(faahko,"a_metabolite.txt")
+ faahkoISA = readISAtab(find.package("faahKO"))
+ assay.filename <- faahkoISA["assay.filenames"][1]
+ xset = processAssayXcmsSet(faahkoISA, assay.filename)
 }
