@@ -30,12 +30,12 @@ setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
 }
 ) 
 
-setGeneric("setAssayFile<-",function(object,index,value){standardGeneric("setAssayFile<-")})
-setReplaceMethod(
-  f="setAssayFile",
-  signature="ISAtab",
-  definition=function(object,index,value){
-    object@assay.files[index] <-value
-    return (object)
-    }
-  )
+setGeneric("setAssayFile",function(isaobject,assay.filename,assay.file){standardGeneric("setAssayFile")})
+setMethod("setAssayFile",
+          signature(isaobject = "ISAtab", assay.filename = "character", assay.file = "data.frame"),
+          function (isaobject, assay.filename, assay.file) 
+          {
+            isaobject@assay.files[[assay.filename]] <- assay.file
+            return(isaobject)
+          }
+)

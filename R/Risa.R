@@ -188,7 +188,6 @@ readISAtabFiles = function(path = getwd(), verbose=FALSE)
   ## Adding the study file content to the isa object
   ## metadata kept into a data.frame - maintains study files and assay files info
   #metadata = cbind(sfiles, assays)
-	
   isaobject <- new("ISAtab",
     path=path,
     investigation.filename=ifilename,
@@ -256,7 +255,7 @@ processAssayXcmsSet = function(isa, assay.filename, ...){
     
   }#if 
   }#for
-}#get.assay.xcmsSet
+}#processAssayXcmsSet
 
 
 ### ADD COMMENT - written with R
@@ -268,8 +267,10 @@ updateAssayMetadata = function(isa, assay.filename, col.name, values){
   }else if (length(values)!=nrow(assay.file)){
     stop("Wrong number of values to be added to the assay file")
   }
+  ###update column of the assay.file
   assay.file [ colnames(assay.file) == col.name ] <- values
-  setAssayFile(isa,assay.filename) <- assay.file
+  #### update the isa object with modified assay.file
+  isa <- setAssayFile(isa,assay.filename, assay.file)
   return(isa)
 }
 
