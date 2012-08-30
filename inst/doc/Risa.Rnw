@@ -99,8 +99,7 @@ library(faahKO)
 @
 
 <<Risa-readISAtab>>=
-path <- find.package("faahKO")
-faahkoISA <- readISAtab(path)
+faahkoISA <- readISAtab(find.package("faahKO"))
 @
 
 The object \Robject{isaobject} contains the following elements:
@@ -235,7 +234,7 @@ a.samples <- faahkoISA["samples.per.assay.filename"][[ assay.filename ]]
 all.colnames <- c(maf.std.colnames, a.samples)
 
 
-write.table(maf_character, file=paste(path,"faahko_maf2.csv"),
+write.table(maf_character, file="faahko_maf2.csv",
             row.names=FALSE, col.names=all.colnames, quote=TRUE, sep="\t", na="\"\"")
 
 updateAssayMetadata(faahkoISA, assay.filename,"Metabolite Assignment File","faahko_maf2.csv" )
@@ -249,7 +248,7 @@ For more details in a similar workflow, please refer to https://github.com/sneum
 The Risa package offers functions to write the whole ISA-Tab dataset or part of it back to disk. These functions are \Rfunction{write.isatab}, \Rfunction{write.investigation.file}, \Rfunction{write.study.file}, \Rfunction{write.assay.file}.
 
 <<Risa-write.assay.file>>=
-write.assay.file(faahkoISA, assay.filename, path=path)
+write.assay.file(faahkoISA, assay.filename)
 @
 
 
