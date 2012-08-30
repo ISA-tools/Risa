@@ -314,18 +314,18 @@ write.assay.file = function(isa, assay.filename, path = getwd()){
 
 processAssayType = function(isa)
 {
-  for(i in seq_len(length(isa$assay.filenames)))
+  for(i in seq_len(length(isa["assay.filenames"])))
   {
       #############################################################################
-      if (isa$assay.technology.types[i] == technology.types$microarray)
+      if (isa["assay.technology.types"][i] == technology.types$microarray)
       {
       #  ## Raw and processed data filenames
-      #  rawfilenames = if ("Array.Data.File" %in% colnames(isa$data.filenames[[i]])) isa$data.filenames[[i]][,"Array.Data.File"] else NULL
-      #  procfilenames = if("Derived.Array.Data.File" %in% colnames(isa$data_files[[i]])) isa$data.filenames[[i]][,"Derived.Array.Data.File"] else NULL
+      #  rawfilenames = if ("Array.Data.File" %in% colnames(isa["data.filenames"][[i]])) isa["data.filenames"][[i]][,"Array.Data.File"] else NULL
+      #  procfilenames = if("Derived.Array.Data.File" %in% colnames(isa["data_files"][[i]])) isa["data.filenames"][[i]][,"Derived.Array.Data.File"] else NULL
 			   
         ## URL for ADF (Array Design Format) file
-      #  urladf = paste("http://www.ebi.ac.uk/microarray-as/ae/files/", unique(isa$asay_files[[i]][,"Array.Design.REF"]), "/", unique(assay.files[[i]][,"Array.Design.REF"]), ".adf.txt", sep="")
-      #  adffilename = file.path(path,unique(isa$assay.files[[i]][,"Array.Design.REF"]))
+      #  urladf = paste("http://www.ebi.ac.uk/microarray-as/ae/files/", unique(isa["asay_files"][[i]][,"Array.Design.REF"]), "/", unique(assay.files[[i]][,"Array.Design.REF"]), ".adf.txt", sep="")
+      #  adffilename = file.path(path,unique(isa["assay.files"][[i]][,"Array.Design.REF"]))
       #  adf_download = download.file(urladf, adffilename, mode="wb")
 
         ## List containing rawfiles, sdrf, idf, adf & directory containing the files
@@ -333,8 +333,8 @@ processAssayType = function(isa)
        # files = list(path = path,
        #            rawfiles = rawfilenames,
        #          procfile = procfilenames,
-       #           sdrf = isa$assay.filenames[[i]],
-       #            idf = isa$investigation.filename,
+       #           sdrf = isa["assay.filenames"][[i]],
+       #            idf = isa["investigation.filename"],
        #            adf = basename(adffilename))
 			   
        #if (is.null(dim(dfilenames[[i]])[2]))
@@ -354,7 +354,7 @@ processAssayType = function(isa)
       #############################################################################
       
       #############################################################################
-      #else if (isa$assay.technology.types[i] == technology.types$fc)
+      #else if (isa["assay.technology.types"][i] == technology.types$fc)
       #{
       #    pd = try(read.AnnotatedDataFrame(file.path(path, afilenames[i]),row.names = NULL, blank.lines.skip = TRUE, fill = TRUE, varMetadata.char = "$", quote="\""))
       #    sampleNames(pd) = pd$Raw.Data.File
@@ -369,42 +369,42 @@ processAssayType = function(isa)
       
       
       #############################################################################
-      else if (isa$assay.technology.types[i] == technology.types$ms)
+      else if (isa["assay.technology.types"][i] == technology.types$ms)
       {
-          if ("Raw.Spectral.Data.File" %in% colnames(isa$data.filenames[[i]]))
+          if ("Raw.Spectral.Data.File" %in% colnames(["data.filenames"][[i]]))
           {
               #mass spectrometry files
-              msfiles = isa$data.filenames[[i]]$Raw.Spectral.Data.File
+              msfiles = isa["data.filenames"][[i]]$Raw.Spectral.Data.File
               
-              pd = try(read.AnnotatedDataFrame(file.path(isa$path, isa$assay.filenames[i]),
+              pd = try(read.AnnotatedDataFrame(file.path(isa["path"], isa["assay.filenames"][i]),
                 row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
                 varMetadata.char = "$", quote="\""))
               
               sampleNames(pd) = pd$Raw.Spectral.Data.File
 
-              if (length(grep("Factor.Value", colnames(isa$assay.files[[i]]))) != 0) {
+              if (length(grep("Factor.Value", colnames(isa["assay.files"][[i]]))) != 0) {
                 ## If there are explicit factors, use them
-                sclass = isa$assay.files[[i]][ which(isa$assay.files[[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa$assay.files[[i]]))[1]]
+                sclass = isa["assay.files"][[i]][ which(isa["assay.files"][[i]]$Sample.Name %in% pd$Sample.Name), grep("Factor.Value", colnames(isa["assay.files"][[i]]))[1]]
                 
                 wd <- getwd()
-                setwd(isa$path)
+                setwd(isa["path"])
                 xset = xcmsSet(files=msfiles, sclass=sclass)
                 setwd(wd)
               } else {
                   wd <- getwd()
-                  setwd(isa$path)
+                  setwd(isa["path"])
                   ## Otherwise just use what was there
                   xset = try(xcmsSet(msfiles, phenoData=pData(pd)))
                   setwd(wd)
               }
               
-              isa$preprocessing[[i]] <- xset
+             
 
           }# end Raw.Spectral.Data.File			
         }## end mass spectrometry
       #############################################################################
       else{
-        stop("Study Assay Technology Type '", isa$assay.technology.types[i], "' not yet supported in the Risa package")
+        stop("Study Assay Technology Type '", isa["assay.technology.types"][i], "' not yet supported in the Risa package")
       }
   }## end for on dfiles
 
