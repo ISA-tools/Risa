@@ -27,28 +27,28 @@ technology.types <- list(
 readISAtab = function(path = getwd(), zipfile = NULL, verbose = FALSE)
 {
   if (!is.null(zipfile)){
-    isatab2bioczip(zipfile, path, verbose)
+    readISAtabZip(zipfile, path, verbose)
   }
   else{
-    isatab2bioc(path, verbose)
+    readISAtabFiles(path, verbose)
   }
 }
 
 ## This function only works if the zip file does not contain a directory (but the ISA-TAB files themselves)
-isatab2bioczip = function(zip, path = getwd(), verbose=FALSE)
+readISAtabZip = function(zip, path = getwd(), verbose=FALSE)
 { 
   if (verbose)
     message("Unzipping file in directory ",path)
   d = unzip(zipfile = zip, exdir = extract <- path)
   if (verbose)
     message("Converting ISA-Tab dataset into R objects...")
-  isaobj = isatab2bioc(path)
+  isaobj = readISAtabFiles(path)
   if (verbose)
     message("... done.")
   return(isaobj)
-}##end function isatab2bioczip
+}##end function readISAtabZip
 
-isatab2bioc = function(path = getwd(), verbose=FALSE)
+readISAtabFiles = function(path = getwd(), verbose=FALSE)
 {
   #### Parse ISATab files
   d = dir(path)
@@ -214,7 +214,7 @@ isatab2bioc = function(path = getwd(), verbose=FALSE)
     )
   return(isaobject)
   
-}##end function isatab2bioc
+}##end function readISAtabFiles
 
 
 
