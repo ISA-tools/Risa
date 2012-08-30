@@ -261,8 +261,7 @@ processAssayXcmsSet = function(isa, assay.filename, ...){
 
 ### ADD COMMENT - written with R
 ### ADD validation for samples
-updateAssayMetadata = function(isa, assay.filename, col.name, values){
-  
+updateAssayMetadata = function(isa, assay.filename, col.name, values){  
   assay.file <- isa["assay.files"][[ assay.filename ]]
   if (length(values)==1){
     values <- c(rep(values,nrow(assay.file)))
@@ -371,7 +370,7 @@ processAssayType = function(isa)
       #############################################################################
       else if (isa["assay.technology.types"][i] == technology.types$ms)
       {
-          if ("Raw.Spectral.Data.File" %in% colnames(["data.filenames"][[i]]))
+          if ("Raw.Spectral.Data.File" %in% colnames(isa["data.filenames"][[i]]))
           {
               #mass spectrometry files
               msfiles = isa["data.filenames"][[i]]$Raw.Spectral.Data.File
