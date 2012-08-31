@@ -28,6 +28,11 @@ isatools@googlegroups.com
 }
 \maketitle
 
+\section{Introduction}
+
+The Risa package is part of the ISA infrastructure software suite (http://isa-tools.org). It provides funcitonality to read ISA-Tab datasets, described in the following section. The source code and latest version can be found in the GitHub repository https://github.com/ISA-tools/Risa. Please, submit all 'bugs' and feature requests through https://github.com/ISA-tools/Risa/issues.
+
+
 \section{ISA-Tab format} 
 
 The Investigation / Study / Assay (ISA) Tab-delimited (Tab) format is a general purpose framework with which to collect and communicate complex metadata (i.e. sample characteristics, technologies used, type of measurements made) from experiments employing a combination of technologies (http://isa-tools.org). In particular, ISA-Tab has been developed for - but not limited to - experiments using genomics, transcriptomics, proteomics or metabol/nomics techniques (the 'omics'). 
@@ -77,22 +82,27 @@ These objects can then be used by downstream Bioconductor packages for data anal
 
 \subsection{Building an R object from a local ISA dataset}
 
-If you have your own ISA archive, you can use the function \Rfunction{isatab2bioc} to convert it into an R object.
-The arguments for the function \Rfunction{isatab2bioc} are:
+If you have your own ISA archive, you can use the function \Rfunction{readISAtab} to convert it into an R object.
+The arguments for the function \Rfunction{readISAtab} are:
 \begin{itemize}
  \item{path}{ the name of the directory containing ISAtab files. The default is the working directory.}
   \item{verbose}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
 \end{itemize}
 
-As an example, we can use the \emph{faahKO} dataset, whose latest version contains an ISA dataset describing the experiment. 
+As an example, we can use the \emph{faahKO} dataset, whose version 1.2.11 contains an ISA dataset describing the experiment. First, it is required to load the \emph{Risa} package, and the \emph{faahKO} package must have been installed.
 
-<<Risa>>=
-library("Risa")
-library("faahKO")
-isaobject = isatab2bioc(find.package("faahKO"))
+<<LibraryPreload>>=
+library(Risa)
+require(faahKO)
 @
 
-The object \Robject{isaobject} contains the following:
+Then, we read the ISA-Tab data set from the \emph{faahKO} package:
+
+<<Risa-readISAtab>>=
+faahkoISA <- readISAtab(find.package("faahKO"))
+@
+
+The object \Robject{faahkoISA} belongs to the \Rclass{ISAtab} class, and contains the following elements:
 \begin{itemize}
 \item path - the path of the ISA-Tab dataset, 
 \item investigation.filename - the name of the Investigation file
@@ -110,34 +120,22 @@ The object \Robject{isaobject} contains the following:
 \item samples - a list with the names of the samples
 \item samples.per.assay.filename - the samples classified according to the assay filename they belong to
 \item assay.filenames.per.sample - the names of the assay files classified per sample name
-\item sample.to.rawdatafile 
-\item sample.to.assayname
-\item rawdatafile.to.sample
-\item assayname.to.sample
+\item sample.to.rawdatafile  - the association between samples and raw data files
+\item sample.to.assayname - the association between samples and assay names
+\item rawdatafile.to.sample - the association between raw data files and samples
+\item assayname.to.sample - the association between assay names and samples
 \end{itemize}
 
-Additionally, the ISA dataset could be compressed in a .zip file. If that is the case, the function \Rfunction{isatab2bioczip} can be used instead. The only condition is that the ISA-Tab files are contained directly into the zip file, i.e. not inside additional folders.
+Additionally, the ISA dataset could be compressed in a .zip file. If that is the case, the function \Rfunction{readISAtab} can be used, passing the \Robject{zipfile} as parameter. The only condition is that the ISA-Tab files are contained directly into the zip file, i.e. not inside additional folders.
 
-The parameters for the \Rfunction{isatab2bioczip} function are:
+In this case, the parameters for the function \Rfunction{readISAtab} will be:
 \begin{itemize}
-  \item{zip}{ a zip archive containing ISAtab files.}
+  \item{zipfile}{ a zip archive containing ISAtab files.}
   \item{path}{ the name of the directory in which the files
     from the zip archive will be extracted. The default is the working directory.}
   \item{verbose}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
 \end{itemize}
 
-\section*{Augmenting the ISA-Tab dataset after analysis}
-
-The Risa package also provides the functionality to augment the original ISA-Tab dataset with more information after analysis. 
-
-The function \Rfunction{addAssayMetadata} allows to modify the metadata in a particular assay file.
-The arguments are:
-\begin{itemize}
-\item{isa}{ An isatab object, as retrieved by the isatab2bioc function.}
-\item{assay.filename}{ the filename of the assay file to be augmented/modified}
-\item{col.name}{ the name of the column of the assay file to be modified}
-\item{values}{ the values to be added to the column of the assay file: it could be a single value, and in this case the value is repeated across the column, or it could be a list of values (whose length must match the number of rows of the assay file) }
-\end{itemize}
 
 \section*{Building xcmsSets for mass spectrometry assays}
 
@@ -145,10 +143,51 @@ The function \Rfunction{processAssayXcmsSet} allows to build an xcmsSet (object 
 
 The parameters for this function are:
 \begin{itemize}
-\item isa: an ISA object, as retrieved by the functions \Rfunction{isatab2bioc} and \Rfunction{isatab2bioczip}
-\item{assay.filename} a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE
-\item{...} extra arguments that can be pass down to the xcmsSet function from the xcms package
+\item{isa}: an ISA object, as retrieved by the function \Rfunction{readISAtab}
+\item{assay.filename} the name of the assay file with information about the relevant assay
+\item{...} extra arguments that can be passed down to the xcmsSet function from the xcms package
 \end{itemize}
+
+Using the \emph{faahKO} package as an example, we select the name of assay file, and use the \Rfunction{processAssayXcmsSet} to build a object of type \Rclass{xcmsSet}:
+
+<<Risa-processXcmsSet>>=
+ assay.filename <- faahkoISA["assay.filenames"][1]
+ faahkoXset <- processAssayXcmsSet(faahkoISA, assay.filename)
+@
+
+\section*{Augmenting the ISA-Tab dataset after analysis}
+
+The Risa package also provides the functionality to augment the original ISA-Tab dataset with more information after analysis. 
+
+The function \Rfunction{updateAssayMetadata} allows to modify the metadata in a particular assay file.
+The arguments are:
+\begin{itemize}
+\item{isa}{ An isatab object, as retrieved by the \Rfunction{readISAtab} function.}
+\item{assay.filename}{ the filename of the assay file to be augmented/modified}
+\item{col.name}{ the name of the column of the assay file to be modified}
+\item{values}{ the values to be added to the column of the assay file: it could be a single value, and in this case the value is repeated across the column, or it could be a list of values (whose length must match the number of rows of the assay file) }
+\end{itemize}
+
+To continue with our example using the \emph{faahKO} data package, we will assume that the results of analysis are stored in the file \emph{faahkoDSDF.txt}. Then, we will update the ISA-Tab dataset adding the result file into the 'Derived Spectral Data File' column of the assay file.
+
+<<Risa-update>>=
+updateAssayMetadata(faahkoISA, assay.filename,"Derived Spectral Data File","faahkoDSDF.txt" )
+@
+
+For an example for a real use case, please refer to https://github.com/sneumann/mtbls2/.
+
+
+\section*{Writing ISA-Tab datasets}
+
+The Risa package offers functions to write the whole ISA-Tab dataset or part of it back to disk. These functions are \Rfunction{write.isatab}, \Rfunction{write.investigation.file}, \Rfunction{write.study.file}, \Rfunction{write.assay.file}.
+
+So, after updating the assay file as indicated above, we can save it back to disk, using the following command:
+
+<<Risa-write.assay.file>>=
+ temp = tempdir()
+ write.isatab(faahkoISA, temp)
+ #write.assay.file(faahkoISA, assay.filename, temp)
+@
 
 
 \section*{Session Info}
@@ -157,6 +196,10 @@ The parameters for this function are:
 toLatex(sessionInfo())
 @
 %
+
+\section*{Further information}
+
+For further information about the ISA software infrastructure, please visit our website http://isa-tools.org.
 
 
 \end{document}
