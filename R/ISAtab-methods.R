@@ -139,7 +139,7 @@ setMethod(
     
     
     ## List of data filenames with assay filenames as keys
-    dfilenames.per.assay = lapply(afiles, function(i) i[,grep("Data.File", colnames(i))])
+    dfilenames.per.assay = lapply(afiles, function(i) i[,grep(isatab.syntax$data.file, colnames(i))])
     
     .Object@data.filenames <- dfilenames.per.assay
     
@@ -232,3 +232,6 @@ setMethod("setAssayFile",
             return(isaobject)
           }
 )
+
+
+

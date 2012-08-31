@@ -11,6 +11,7 @@ isatab.syntax <- list(
   study.assay.measurement.type="Study Assay Measurement Type",
   sample.name="Sample Name",
   assay.name="Assay Name",
+  data.file = "Data File",
   raw.data.file="Raw Data File",
   free.induction.decay.data.file="Free Induction Decay Data File",
   array.data.file="Array Data File",
@@ -50,33 +51,8 @@ readISAtabZip = function(zip, path = getwd(), verbose=FALSE)
 
 readISAtabFiles = function(path = getwd(), verbose=FALSE)
 {
- 
-  #isaobject <- new("ISAtab",
-  #  path=path,
-  #  investigation.filename=ifilename,
-  #  investigation.file=ifile,
-  #  study.identifiers=sidentifiers,
-  #  study.filenames=sfilenames,
-  #  study.files=sfiles,
-  #  assay.filenames=afilenames,
-  #  assay.filenames.per.study=afilenames.per.study,
-  #  assay.files=afiles,
-  #  assay.files.per.study=afiles.per.study,
-  #  assay.technology.types=assay.tech.types,
-  #  assay.measurement.types=assay.meas.types,
-  #  data.filenames=dfilenames.per.assay,
-  #  samples=samples,
-  #  samples.per.study=samples.per.study,
-  #  samples.per.assay.filename=samples.per.assay.filename,
-  #  assay.filenames.per.sample=assay.filenames.per.sample,
-  #  sample.to.rawdatafile=sample.to.rawdatafile,
-  #  sample.to.assayname=sample.to.assayname,
-  #  rawdatafile.to.sample=rawdatafile.to.sample,
-  #  assayname.to.sample=assayname.to.sample
-  #  )
   isaobject <- new(Class="ISAtab",path=path)
-  return(isaobject)
-  
+  return(isaobject) 
 }##end function readISAtabFiles
 
 
