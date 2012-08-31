@@ -3,8 +3,6 @@
 \docType{class}
 \alias{ISAtab-class}
 \alias{[,ISAtab-method}
-\alias{<-setAssayFile}
-\alias{<-setAssayFile,ISAtab-method}
 \title{Class \code{"ISAtab"}, a class for maintaing ISAtab information}
 \description{
   This class maintains informatino from an ISAtab dataset, including an investigation file, one or more study files, and one or more assay files for each study file. 
