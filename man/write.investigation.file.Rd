@@ -9,17 +9,17 @@
 write.investigation.file(isa, path = getwd())
 }
 \arguments{
-  \item{isa}{ the ISA-Tab object (as retrieved by the \link{isatab2bioc} function or tthe \link{isatab2bioczip} function)}
+  \item{isa}{ the ISA-Tab object (as retrieved by the \link{readISAtab} function)}
   \item{path}{the output path in which the study file is going to be written, by default is the working directory}
   }
 \author{
   Alejandra Gonzalez-Beltran / 
   Maintainer: Alejandra Gonzalez-Beltran, ISA Team <isatools@googlegroups.com>  
 }
-\seealso{ \code{write.isatab}, \code{write.study.file}, \code{write.assay.file} }
+\seealso{ \code{write.isatab}, \code{write.study.file}, \code{write.assay.file}, \code{readISAtab} }
 \examples{
     ### Example of writing the study file of faahKO ISA-Tab dataset into the temp director
-    faahkoISA <- isatab2bioc(find.package("faahKO"))
+    faahkoISA <- readISAtab(find.package("faahKO"))
     temp = tempdir()
     write.investigation.file(faahkoISA, temp)
 }

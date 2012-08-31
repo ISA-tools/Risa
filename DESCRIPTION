@@ -1,13 +1,13 @@
 Package: Risa
-Version: 0.99.0
-Date: 2012-mm-dd
+Version: 0.99.1
+Date: 2012-08-31
 Title: Converting experimental metadata from ISA-tab into
        Bioconductor data structures
 Author: Alejandra Gonzalez-Beltran, Audrey Kauffmann, Steffen Neumann, Gabriella Rustici, ISA Team
 Maintainer: Alejandra Gonzalez-Beltran, ISA Team <isatools@googlegroups.com>
-Depends: R (>= 2.0.9), Biobase (>= 2.4.0), Rcpp (>= 0.9.13)
+Depends: R (>= 2.0.9), Biobase (>= 2.4.0), methods, Rcpp (>= 0.9.13)
 Imports: xcms
-Suggests: faahKO (>= 1.2.10)
+Suggests: faahKO (>= 1.2.11)
 Description: The Investigation / Study / Assay (ISA) tab-delimited 
 	 format is a general purpose framework with which to collect and communicate 
 	 complex metadata (i.e. sample characteristics, technologies used, type 
