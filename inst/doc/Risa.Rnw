@@ -184,7 +184,9 @@ The Risa package offers functions to write the whole ISA-Tab dataset or part of 
 So, after updating the assay file as indicated above, we can save it back to disk, using the following command:
 
 <<Risa-write.assay.file>>=
-write.assay.file(faahkoISA, assay.filename)
+ temp = tempdir()
+ write.isatab(faahkoISA, temp)
+ #write.assay.file(faahkoISA, assay.filename, temp)
 @
 
 

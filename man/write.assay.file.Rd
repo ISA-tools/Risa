@@ -19,7 +19,7 @@ write.assay.file(isa, assay.filename, path = getwd())
 }
 \seealso{ \code{write.isatab},\code{write.investigation.file}, \code{write.study.file}, \code{readISAtab} }
 \examples{
-    ### Example of writing the study file of faahKO ISA-Tab dataset into the temp director
+    ### Example of writing the study file of faahKO ISA-Tab dataset into the temp directory
     faahkoISA <- readISAtab(find.package("faahKO"))
     temp = tempdir()
     write.assay.file(faahkoISA, faahkoISA["assay.filenames"][[1]], temp)

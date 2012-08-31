@@ -68,8 +68,6 @@ setMethod(
     
     .Object@study.filenames <- sfilenames
     
-    
-    
     ## TODO pretty printing sfilenames
     ## Validation of existance of study files
     if (!all(sapply(sfilenames, function(i) file.exists(file.path(path, i)))))
@@ -79,7 +77,6 @@ setMethod(
     sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))
     
     .Object@study.files <- sfiles
-    
     
     ## List of assay filenames 
     #afilenames is a list with all the assay filenames (without association to studies)
@@ -138,12 +135,6 @@ setMethod(
     .Object@assay.measurement.types <- assay.meas.types
     
     
-    ## List of data filenames with assay filenames as keys
-    dfilenames.per.assay = lapply(afiles, function(i) i[,grep(isatab.syntax$data.file, colnames(i))])
-    
-    .Object@data.filenames <- dfilenames.per.assay
-    
-    
     ## Identifying what sample is studied in which assay
     ## assays is a list of data frames (one for each assay file)
     assays = lapply(seq_len(length(sfiles)), 
@@ -176,62 +167,81 @@ setMethod(
                                                 )))
     
     .Object@assay.filenames.per.sample <- assay.filenames.per.sample
-    
-    data.col.names = lapply(seq_len(length(afiles)),
-                            function(i) if (isatab.syntax$raw.data.file %in% colnames(afiles[[i]])){
-                              isatab.syntax$raw.data.file
-                            }else if (isatab.syntax$free.induction.decay.data.file %in% colnames(afiles[[i]])){
-                              isatab.syntax$free.induction.decay.data.file
-                            }else if (isatab.syntax$array.data.file %in% colnames(afiles[[i]])){
-                              isatab.syntax$array.data.file
-                            }else if (isatab.syntax$raw.spectral.data.file %in% colnames(afiles[[i]])){
-                              isatab.syntax$raw.spectral.data.file
-                            })
-    
-    
-    sample.to.rawdatafile <- lapply( seq_len(length(afiles)), 
-                                     function(i) afiles[[i]][,c(isatab.syntax$sample.name,data.col.names[[i]])] )
-    sample.to.rawdatafile <- lapply(seq_len(length(afiles)), function(i)
-      merge(sample.to.rawdatafile[[i]][ !duplicated(sample.to.rawdatafile[[i]] [[isatab.syntax$sample.name]]), ], sample.to.rawdatafile[[i]][ duplicated(sample.to.rawdatafile[[i]][[isatab.syntax$sample.name]]), ], all=TRUE))  
-    
-    .Object@sample.to.rawdatafile <- sample.to.rawdatafile
-    
-    sample.to.assayname <-lapply( afiles,
-                                  function(i) i[,c(isatab.syntax$sample.name,grep(isatab.syntax$assay.name, colnames(i), value=TRUE))])
-    sample.to.assayname <- lapply(seq_len(length(afiles)), function(i)
-      merge(sample.to.assayname[[i]][ !duplicated(sample.to.assayname[[i]][[isatab.syntax$sample.name]]), ], sample.to.assayname[[i]][ duplicated(sample.to.assayname[[i]][[isatab.syntax$sample.name]]), ], all=TRUE))
-    
-    .Object@sample.to.assayname <- sample.to.assayname
-    
-    rawdatafile.to.sample <- lapply( seq_len(length(afiles)), 
-                                     function(i) afiles[[i]][,c(data.col.names[[i]],isatab.syntax$sample.name)] )
-    rawdatafile.to.sample <- lapply(seq_len(length(afiles)), function(i)
-      merge(rawdatafile.to.sample[[i]][ !duplicated(rawdatafile.to.sample[[i]][[data.col.names[[i]]]]), ], rawdatafile.to.sample[[i]][ duplicated(rawdatafile.to.sample[[i]][[data.col.names[[i]]]]), ], all=TRUE))
-    
-    .Object@rawdatafile.to.sample <- rawdatafile.to.sample
-    
-    assayname.to.sample <- lapply( afiles,
-                                   function(i) i[,c(grep(isatab.syntax$assay.name, colnames(i), value=TRUE),isatab.syntax$sample.name)])
-    assayname.to.sample <- lapply(seq_len(length(afiles)), function(i)
-      merge(assayname.to.sample[[i]][ !duplicated(assayname.to.sample[[i]][,c(grep(isatab.syntax$assay.name, colnames(assayname.to.sample[[i]]), value=TRUE))]), ], 
-            assayname.to.sample[[i]][  duplicated(assayname.to.sample[[i]][,c(grep(isatab.syntax$assay.name, colnames(assayname.to.sample[[i]]), value=TRUE))]), ], 
-            all=TRUE))
-    
-    .Object@assayname.to.sample <- assayname.to.sample
+   
+    .Object <- setAssayDependentSlots(.Object)
     
     return(.Object) # return of the object
     }
   )
 
-setGeneric("setAssayFile",function(isaobject,assay.filename,assay.file){standardGeneric("setAssayFile")})
+setGeneric("setAssayFile",function(.Object,assay.filename,assay.file){standardGeneric("setAssayFile")})
 setMethod("setAssayFile",
-          signature(isaobject = "ISAtab", assay.filename = "character", assay.file = "data.frame"),
-          function (isaobject, assay.filename, assay.file) 
+          signature(.Object = "ISAtab", assay.filename = "character", assay.file = "data.frame"),
+          function (.Object, assay.filename, assay.file) 
           {
-            isaobject@assay.files[[assay.filename]] <- assay.file
-            return(isaobject)
+            .Object@assay.files[[assay.filename]] <- assay.file
+            .Object <- setAssayDependentSlots(.Object)
+            return(.Object)
           }
 )
 
+setGeneric("setAssayDependentSlots",function(.Object){standardGeneric("setAssayDependentSlots")})
+setMethod("setAssayDependentSlots",
+          signature(.Object = "ISAtab"),
+          function (.Object) 
+          {
+            
+            afiles <- .Object@assay.files
+            
+            ## List of data filenames with assay filenames as keys
+            dfilenames.per.assay = lapply(afiles, function(i) i[,grep(isatab.syntax$data.file, colnames(i))])
+            
+            .Object@data.filenames <- dfilenames.per.assay
+            
+            
+            data.col.names = lapply(seq_len(length(afiles)),
+                                    function(i) if (isatab.syntax$raw.data.file %in% colnames(afiles[[i]])){
+                                      isatab.syntax$raw.data.file
+                                    }else if (isatab.syntax$free.induction.decay.data.file %in% colnames(afiles[[i]])){
+                                      isatab.syntax$free.induction.decay.data.file
+                                    }else if (isatab.syntax$array.data.file %in% colnames(afiles[[i]])){
+                                      isatab.syntax$array.data.file
+                                    }else if (isatab.syntax$raw.spectral.data.file %in% colnames(afiles[[i]])){
+                                      isatab.syntax$raw.spectral.data.file
+                                    })
+            
+            
+            sample.to.rawdatafile <- lapply( seq_len(length(afiles)), 
+                                             function(i) afiles[[i]][,c(isatab.syntax$sample.name,data.col.names[[i]])] )
+            sample.to.rawdatafile <- lapply(seq_len(length(afiles)), function(i)
+              merge(sample.to.rawdatafile[[i]][ !duplicated(sample.to.rawdatafile[[i]] [[isatab.syntax$sample.name]]), ], sample.to.rawdatafile[[i]][ duplicated(sample.to.rawdatafile[[i]][[isatab.syntax$sample.name]]), ], all=TRUE))  
+            
+            .Object@sample.to.rawdatafile <- sample.to.rawdatafile
+            
+            sample.to.assayname <-lapply( afiles,
+                                          function(i) i[,c(isatab.syntax$sample.name,grep(isatab.syntax$assay.name, colnames(i), value=TRUE))])
+            sample.to.assayname <- lapply(seq_len(length(afiles)), function(i)
+              merge(sample.to.assayname[[i]][ !duplicated(sample.to.assayname[[i]][[isatab.syntax$sample.name]]), ], sample.to.assayname[[i]][ duplicated(sample.to.assayname[[i]][[isatab.syntax$sample.name]]), ], all=TRUE))
+            
+            .Object@sample.to.assayname <- sample.to.assayname
+            
+            rawdatafile.to.sample <- lapply( seq_len(length(afiles)), 
+                                             function(i) afiles[[i]][,c(data.col.names[[i]],isatab.syntax$sample.name)] )
+            rawdatafile.to.sample <- lapply(seq_len(length(afiles)), function(i)
+              merge(rawdatafile.to.sample[[i]][ !duplicated(rawdatafile.to.sample[[i]][[data.col.names[[i]]]]), ], rawdatafile.to.sample[[i]][ duplicated(rawdatafile.to.sample[[i]][[data.col.names[[i]]]]), ], all=TRUE))
+            
+            .Object@rawdatafile.to.sample <- rawdatafile.to.sample
+            
+            assayname.to.sample <- lapply( afiles,
+                                           function(i) i[,c(grep(isatab.syntax$assay.name, colnames(i), value=TRUE),isatab.syntax$sample.name)])
+            assayname.to.sample <- lapply(seq_len(length(afiles)), function(i)
+              merge(assayname.to.sample[[i]][ !duplicated(assayname.to.sample[[i]][,c(grep(isatab.syntax$assay.name, colnames(assayname.to.sample[[i]]), value=TRUE))]), ], 
+                    assayname.to.sample[[i]][  duplicated(assayname.to.sample[[i]][,c(grep(isatab.syntax$assay.name, colnames(assayname.to.sample[[i]]), value=TRUE))]), ], 
+                    all=TRUE))
+            
+            .Object@assayname.to.sample <- assayname.to.sample
+            return(.Object)
+          }
+)
 
 
