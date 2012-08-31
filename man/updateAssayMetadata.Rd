@@ -23,8 +23,8 @@ updateAssayMetadata(isa, assay.filename, col.name, values)
 }
 \seealso{ \code{readISAtab}, \url{https://github.com/sneumann/mtbls2}}
 \examples{
- ### This example shows how to add values to the column "Derived Spectral Data File", assuming that the results are stored in the file    "faahko_dsdf"
+ ### This example shows how to add values to the column "Derived Spectral Data File", assuming that the results are stored in the file    "faahkoDSDF.txt"
  faahkoISA = readISAtab(find.package("faahKO"))
  assay.filename <- faahkoISA["assay.filenames"][1]
- updateAssayMetadata(faahkoISA, assay.filename,"Derived Spectral Data File","faahko_dsdf.txt" )
+ updateAssayMetadata(faahkoISA, assay.filename,"Derived Spectral Data File","faahkoDSDF.txt" )
 }

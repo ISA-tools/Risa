@@ -89,20 +89,20 @@ The arguments for the function \Rfunction{readISAtab} are:
   \item{verbose}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
 \end{itemize}
 
-As an example, we can use the \emph{faahKO} dataset, whose version 1.2.11 contains an ISA dataset describing the experiment. 
+As an example, we can use the \emph{faahKO} dataset, whose version 1.2.11 contains an ISA dataset describing the experiment. First, it is required to load the \emph{Risa} package, and the \emph{faahKO} package must have been installed.
 
 <<LibraryPreload>>=
 library(Risa)
-library(xcms)
-library(CAMERA)
-library(faahKO)
+require(faahKO)
 @
+
+Then, we read the ISA-Tab data set from the \emph{faahKO} package:
 
 <<Risa-readISAtab>>=
 faahkoISA <- readISAtab(find.package("faahKO"))
 @
 
-The object \Robject{isaobject} contains the following elements:
+The object \Robject{faahkoISA} belongs to the \Rclass{ISAtab} class, and contains the following elements:
 \begin{itemize}
 \item path - the path of the ISA-Tab dataset, 
 \item investigation.filename - the name of the Investigation file
@@ -120,10 +120,10 @@ The object \Robject{isaobject} contains the following elements:
 \item samples - a list with the names of the samples
 \item samples.per.assay.filename - the samples classified according to the assay filename they belong to
 \item assay.filenames.per.sample - the names of the assay files classified per sample name
-\item sample.to.rawdatafile 
-\item sample.to.assayname
-\item rawdatafile.to.sample
-\item assayname.to.sample
+\item sample.to.rawdatafile  - the association between samples and raw data files
+\item sample.to.assayname - the association between samples and assay names
+\item rawdatafile.to.sample - the association between raw data files and samples
+\item assayname.to.sample - the association between assay names and samples
 \end{itemize}
 
 Additionally, the ISA dataset could be compressed in a .zip file. If that is the case, the function \Rfunction{readISAtab} can be used, passing the \Robject{zipfile} as parameter. The only condition is that the ISA-Tab files are contained directly into the zip file, i.e. not inside additional folders.
@@ -143,10 +143,12 @@ The function \Rfunction{processAssayXcmsSet} allows to build an xcmsSet (object 
 
 The parameters for this function are:
 \begin{itemize}
-\item isa: an ISA object, as retrieved by the function \Rfunction{readISAtab}
-\item{assay.filename} a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE
+\item{isa}: an ISA object, as retrieved by the function \Rfunction{readISAtab}
+\item{assay.filename} the name of the assay file with information about the relevant assay
 \item{...} extra arguments that can be passed down to the xcmsSet function from the xcms package
 \end{itemize}
+
+Using the \emph{faahKO} package as an example, we select the name of assay file, and use the \Rfunction{processAssayXcmsSet} to build a object of type \Rclass{xcmsSet}:
 
 <<Risa-processXcmsSet>>=
  assay.filename <- faahkoISA["assay.filenames"][1]
@@ -166,86 +168,20 @@ The arguments are:
 \item{values}{ the values to be added to the column of the assay file: it could be a single value, and in this case the value is repeated across the column, or it could be a list of values (whose length must match the number of rows of the assay file) }
 \end{itemize}
 
-
-To continue with our example using the \emph{faahKO} data package, we will use the \emph{xcms} and \emph{CAMERA} packages and follow a typical workflow for the analysis of mass spectrometry in metabolomics. Finally, we will update the ISA-Tab dataset adding the result file into the "Metabolite Assingment File" column of the assay file.
+To continue with our example using the \emph{faahKO} data package, we will assume that the results of analysis are stored in the file \emph{faahkoDSDF.txt}. Then, we will update the ISA-Tab dataset adding the result file into the 'Derived Spectral Data File' column of the assay file.
 
 <<Risa-update>>=
-faahkoXset <- group(faahkoXset, minfrac=0.75, bw=2)
-retcor(faahkoXset, plottype="mdevden")
-faahkoXset <- fillPeaks(faahkoXset)
-
-an <- xsAnnotate(faahkoXset,
-                 sample=seq(1,length(sampnames(faahkoXset))),
-                 nSlaves=2)
-
-an <- groupFWHM(an)
-
-an <- findIsotopes(an)  # optional but recommended.
-
-an <- findAdducts(an,
-                  polarity="positive")
-
-pl <- getPeaklist(an)
-
-l <- nrow(pl)
-
-charge <- sapply(an@isotopes, function(x) {ifelse( length(x) > 0, x$charge, NA) })
-abundance <- groupval(an@xcmsSet, value="into")
-
-maf <- data.frame(identifier = character(l), 
-                  chemical_formula = character(l), 
-                  description = character(l), 
-                  mass_to_charge = pl$mz, 
-                  fragmentation = character(l), 
-                  charge = charge, 
-                  retention_time = pl$rt, 
-                  taxid = character(l), 
-                  species = character(l), 
-                  database = character(l), 
-                  database_version = character(l), 
-                  reliability = character(l), 
-                  uri = character(l), 
-                  search_engine = character(l), 
-                  search_engine_score = character(l),
-                  modifications = character(l), 
-                  smallmolecule_abundance_sub = character(l),
-                  smallmolecule_abundance_stdev_sub = character(l), 
-                  smallmolecule_abundance_std_error_sub = character(l),
-                  abundance, stringsAsFactors=FALSE)
-
-maf_character <- apply(maf, 2, as.character)
-
-##
-## These columns are defined by mzTab
-##
-
-maf.std.colnames <- c("identifier", "chemical_formula", "description",
-"mass_to_charge", "fragmentation", "charge", "retention_time",
-"taxid", "species", "database", "database_version", "reliability",
-"uri", "search_engine", "search_engine_score", "modifications",
-"smallmolecule_abundance_sub", "smallmolecule_abundance_stdev_sub",
-"smallmolecule_abundance_std_error_sub")
-
-a.samples <- faahkoISA["samples.per.assay.filename"][[ assay.filename ]]
-
-##
-## Plus the columns for the sample intensities
-##
-all.colnames <- c(maf.std.colnames, a.samples)
-
-
-write.table(maf_character, file="faahko_maf2.csv",
-            row.names=FALSE, col.names=all.colnames, quote=TRUE, sep="\t", na="\"\"")
-
-updateAssayMetadata(faahkoISA, assay.filename,"Metabolite Assignment File","faahko_maf2.csv" )
+updateAssayMetadata(faahkoISA, assay.filename,"Derived Spectral Data File","faahkoDSDF.txt" )
 @
 
-For more details in a similar workflow, please refer to https://github.com/sneumann/mtbls2/.
+For an example for a real use case, please refer to https://github.com/sneumann/mtbls2/.
 
 
 \section*{Writing ISA-Tab datasets}
 
 The Risa package offers functions to write the whole ISA-Tab dataset or part of it back to disk. These functions are \Rfunction{write.isatab}, \Rfunction{write.investigation.file}, \Rfunction{write.study.file}, \Rfunction{write.assay.file}.
+
+So, after updating the assay file as indicated above, we can save it back to disk, using the following command:
 
 <<Risa-write.assay.file>>=
 write.assay.file(faahkoISA, assay.filename)
