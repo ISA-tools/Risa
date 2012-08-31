@@ -1,5 +1,15 @@
 #### Risa is an R package that supports parsing, saving and updating ISA-tab datasets.
 
+- General info: <http://isa-tools.org>
+- Tools' overview in this short paper: <http://bioinformatics.oxfordjournals.org/content/26/18/2354.full.pdf+html>
+- Issue tracking and bug reporting: <https://github.com/ISA-tools/Risa/issues>
+- Mainline source code: <https://github.com/ISA-tools/Risa>
+- Twitter: [@isatools](http://twitter.com/isatools)
+- IRC: [irc://irc.freenode.net/#isatab](irc://irc.freenode.net/#isatab)
+- [Development blog](http://isatools.wordpress.com) 
+
+## Development
+
 ### Contributing
 
 You should read this article about Git Flow: <http://scottchacon.com/2011/08/31/github-flow.html>. It's a really useful tutorial on how to use Git for collaborative development.
