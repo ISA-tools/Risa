@@ -1,5 +1,3 @@
-## Risa
-
 <p align="center">
 <img src="http://isatab.sourceforge.net/assets/img/tools/tools-table-images/risatab.png" align="center" alt="Risa"/>
 </p>
