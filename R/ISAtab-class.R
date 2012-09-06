@@ -1,5 +1,3 @@
-require(methods) || stop("Couldn't load package methods")
-
 ### class to hold ISATab information
 #' An S4 class that stores ISAtab information.
 #' ISAtab-class
