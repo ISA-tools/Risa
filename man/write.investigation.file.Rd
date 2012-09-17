@@ -16,7 +16,7 @@ write.investigation.file(isa, path = getwd())
   Alejandra Gonzalez-Beltran / 
   Maintainer: Alejandra Gonzalez-Beltran, ISA Team <isatools@googlegroups.com>  
 }
-\seealso{ \code{write.isatab}, \code{write.study.file}, \code{write.assay.file}, \code{readISAtab} }
+\seealso{ \code{write.ISAtab}, \code{write.study.file}, \code{write.assay.file}, \code{readISAtab} }
 \examples{
     ### Example of writing the study file of faahKO ISA-Tab dataset into the temp director
     faahkoISA <- readISAtab(find.package("faahKO"))
