@@ -116,7 +116,7 @@ updateAssayMetadata = function(isa, assay.filename, col.name, values){
 
 ### TODO fix quotes when writing files
 ### ADD COMMENT - written with R 
-write.isatab = function(isa, path = getwd()){
+write.ISAtab = function(isa, path = getwd()){
   write.investigation.file(isa, path)
   for(i in seq_len(length(isa["study.filenames"]))){
     write.study.file(isa, isa["study.filenames"][[i]], path)
