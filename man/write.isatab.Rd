@@ -1,12 +1,12 @@
-\name{write.isatab}
-\alias{write.isatab}
+\name{write.ISAtab}
+\alias{write.ISAtab}
 \docType{data}
 \title{ Write an ISA-Tab dataset }
 \description{
-  \code{write.isatab} writes a ISA-Tab dataset.
+  \code{write.ISAtab} writes a ISA-Tab dataset.
 }
 \usage{
-write.isatab(isa, path = getwd())
+write.ISAtab(isa, path = getwd())
 }
 \arguments{
   \item{isa}{ the ISA-Tab object as built with the function \code{readISAtab}.}
@@ -21,5 +21,5 @@ write.isatab(isa, path = getwd())
     ### Example of writing the study file of faahKO ISA-Tab dataset into the temp director
     faahkoISA <- readISAtab(system.file("extdata","faahKO-metadata", package="Risa"))
     temp = tempdir()
-    write.isatab(faahkoISA, temp)
+    write.ISAtab(faahkoISA, temp)
 }

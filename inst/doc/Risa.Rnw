@@ -179,13 +179,13 @@ For an example for a real use case, please refer to https://github.com/sneumann/
 
 \section*{Writing ISA-Tab datasets}
 
-The Risa package offers functions to write the whole ISA-Tab dataset or part of it back to disk. These functions are \Rfunction{write.isatab}, \Rfunction{write.investigation.file}, \Rfunction{write.study.file}, \Rfunction{write.assay.file}.
+The Risa package offers functions to write the whole ISA-Tab dataset or part of it back to disk. These functions are \Rfunction{write.ISAtab}, \Rfunction{write.investigation.file}, \Rfunction{write.study.file}, \Rfunction{write.assay.file}.
 
 So, after updating the assay file as indicated above, we can save it back to disk, using the following command:
 
 <<Risa-write.assay.file>>=
  temp = tempdir()
- write.isatab(faahkoISA, temp)
+ write.ISAtab(faahkoISA, temp)
  #write.assay.file(faahkoISA, assay.filename, temp)
 @
 

@@ -1,5 +1,5 @@
 ## getters
-#' extract parts of ISAtab class
+#' extract slots of ISAtab class
 #'
 #' @name [
 #' @aliases [,ISAtab-method
@@ -30,11 +30,44 @@ setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
 }
 ) 
 
+## setter methods
+#' @name [
+#' @aliases [<-,ISAtab-method
+#' @docType methods
+#' @rdname extract-methods
+setReplaceMethod(f="[",signature="ISAtab", definition=function(x,i,j,value){
+  if (i=="path") { x@path<-value } else {}
+  if (i=="investigation.filename") { x@investigation.filename<-value } else {}
+  if (i=="investigation.file") { x@investigation.file<-value } else {}
+  if (i=="study.identifiers") { x@study.identifiers<-value } else {}
+  if (i=="study.filenames") { x@study.filenames<-value } else {}
+  if (i=="study.files") { x@study.files<-value } else {}   
+  if (i=="assay.filenames") { x@assay.filenames<-value } else {}
+  if (i=="assay.filenames.per.study") { x@assay.filenames.per.study<-value } else {}
+  if (i=="assay.files") { x@assay.files<-value } else {}
+  if (i=="assay.files.per.study") { x@assay.files.per.study<-value} else {}
+  if (i=="assay.technology.types") { x@assay.technology.types<-value} else {}
+  if (i=="assay.measurement.types") { x@assay.measurement.types<-value } else {}
+  if (i=="data.filenames") { x@data.filenames<-value } else {}
+  if (i=="samples") { x@samples<-value } else {}
+  if (i=="samples.per.study") { x@samples.per.study<-value } else {}
+  if (i=="samples.per.assay.filename") { x@samples.per.assay.filename<-value } else {}
+  if (i=="assay.filenames.per.sample") { x@assay.filenames.per.sample<-value } else {}
+  if (i=="sample.to.rawdatafile") { x@sample.to.rawdatafile<-value } else {}
+  if (i=="sample.to.assayname") { x@sample.to.assayname<-value } else {}
+  if (i=="rawdatafile.to.sample") { x@rawdatafile.to.sample<-value } else {}
+  if (i=="assayname.to.sample") { x@assayname.to.sample<-value } else {} 
+  return (x)
+  }
+)
+
 setMethod(
   f="initialize",
   signature="ISAtab",
   definition=function(.Object,path){
-    .Object@path <- path # Assignment of the slots
+    
+    # Assignment of the slots
+    .Object["path"] <- path
     
     #### Parse ISATab files
     d = dir(path)
@@ -46,18 +79,18 @@ setMethod(
     else if (!file.exists(file.path(path, ifilename)))
       stop("Did not find investigation file: ", ifilename)
     
-    .Object@investigation.filename <- ifilename
+    .Object["investigation.filename"] <- ifilename
     
     ## Reading in investigation file into a data frame
     ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE, na.strings = "NA")
     
-    .Object@investigation.file <- ifile
+    .Object["investigation.file"] <- ifile
     
     
     ## Study Identifiers  - as a list of strings
     sidentifiers = ifile[grep(isatab.syntax$study.identifier, ifile[,1], useBytes=TRUE),][2][[1]]
     
-    .Object@study.identifiers <- sidentifiers
+    .Object["study.identifiers"] <- sidentifiers
     
     ## Study filenames (one or more)
     sfilenames = unlist(sapply(ifile[grep(isatab.syntax$study.file.name, ifile[,1], useBytes=TRUE),], function(i) grep(isatab.syntax$study.prefix, i, value=TRUE, useBytes=TRUE)))
@@ -66,7 +99,7 @@ setMethod(
     ## Assign sidentifiers as names of the list sfilenames
     names(sfilenames) <- sidentifiers
     
-    .Object@study.filenames <- sfilenames
+    .Object["study.filenames"] <- sfilenames
     
     ## TODO pretty printing sfilenames
     ## Validation of existance of study files
@@ -76,13 +109,13 @@ setMethod(
     ## Reading study files into a list of data frames
     sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))
     
-    .Object@study.files <- sfiles
+    .Object["study.files"] <- sfiles
     
     ## List of assay filenames 
     #afilenames is a list with all the assay filenames (without association to studies)
     afilenames = unlist(sapply(ifile[grep(isatab.syntax$study.assay.file.name, ifile[,1], useBytes=TRUE),], function(i) grep(isatab.syntax$assay.prefix, i, value=TRUE, useBytes=TRUE)))
     
-    .Object@assay.filenames <- afilenames
+    .Object["assay.filenames"] <- afilenames
     
     
     #getting afilenames associated with studies
@@ -92,7 +125,7 @@ setMethod(
     afilenames.per.study = lapply(seq_len(length(afilenames.lists)), function(i) Filter(function(j) !identical(character(0), j), afilenames.lists[[i]]))
     names(afilenames.per.study) <- sidentifiers
     
-    .Object@assay.filenames.per.study <- afilenames.per.study
+    .Object["assay.filenames.per.study"] <- afilenames.per.study
     
     
     ## Reading in assay files 
@@ -100,7 +133,7 @@ setMethod(
     afiles <- lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE,  check.names=FALSE))
     names(afiles) <- afilenames
     
-    .Object@assay.files <- afiles
+    .Object["assay.files"] <- afiles
     
     # afiles.per.study is a list (one element per study) of lists (one element per assay) 
     afiles.per.study = lapply(seq_len(length(afilenames.per.study)), 
@@ -108,7 +141,7 @@ setMethod(
                                                   function(i) read.table(file.path(path,afilenames.per.study[[j]][[i]]), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))))
     names(afiles.per.study) <- sidentifiers
     
-    .Object@assay.files.per.study < afiles.per.study
+    .Object["assay.files.per.study"] < afiles.per.study
     
     
     ## Assay technology types
@@ -124,7 +157,7 @@ setMethod(
       stop("The number of assay files mismatches the number of assay types")
     }
     
-    .Object@assay.technology.types <- assay.tech.types
+    .Object["assay.technology.types"] <- assay.tech.types
     
     
     ## Assay measurement types
@@ -132,7 +165,7 @@ setMethod(
     assay.meas.types = na.omit(assay.meas.types[assay.meas.types != ""])
     assay.meas.types = assay.meas.types[ assay.meas.types != isatab.syntax$study.assay.measurement.type]
     
-    .Object@assay.measurement.types <- assay.meas.types
+    .Object["assay.measurement.types"] <- assay.meas.types
     
     
     ## Identifying what sample is studied in which assay
@@ -144,20 +177,20 @@ setMethod(
     
     samples = unlist(lapply(sfiles, function(i) i[,grep(isatab.syntax$sample.name, colnames(i))]))
     
-    .Object@samples <- samples
+    .Object["samples"] <- samples
     
     samples.per.assay.filename = lapply(seq_len(length(afiles)), 
                                         function(i) afiles[[i]][[isatab.syntax$sample.name]])
     names(samples.per.assay.filename) <- afilenames
     
-    .Object@samples.per.assay.filename <- samples.per.assay.filename
+    .Object["samples.per.assay.filename"] <- samples.per.assay.filename
     
     
     samples.per.study <- lapply(seq_len(length(sfiles)),
                                 function(i) sfiles[[i]][[isatab.syntax$sample.name]])
     names(samples.per.study) <- sidentifiers
     
-    .Object@samples.per.study <- samples.per.study
+    .Object["samples.per.study"] <- samples.per.study
     
     assay.filenames.per.sample <- unlist(lapply(seq_len(length(samples)), 
                                                 function(j) lapply(seq_len(length(afilenames)), 
@@ -166,7 +199,7 @@ setMethod(
                                                                    }
                                                 )))
     
-    .Object@assay.filenames.per.sample <- assay.filenames.per.sample
+    .Object["assay.filenames.per.sample"] <- assay.filenames.per.sample
    
     .Object <- setAssayDependentSlots(.Object)
     
@@ -179,7 +212,7 @@ setMethod("setAssayFile",
           signature(.Object = "ISAtab", assay.filename = "character", assay.file = "data.frame"),
           function (.Object, assay.filename, assay.file) 
           {
-            .Object@assay.files[[assay.filename]] <- assay.file
+            .Object["assay.files"][[assay.filename]] <- assay.file
             .Object <- setAssayDependentSlots(.Object)
             return(.Object)
           }
@@ -189,14 +222,13 @@ setGeneric("setAssayDependentSlots",function(.Object){standardGeneric("setAssayD
 setMethod("setAssayDependentSlots",
           signature(.Object = "ISAtab"),
           function (.Object) 
-          {
-            
-            afiles <- .Object@assay.files
+          { 
+            afiles <- .Object["assay.files"]
             
             ## List of data filenames with assay filenames as keys
             dfilenames.per.assay = lapply(afiles, function(i) i[,grep(isatab.syntax$data.file, colnames(i))])
             
-            .Object@data.filenames <- dfilenames.per.assay
+            .Object["data.filenames"] <- dfilenames.per.assay
             
             
             data.col.names = lapply(seq_len(length(afiles)),
@@ -223,7 +255,7 @@ setMethod("setAssayDependentSlots",
             sample.to.assayname <- lapply(seq_len(length(afiles)), function(i)
               merge(sample.to.assayname[[i]][ !duplicated(sample.to.assayname[[i]][[isatab.syntax$sample.name]]), ], sample.to.assayname[[i]][ duplicated(sample.to.assayname[[i]][[isatab.syntax$sample.name]]), ], all=TRUE))
             
-            .Object@sample.to.assayname <- sample.to.assayname
+            .Object["sample.to.assayname"] <- sample.to.assayname
             
             rawdatafile.to.sample <- lapply( seq_len(length(afiles)), 
                                              function(i) afiles[[i]][,c(data.col.names[[i]],isatab.syntax$sample.name)] )
@@ -239,7 +271,7 @@ setMethod("setAssayDependentSlots",
                     assayname.to.sample[[i]][  duplicated(assayname.to.sample[[i]][,c(grep(isatab.syntax$assay.name, colnames(assayname.to.sample[[i]]), value=TRUE))]), ], 
                     all=TRUE))
             
-            .Object@assayname.to.sample <- assayname.to.sample
+            .Object["assayname.to.sample"] <- assayname.to.sample
             return(.Object)
           }
 )
