@@ -3,7 +3,7 @@
 </p>
 
 
-Risa is an R package that supports parsing, saving and updating ISA-tab datasets.
+Risa is an R package that supports parsing, saving and updating ISA-tab datasets. It is available in Bioconductor 2.11 at http://www.bioconductor.org/packages/release/bioc/html/Risa.html.
 
 - General info: <http://isa-tools.org>
 - Tools' overview in this short paper: <http://bioinformatics.oxfordjournals.org/content/26/18/2354.full.pdf+html>
