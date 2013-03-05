@@ -56,46 +56,45 @@ readISAtabFiles = function(path = getwd(), verbose=FALSE)
 }##end function readISAtabFiles
 
 
+### Retrieves a list of 'factor' objects, one per "Factor Value" column defined in the ISA-TAB
+getFactorValues = function(isa){
+  
+  study.files <- isa["study.files"]  
+  for(i in seq_len(length(study.files))){
+    if (length(grep("Factor.Value", colnames(study.files[[i]]))) != 0) {
+      factor.values  <-  study.files[[i]][ grep("Factor.Value", colnames(study.files[[i]]))]
+    }
+  }
+  factors.list <- lapply(factor.values, factor)
+  return(factors.list)  
+}
 
-### specific function to deal with assays whose technology type is mass spectrometry using the xcms package
-### it returns an xcmsSet
-processAssayXcmsSet = function(isa, assay.filename, ...){
-  for(i in seq_len(length(isa["assay.filenames"]))){
-    
-    if (isa["assay.filenames"][[i]]==assay.filename){
-      
-      if (isatab.syntax$raw.spectral.data.file %in% colnames(isa["data.filenames"][[i]]))
-      {
-        #mass spectrometry files
-        msfiles = isa["data.filenames"][[i]][[ isatab.syntax$raw.spectral.data.file ]]
+getStudyGroups = function(isa){
+  
+  factor.values <- getFactorValues(isa)  
+  factor.names <- names(factor.values)
+  factor.values.df <- as.data.frame(factor.values)
+  factor.values.combinations <- factor.values.df[!duplicated(factor.values.df),]
+  samples <- isa["samples"]
+  study.files <- isa["study.files"]
+  
+  groups <- list()
+  
+  for(j in seq_len(length(factor.values.combinations)))
+      groups[j] <- list()
+  
+  #i ranges in the samples
+  for(i in seq_len(length(samples))){
         
-        pd = try(read.AnnotatedDataFrame(file.path(isa["path"], isa["assay.filenames"][i]),
-                                         row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
-                                         varMetadata.char = "$", quote="\""))
+    ##get row numbers from factor.values corresponding to each group name (given by a combination of factor values)
+    for(j in seq_len(length(factor.values.combinations)))
+      if (all(factor.values[i,] == factor.values.combinations [j,])){
         
-        sampleNames(pd) = pd$Raw.Spectral.Data.File
+      }
         
-        if (length(grep("Factor.Value", colnames(isa["assay.files"][[i]]))) != 0) {
-          ## If there are explicit factors, use them
-          sclass = isa["assay.files"][[i]][ which(isa["assay.files"][[i]][[isatab.syntax$sample.name]] %in% pd$Sample.Name), grep("Factor.Value", colnames(isa["assay.files"][[i]]))[1]]
-          
-          wd <- getwd()
-          setwd(isa["path"])
-          xset = xcmsSet(files=msfiles, sclass=sclass, ...)
-          setwd(wd)
-        } else {
-          wd <- getwd()
-          setwd(isa["path"])
-          ## Otherwise just use what was there
-          xset = try(xcmsSet(msfiles, phenoData=pData(pd), ...))
-          setwd(wd)
-        }
-        return(xset)
-    }#if
-    
-  }#if 
-  }#for
-}#processAssayXcmsSet
+  }
+  
+}
 
 
 ### ADD COMMENT - written with R
