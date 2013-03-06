@@ -29,6 +29,7 @@ setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
   if (i=="assayname.to.sample") { return(x@assayname.to.sample) } else {}
   if (i=="factors") { return(x@factors) } else {}
   if (i=="treatments") { return(x@treatments) } else {}
+  if (i=="groups") { return(x@groups) } else {}
 }
 ) 
 
@@ -61,6 +62,7 @@ setReplaceMethod(f="[",signature="ISAtab", definition=function(x,i,j,value){
   if (i=="assayname.to.sample") { x@assayname.to.sample<-value } else {} 
   if (i=="factors") { x@factors<-value } else {} 
   if (i=="treatments") { x@treatments<-value } else {} 
+  if (i=="groups") { x@groups<-value } else {} 
   return (x)
   }
 )
@@ -305,7 +307,8 @@ setMethod("setTreatments",
           function (.Object) 
           { 
             factors <- .Object["factors"] 
-            factors.df <- as.data.frame(factors)            
+            factors.df <- as.data.frame(factors)      
+            colnames(factors.df) <- unlist(lapply(factors, function(x) names(x)))
             treatments <- factors.df[!duplicated(factors.df),]
             treatments <- as.data.frame(treatments)                        
             .Object["treatments"] <- treatments            
@@ -318,35 +321,20 @@ setGeneric("setGroups",function(.Object){standardGeneric("setGroups")})
 setMethod("setGroups",
           signature(.Object = "ISAtab"),
           function (.Object) 
-          { 
-            
-            factors <- .Object["factors"]            
-            factor.names <- names(factors)
-            factor.df <- as.data.frame(factors)
-            treatments <- factor.values.df[!duplicated(factor.values.df),]
-            samples <- isa["samples"]
-            study.files <- isa["study.files"]
-            
+          {                     
+            treatments <- .Object["treatments"]            
+                                  
+            study.files <- .Object["study.files"]
+                                    
             groups <- list()
             
-            for(j in seq_len(length(factor.values.combinations)))
-              groups[j] <- list()
-            
-            #i ranges in the samples
-            for(i in seq_len(length(samples))){
-              
-              ##get row numbers from factor.values corresponding to each group name (given by a combination of factor values)
-              for(j in seq_len(length(treatments))){
-                #if (all(factors[i,] == treatments[j,])){
-                  
-                #}
-              }
-              
+            for(i in seq_len(nrow(treatments))){
+                mydf <- data.frame(treatments[i,])
+                df <- data.frame(lapply(mydf, function(x) rep(x, each = length(samples))))            
+                groups[[i]] = samples[apply(study.files[[1]][ names(treatments)] == df, 1, all)]
             }
-            
+                        
             .Object["groups"] <- groups
             return(.Object)
           }
 )
-
-
