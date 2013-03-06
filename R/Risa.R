@@ -58,29 +58,7 @@ readISAtabFiles = function(path = getwd(), verbose=FALSE)
 
 getStudyGroups = function(isa){
   
-  factor.values <- getFactorValues(isa)  
-  factor.names <- names(factor.values)
-  factor.values.df <- as.data.frame(factor.values)
-  treatments <- factor.values.df[!duplicated(factor.values.df),]
-  samples <- isa["samples"]
-  study.files <- isa["study.files"]
   
-  groups <- list()
-  
-  for(j in seq_len(length(factor.values.combinations)))
-      groups[j] <- list()
-  
-  #i ranges in the samples
-  for(i in seq_len(length(samples))){
-        
-    ##get row numbers from factor.values corresponding to each group name (given by a combination of factor values)
-    for(j in seq_len(length(treatments))){
-      if (all(factor.values[i,] == treatments[j,])){
-        
-      }
-    }
-        
-  }
   
 }
 

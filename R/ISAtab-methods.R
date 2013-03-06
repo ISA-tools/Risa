@@ -28,6 +28,7 @@ setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
   if (i=="rawdatafile.to.sample") { return(x@rawdatafile.to.sample) } else {}
   if (i=="assayname.to.sample") { return(x@assayname.to.sample) } else {}
   if (i=="factors") { return(x@factors) } else {}
+  if (i=="treatments") { return(x@treatments) } else {}
 }
 ) 
 
@@ -59,6 +60,7 @@ setReplaceMethod(f="[",signature="ISAtab", definition=function(x,i,j,value){
   if (i=="rawdatafile.to.sample") { x@rawdatafile.to.sample<-value } else {}
   if (i=="assayname.to.sample") { x@assayname.to.sample<-value } else {} 
   if (i=="factors") { x@factors<-value } else {} 
+  if (i=="treatments") { x@treatments<-value } else {} 
   return (x)
   }
 )
@@ -198,6 +200,10 @@ setMethod(
     .Object <- setAssayDependentSlots(.Object)
     
     .Object <- setFactors(.Object)
+        
+    .Object <- setTreatments(.Object)
+    
+    .Object <- setGroups(.Object)
     
     return(.Object) 
     }
@@ -278,15 +284,69 @@ setMethod("setFactors",
           function (.Object) 
           { 
             study.files <- .Object["study.files"]  
+            factors.list <- list()
             for(i in seq_len(length(study.files))){
               if (length(grep("Factor.Value", colnames(study.files[[i]]))) != 0) {
                 factor.values  <-  study.files[[i]][ grep("Factor.Value", colnames(study.files[[i]]))]
+                factors.list[[i]] <- lapply(factor.values, factor)  
+              }else{
+                study.filenames <- .Object["study.filenames"]
+                warning("No 'Factor Value' column defined in study file ",study.filenames[[i]])
               }
-            }
-            factors.list <- lapply(factor.values, factor)  
+            }           
             .Object["factors"] <- factors.list
             return(.Object)
           }
           )
+
+setGeneric("setTreatments",function(.Object){standardGeneric("setTreatments")})
+setMethod("setTreatments",
+          signature(.Object = "ISAtab"),
+          function (.Object) 
+          { 
+            factors <- .Object["factors"] 
+            factors.df <- as.data.frame(factors)            
+            treatments <- factors.df[!duplicated(factors.df),]
+            treatments <- as.data.frame(treatments)                        
+            .Object["treatments"] <- treatments            
+            return(.Object)
+          }
+)
+
+
+setGeneric("setGroups",function(.Object){standardGeneric("setGroups")})
+setMethod("setGroups",
+          signature(.Object = "ISAtab"),
+          function (.Object) 
+          { 
+            
+            factors <- .Object["factors"]            
+            factor.names <- names(factors)
+            factor.df <- as.data.frame(factors)
+            treatments <- factor.values.df[!duplicated(factor.values.df),]
+            samples <- isa["samples"]
+            study.files <- isa["study.files"]
+            
+            groups <- list()
+            
+            for(j in seq_len(length(factor.values.combinations)))
+              groups[j] <- list()
+            
+            #i ranges in the samples
+            for(i in seq_len(length(samples))){
+              
+              ##get row numbers from factor.values corresponding to each group name (given by a combination of factor values)
+              for(j in seq_len(length(treatments))){
+                #if (all(factors[i,] == treatments[j,])){
+                  
+                #}
+              }
+              
+            }
+            
+            .Object["groups"] <- groups
+            return(.Object)
+          }
+)
 
 
