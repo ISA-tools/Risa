@@ -25,4 +25,5 @@ ISAtab <- setClass("ISAtab",
                      sample.to.rawdatafile="list",
                      sample.to.assayname="list",
                      rawdatafile.to.sample="list",
-                     assayname.to.sample="list"))
+                     assayname.to.sample="list",
+                     factors="list")) # a list of 'factor' objects

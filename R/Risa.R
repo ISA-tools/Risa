@@ -56,25 +56,12 @@ readISAtabFiles = function(path = getwd(), verbose=FALSE)
 }##end function readISAtabFiles
 
 
-### Retrieves a list of 'factor' objects, one per "Factor Value" column defined in the ISA-TAB
-getFactorValues = function(isa){
-  
-  study.files <- isa["study.files"]  
-  for(i in seq_len(length(study.files))){
-    if (length(grep("Factor.Value", colnames(study.files[[i]]))) != 0) {
-      factor.values  <-  study.files[[i]][ grep("Factor.Value", colnames(study.files[[i]]))]
-    }
-  }
-  factors.list <- lapply(factor.values, factor)
-  return(factors.list)  
-}
-
 getStudyGroups = function(isa){
   
   factor.values <- getFactorValues(isa)  
   factor.names <- names(factor.values)
   factor.values.df <- as.data.frame(factor.values)
-  factor.values.combinations <- factor.values.df[!duplicated(factor.values.df),]
+  treatments <- factor.values.df[!duplicated(factor.values.df),]
   samples <- isa["samples"]
   study.files <- isa["study.files"]
   
@@ -87,10 +74,11 @@ getStudyGroups = function(isa){
   for(i in seq_len(length(samples))){
         
     ##get row numbers from factor.values corresponding to each group name (given by a combination of factor values)
-    for(j in seq_len(length(factor.values.combinations)))
-      if (all(factor.values[i,] == factor.values.combinations [j,])){
+    for(j in seq_len(length(treatments))){
+      if (all(factor.values[i,] == treatments[j,])){
         
       }
+    }
         
   }
   
