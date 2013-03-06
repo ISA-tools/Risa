@@ -307,10 +307,11 @@ setMethod("setTreatments",
           function (.Object) 
           { 
             factors <- .Object["factors"] 
-            factors.df <- as.data.frame(factors)      
-            colnames(factors.df) <- unlist(lapply(factors, function(x) names(x)))
-            treatments <- factors.df[!duplicated(factors.df),]
-            treatments <- as.data.frame(treatments)                        
+            factors.df.list <- lapply(factors, as.data.frame)
+            for (i in seq(factors.df.list)){
+              colnames(factors.df.list[[i]]) <-  names(factors[[i]])
+            }           
+            treatments <- lapply(factors.df.list, function(factors.df) factors.df[!duplicated(factors.df),])           
             .Object["treatments"] <- treatments            
             return(.Object)
           }
@@ -325,13 +326,19 @@ setMethod("setGroups",
             treatments <- .Object["treatments"]            
                                   
             study.files <- .Object["study.files"]
+            
+            samples.per.study <- .Object["samples.per.study"]
                                     
             groups <- list()
             
-            for(i in seq_len(nrow(treatments))){
-                mydf <- data.frame(treatments[i,])
-                df <- data.frame(lapply(mydf, function(x) rep(x, each = length(samples))))            
-                groups[[i]] = samples[apply(study.files[[1]][ names(treatments)] == df, 1, all)]
+            for (j in seq_len(length(study.files))){
+              subgroups <- list()
+              for(i in seq_len(nrow(treatments[[j]]))){              
+                treatment <- data.frame(treatments[[j]][i,])
+                df <- data.frame(lapply(treatment, function(x) rep(x, each = length(samples.per.study[[j]]))))            
+                subgroups[[i]] = samples.per.study[[j]][ apply(study.files[[j]][ names(treatments[[j]])] == df, 1, all) ]
+              }
+              groups[[j]] <- subgroups
             }
                         
             .Object["groups"] <- groups

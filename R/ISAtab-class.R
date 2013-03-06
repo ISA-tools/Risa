@@ -27,5 +27,5 @@ ISAtab <- setClass("ISAtab",
                      rawdatafile.to.sample="list",
                      assayname.to.sample="list",
                      factors="list", 
-                     treatments="data.frame", 
+                     treatments="list", 
                      groups="list")) 

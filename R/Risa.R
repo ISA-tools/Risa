@@ -56,12 +56,6 @@ readISAtabFiles = function(path = getwd(), verbose=FALSE)
 }##end function readISAtabFiles
 
 
-getStudyGroups = function(isa){
-  
-  
-  
-}
-
 
 ### ADD COMMENT - written with R
 ### ADD validation for samples
