@@ -1,6 +1,5 @@
 ### Methods to deal with assays whose technology type is mass spectrometry 
 
-
 ### specific function to deal with assays whose technology type is mass spectrometry using the xcms package
 ### it returns an xcmsSet
 processAssayXcmsSet.1factor = function(isa, assay.filename, ...){
@@ -47,6 +46,12 @@ processAssayXcmsSet.1factor = function(isa, assay.filename, ...){
 ### it returns an xcmsSet
 ### TODO - change implementation to include all factors
 processAssayXcmsSet = function(isa, assay.filename, ...){
+  
+  
+  phenodata.data.frame <- as.data.frame(isa["factors"])
+  
+  
+  
   for(i in seq_len(length(isa["assay.filenames"]))){
     
     if (isa["assay.filenames"][[i]]==assay.filename){
@@ -55,7 +60,7 @@ processAssayXcmsSet = function(isa, assay.filename, ...){
       {
         #mass spectrometry files
         msfiles = isa["data.filenames"][[i]][[ isatab.syntax$raw.spectral.data.file ]]
-        
+                
         pd = try(read.AnnotatedDataFrame(file.path(isa["path"], isa["assay.filenames"][i]),
                                          row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
                                          varMetadata.char = "$", quote="\""))

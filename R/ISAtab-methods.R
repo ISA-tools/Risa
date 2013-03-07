@@ -15,6 +15,7 @@ setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
   if (i=="assay.filenames") { return(x@assay.filenames) } else {}
   if (i=="assay.filenames.per.study") { return(x@assay.filenames.per.study) } else {}
   if (i=="assay.files") { return(x@assay.files) } else {}
+  if (i=="assay.names") { return(x@assay.names) } else {}
   if (i=="assay.files.per.study") { return(x@assay.files.per.study) } else {}
   if (i=="assay.technology.types") { return(x@assay.technology.types) } else {}
   if (i=="assay.measurement.types") { return(x@assay.measurement.types) } else {}
@@ -48,6 +49,7 @@ setReplaceMethod(f="[",signature="ISAtab", definition=function(x,i,j,value){
   if (i=="assay.filenames") { x@assay.filenames<-value } else {}
   if (i=="assay.filenames.per.study") { x@assay.filenames.per.study<-value } else {}
   if (i=="assay.files") { x@assay.files<-value } else {}
+  if (i=="assay.names") { x@assay.names<-value } else {}
   if (i=="assay.files.per.study") { x@assay.files.per.study<-value} else {}
   if (i=="assay.technology.types") { x@assay.technology.types<-value} else {}
   if (i=="assay.measurement.types") { x@assay.measurement.types<-value } else {}
@@ -144,7 +146,12 @@ setMethod(
                                                   function(i) read.table(file.path(path,afilenames.per.study[[j]][[i]]), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))))
     names(afiles.per.study) <- sidentifiers
     
-    .Object["assay.files.per.study"] < afiles.per.study
+    .Object["assay.files.per.study"] <- afiles.per.study
+    
+  
+    ###assay.names
+    assay.names <- lapply( afiles, function(i) i[ grep(isatab.syntax$assay.name, colnames(i) ) ])  
+    .Object["assay.names"] <- assay.names
         
     ## Assay technology types
     #data frame with types
