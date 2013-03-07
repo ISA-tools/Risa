@@ -17,6 +17,7 @@ isatab.syntax <- list(
   array.data.file="Array Data File",
   raw.spectral.data.file="Raw Spectral Data File",
   factor.name="Factor Name",
+  factor.value="Factor Value",
   assay.name="Assay Name"
   )
 
