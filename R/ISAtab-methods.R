@@ -317,8 +317,12 @@ setMethod("setTreatments",
             factors.df.list <- lapply(factors, as.data.frame)
             for (i in seq(factors.df.list)){
               colnames(factors.df.list[[i]]) <-  names(factors[[i]])
-            }           
+            } 
+           
             treatments <- lapply(factors.df.list, function(factors.df) factors.df[!duplicated(factors.df),])           
+            if (length(treatments) == 1){
+              names(treatments) <- colnames(factors.df.list[[1]])
+            }
             .Object["treatments"] <- treatments            
             return(.Object)
           }
@@ -331,7 +335,7 @@ setMethod("setGroups",
           function (.Object) 
           {                     
             treatments <- .Object["treatments"]            
-                                  
+                        
             study.files <- .Object["study.files"]
             
             samples.per.study <- .Object["samples.per.study"]
@@ -340,14 +344,30 @@ setMethod("setGroups",
             
             for (j in seq_len(length(study.files))){
               subgroups <- list()
-              for(i in seq_len(nrow(treatments[[j]]))){              
-                treatment <- data.frame(treatments[[j]][i,])
-                df <- data.frame(lapply(treatment, function(x) rep(x, each = length(samples.per.study[[j]]))))            
-                subgroups[[i]] = samples.per.study[[j]][ apply(study.files[[j]][ names(treatments[[j]])] == df, 1, all) ]
+             
+              if (class(treatments[[j]]) == "factor"){
+                
+               
+                for(i in seq_len(length(levels(treatment[[j]])))){
+                  treatment <- treatments[[j]][[i]]  
+                  list <-  rep(treatment, each = length(samples.per.study[[j]]))
+                  subgroups[[i]] = samples.per.study[[j]][ apply(study.files[[j]][ names(treatments)] == as.data.frame(list) , 1, all) ]
+                  groups[[j]] <- subgroups
+                }
+                                
+              }else{
+                n <- nrow(treatments[[j]])
+                
+                for(i in seq_len(n)){              
+                  treatment <- data.frame(treatments[[j]][i,])
+                  df <- data.frame(lapply(treatment, function(x) rep(x, each = length(samples.per.study[[j]]))))            
+                  subgroups[[i]] = samples.per.study[[j]][ apply(study.files[[j]][ names(treatments[[j]])] == df, 1, all) ]
+                }
+                groups[[j]] <- subgroups
+              }            
+                
               }
-              groups[[j]] <- subgroups
-            }
-                        
+                
             .Object["groups"] <- groups
             return(.Object)
           }

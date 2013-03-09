@@ -21,7 +21,7 @@ processAssayXcmsSet.1factor = function(isa, assay.filename, ...){
     sampleNames(pd) = pd$Raw.Spectral.Data.File
     
     if (length(grep(isatab.syntax$factor.value, colnames(isa["assay.files"][[i]]))) != 0) {
-      ## If there are explicit factors, use the first of them
+      ## If there are explicit factors, use the first one of them
       sclass = isa["assay.files"][[i]][ which(isa["assay.files"][[i]][[isatab.syntax$sample.name]] %in% pd$Sample.Name), grep(isatab.syntax$factor.value, colnames(isa["assay.files"][[i]]))[1]]
       
       wd <- getwd()

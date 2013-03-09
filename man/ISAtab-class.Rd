@@ -36,7 +36,7 @@ Objects can be created by calls of the form \code{new("ISAtab", ...)}.
     \item{\code{rawdatafile.to.sample}:}{Object of class \code{"list"}, mantains the association raw data file and samples }
     \item{\code{assayname.to.sample}:}{Object of class \code{"list"}, mantains the associations between assay names and samples }
     \item{\code{factors}:}{Object of class \code{"list"}, which contains R 'factor' objects for each of the studies (with factor names and factor levels).}
-    \item{\code{treatments}:}{Object of class \code{"list"} of data frames with the combination of factor values, per study file }
+    \item{\code{treatments}:}{Object of class \code{"list"} of data frames with the combination of factor values, per study file, or a factor object, if there is a single study }
     \item{\code{groups}:}{Object of class \code{"list"}, with one element per study file, and each element is a list of the samples for the corresponding treatment }
   }
 }
