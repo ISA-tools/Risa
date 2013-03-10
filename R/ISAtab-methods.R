@@ -300,7 +300,7 @@ setMethod("setFactors",
                 factors.list[[i]] <- lapply(factor.values, factor)  
               }else{
                 study.filenames <- .Object["study.filenames"]
-                warning("No 'Factor Value' column defined in study file ",study.filenames[[i]])
+                message("No 'Factor Value' column defined in study file ",study.filenames[[i]], ". Factors slot will be an empty list")
               }
             }           
             .Object["factors"] <- factors.list
@@ -314,15 +314,21 @@ setMethod("setTreatments",
           function (.Object) 
           { 
             factors <- .Object["factors"] 
-            factors.df.list <- lapply(factors, as.data.frame)
-            for (i in seq(factors.df.list)){
-              colnames(factors.df.list[[i]]) <-  names(factors[[i]])
-            } 
+            if (length(factors) == 0){
+              treatments <- list()      
+              message("Treatments slot will be an empty list")
+            } else {
+              factors.df.list <- lapply(factors, as.data.frame)
+              for (i in seq(factors.df.list)){
+                colnames(factors.df.list[[i]]) <-  names(factors[[i]])
+              } 
            
-            treatments <- lapply(factors.df.list, function(factors.df) factors.df[!duplicated(factors.df),])           
-            if (length(treatments) == 1){
-              names(treatments) <- colnames(factors.df.list[[1]])
+              treatments <- lapply(factors.df.list, function(factors.df) factors.df[!duplicated(factors.df),])           
+              if (length(treatments) == 1){
+                names(treatments) <- paste(colnames(factors.df.list[[1]]), collapse=' ')
+              }
             }
+            
             .Object["treatments"] <- treatments            
             return(.Object)
           }
@@ -342,12 +348,13 @@ setMethod("setGroups",
                                     
             groups <- list()
             
+            if (length(treatments) != 0){
+            
             for (j in seq_len(length(study.files))){
               subgroups <- list()
              
               if (class(treatments[[j]]) == "factor"){
-                
-               
+                               
                 for(i in seq_len(length(levels(treatment[[j]])))){
                   treatment <- treatments[[j]][[i]]  
                   list <-  rep(treatment, each = length(samples.per.study[[j]]))
@@ -367,8 +374,11 @@ setMethod("setGroups",
               }            
                 
               }
-                
-            .Object["groups"] <- groups
+            }else{
+              message("Groups slot will be an empty list")
+            }    
+            
+           .Object["groups"] <- groups
             return(.Object)
           }
 )

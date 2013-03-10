@@ -42,18 +42,18 @@ readISAtabZip = function(zip, path = getwd(), verbose=FALSE)
 { 
   if (verbose)
     message("Unzipping file in directory ",path)
-  d = unzip(zipfile = zip, exdir = extract <- path)
-  if (verbose)
-    message("Converting ISA-Tab dataset into R objects...")
-  isaobj = readISAtabFiles(path)
-  if (verbose)
-    message("... done.")
+  d = unzip(zipfile = zip, exdir = extract <- path)  
+  isaobj = readISAtabFiles(path) 
   return(isaobj)
 }##end function readISAtabZip
 
 readISAtabFiles = function(path = getwd(), verbose=FALSE)
 {
+  if (verbose)
+    message("Converting ISA-Tab dataset at ",path," into R objects...")
   isaobject <- new(Class="ISAtab",path=path)
+  if (verbose)
+    message("... done.")
   return(isaobject) 
 }##end function readISAtabFiles
 
