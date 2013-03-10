@@ -355,7 +355,7 @@ setMethod("setGroups",
              
               if (class(treatments[[j]]) == "factor"){
                                
-                for(i in seq_len(length(levels(treatment[[j]])))){
+                for(i in seq_len(length(levels(treatments[[j]])))){
                   treatment <- treatments[[j]][[i]]  
                   list <-  rep(treatment, each = length(samples.per.study[[j]]))
                   subgroups[[i]] = samples.per.study[[j]][ apply(study.files[[j]][ names(treatments)] == as.data.frame(list) , 1, all) ]
