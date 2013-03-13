@@ -1,5 +1,11 @@
 NEWS for Risa package
 
-Changes for 0.99.2
+Changes for 1.0.1
+------------------
+1. The ISAtab-class was extended to include the definition of assay.names, factors, treatments, groups.
+2. The previous processAssayXcmsSet method was split into processAssayXcmsSet.1factor and processAssayXcmsSet to consider the first factor only (as it was in the previous definition) or all the factors, respectively.
+
+
+Changes for 1.0.0
 ------------------
 This is the first release version of the package. It contains functionality to parse ISAtab datasets into an R object from the ISAtab class. It also provides functionality to save the ISA-tab dataset, or each of its individual files. Additionally, it is also possible to update assay files. Currently, metadata associated to proteomics and metabolomics-based assays (i.e. mass spectrometry) can be processed into an xcmsSet object (from the xcms R package).
