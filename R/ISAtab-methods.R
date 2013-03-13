@@ -240,8 +240,7 @@ setMethod("setAssayDependentSlots",
             dfilenames.per.assay = lapply(afiles, function(i) i[,grep(isatab.syntax$data.file, colnames(i))])
             
             .Object["data.filenames"] <- dfilenames.per.assay
-            
-            
+                        
             data.col.names = lapply(seq_len(length(afiles)),
                                     function(i) if (isatab.syntax$raw.data.file %in% colnames(afiles[[i]])){
                                       isatab.syntax$raw.data.file

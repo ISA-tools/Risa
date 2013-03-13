@@ -1,5 +1,13 @@
 ### Methods to deal with assays whose technology type is mass spectrometry 
 
+#retrieves a list of the raw data files per assay file from the ISAtab object, with full path
+getRawDataFiles = function(isa){  
+  msfiles <- lapply(isa["data.filenames"], function(x) x[isatab.syntax$raw.spectral.data.file])
+  #msfiles is a list with one element per assay file, and each element is a list with the 'Raw Spectral Data File's
+  msfiles <- sapply(msfiles, function(x) sapply(x, function(y) paste(isa["path"], y, sep=.Platform$file.sep)))  
+  return(msfiles)
+}
+
 ### specific function to deal with assays whose technology type is mass spectrometry using the xcms package
 ### it returns an xcmsSet
 processAssayXcmsSet.1factor = function(isa, assay.filename, ...){
