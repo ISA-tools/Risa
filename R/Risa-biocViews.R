@@ -35,30 +35,22 @@ getPackagesInBiocView <- function(view,
   }
 
 suggestBiocPackage <- function(isa){
-  
-  #suppressPackageStartupMessages(require("biocViews"))
-  #data(biocViewsVocab)
-  
-  #reposUrl = "http://www.bioconductor.org/packages/2.11/bioc"
-  #biocViews <- getBiocViews(reposUrl, biocViewsVocab, "Software")
-  #print(biocViews[1:2])
-
-  #getPackageNEWS(prevRepos="http://www.bioconductor.org/packages/2.10/bioc",
-  #             currRepos="http://www.bioconductor.org/packages/2.11/bioc",
-  #             srcDir)
-
-  #getPacksAndViews(reposUrl, biocViews, "NoViewProvided", false)
-
-  #assayTechnologies <- getBiocSubViews(reposUrl, biocViewsVocab, "AssayTechnologies")
-  #assayTechnologies$MassSpectrometry
-  
+    
   mapping.file <- system.file("extdata","ISA-BiocViews-Mapping.csv", package="Risa")
   
-  mappping <- read.csv(mapping.file, header=FALSE, fill=TRUE, na.strings = "NA", row.names=NULL)
-  
-  assay.technology.types <- isa["assay.technology.types"]
+  mapping <- read.csv(mapping.file, header=TRUE, fill=TRUE, na.strings = "NA", row.names=NULL)
   
   assay.measurement.types <- isa["assay.measurement.types"]
   
+  measurement.types.views <- mapping[["BiocViews"]][ mapping[["ISA.measurement.type"]] == assay.measurement.types ]
   
+  assay.technology.types <- isa["assay.technology.types"]
+  
+  technology.types.views <- mapping[["BiocViews"]][ mapping[["ISA.technology.type"]] == assay.technology.types ]
+  
+  views <- setdiff(union(technology.types.views, measurement.types.views),"")
+  
+  package.list <- lapply(views, getPackagesInBiocView)
+  
+  return(package.list)
 }
