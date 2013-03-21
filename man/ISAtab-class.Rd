@@ -23,6 +23,7 @@ Objects can be created by calls of the form \code{new("ISAtab", ...)}.
     \item{\code{assay.filenames.per.study}:}{Object of class \code{"list"}, the names of the assay files according to the study they belong to }
     \item{\code{assay.files}:}{Object of class \code{"list"}, a list of data frames with the contents of the assay files }
     \item{\code{assay.files.per.study}:}{Object of class \code{"list"}, a list of data frames with the contents of the assay files divided per study they belong to }
+    \item{\code{assay.names}:}{Object of class \code{"list"}, which is a list of data frames, containing, per each assay file, the column of the assay file corresponding to the "Assay Name" }
     \item{\code{assay.technology.types}:}{Object of class \code{"character"}, a list with the technology types corresponding to each assay }
     \item{\code{assay.measurement.types}:}{Object of class \code{"character"}, a list with the names of the data files }
     \item{\code{data.filenames}:}{Object of class \code{"list"},    a list with the names of the samples }
@@ -34,6 +35,9 @@ Objects can be created by calls of the form \code{new("ISAtab", ...)}.
     \item{\code{sample.to.assayname}:}{Object of class \code{"list"}, maintains the association between samples and assay names }
     \item{\code{rawdatafile.to.sample}:}{Object of class \code{"list"}, mantains the association raw data file and samples }
     \item{\code{assayname.to.sample}:}{Object of class \code{"list"}, mantains the associations between assay names and samples }
+    \item{\code{factors}:}{Object of class \code{"list"}, which contains R 'factor' objects for each of the studies (with factor names and factor levels).}
+    \item{\code{treatments}:}{Object of class \code{"list"} of data frames with the combination of factor values, per study file, or a factor object, if there is a single study }
+    \item{\code{groups}:}{Object of class \code{"list"}, with one element per study file, and each element is a list of the samples for the corresponding treatment }
   }
 }
 \section{Methods}{

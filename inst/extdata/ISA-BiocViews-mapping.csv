@@ -1,0 +1,30 @@
+ISA Configuration File,ISA measurement type,BiocViews,ISA technology type,BiocViews
+cellcount_flowcytometry,cell counting,,flow cytometry,FlowCytometry
+cellsorting_flowcyt,cell sorting,,flow cytometry,FlowCytometry
+clinical_chemistry,clinical chemistry analysis,,,
+copynumvariation_micro,copy number variation profiling,CopyNumberVariants,DNA microarray,"Microarray,aCGH"
+dnamethylation_micro,DNA methylation profiling,DNAMethylation,DNA microarray,"Microarray,ChIPchip,CpGIsland,Methylseq"
+dnamethylation_seq,DNA methylation profiling,DNAMethylation,nucleotide sequencing,"Sequencing,ChIPseq,CpGIsland,Methylseq"
+envgen_survey_seq,environmental gene survey,,nucleotide sequencing,Sequencing
+genome_seq,genome sequencing,,nucleotide sequencing,Sequencing
+hematology,hematology,,,
+heterozygosity_micro,loss of heterozygosity profiling,"SNP,CopyNumberVariants",DNA microarray,Microarray
+histology,histology,,,
+histonemodification_seq,histone modification profiling,Regulation,nucleotide sequencing,"Sequencing,ChIPseq"
+metaboliteprofiling_ms,metabolite profiling,Metabolomics,mass spectrometry,MassSpectrometry
+metaboliteprofiling_nmr,metabolite profiling,Metabolomics,NMR spectroscopy,
+metagenome_seq,metagenome sequencing,,nucleotide sequencing,Sequencing
+ppi_detection_micro,protein-protein interaction detection,,protein microarray,Microarray
+protein_dna_binding_ident_micro,protein-DNA binding site identification,Regulation,DNA microarray,"Microarray,ChIPchip"
+protein_dna_binding_ident_seq,protein-DNA binding site identification,Regulation,nucleotide sequencing,"Sequencing,ChIPseq"
+protein_expression_ge,protein expression profiling,Proteomics,gel electrophoresis,
+protein_expression_micro,protein expression profiling,Proteomics,protein microarray,Microarray
+protein_expression_ms,protein expression profiling,Proteomics,mass spectrometry,"MassSpectrometry,Proteomics"
+proteinident_ms,protein identification,,mass spectrometry,"MassSpectrometry,Proteomics"
+snpanalysis_micro,SNP analysis,SNP,DNA microarray,"Microarray,GeneticVariability"
+studySample,,,,
+tfbsident_micro,transcription factor binding site identification,Regulation,DNA microarray,"Microarray,ChIPchip"
+tfbsident_seq,transcription factor binding site identification,Regulation,nucleotide sequencing,"Sequencing,ChIPseq"
+transcription_micro,transcription profiling,"Transcription,GeneExpression",DNA microarray,"Microarray,DifferentialExpression,ExonArray"
+transcription_rtpcr,transcription profiling,"Transcription,GeneExpression,DifferentialExpression",real time PCR,qPCR
+transcription_seq,transcription profiling,"Transcription,GeneExpression",nucleotide sequencing,"Sequencing,DifferentialExpression,RNAseq"
