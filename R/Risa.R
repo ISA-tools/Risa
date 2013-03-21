@@ -16,7 +16,9 @@ isatab.syntax <- list(
   free.induction.decay.data.file="Free Induction Decay Data File",
   array.data.file="Array Data File",
   raw.spectral.data.file="Raw Spectral Data File",
-  factor.name="Factor Name"
+  factor.name="Factor Name",
+  factor.value="Factor Value",
+  assay.name="Assay Name"
   )
 
 technology.types <- list(
@@ -40,62 +42,21 @@ readISAtabZip = function(zip, path = getwd(), verbose=FALSE)
 { 
   if (verbose)
     message("Unzipping file in directory ",path)
-  d = unzip(zipfile = zip, exdir = extract <- path)
-  if (verbose)
-    message("Converting ISA-Tab dataset into R objects...")
-  isaobj = readISAtabFiles(path)
-  if (verbose)
-    message("... done.")
+  d = unzip(zipfile = zip, exdir = extract <- path)  
+  isaobj = readISAtabFiles(path) 
   return(isaobj)
 }##end function readISAtabZip
 
 readISAtabFiles = function(path = getwd(), verbose=FALSE)
 {
+  if (verbose)
+    message("Converting ISA-Tab dataset at ",path," into R objects...")
   isaobject <- new(Class="ISAtab",path=path)
+  if (verbose)
+    message("... done.")
   return(isaobject) 
 }##end function readISAtabFiles
 
-
-
-### specific function to deal with assays whose technology type is mass spectrometry using the xcms package
-### it returns an xcmsSet
-processAssayXcmsSet = function(isa, assay.filename, ...){
-  for(i in seq_len(length(isa["assay.filenames"]))){
-    
-    if (isa["assay.filenames"][[i]]==assay.filename){
-      
-      if (isatab.syntax$raw.spectral.data.file %in% colnames(isa["data.filenames"][[i]]))
-      {
-        #mass spectrometry files
-        msfiles = isa["data.filenames"][[i]][[ isatab.syntax$raw.spectral.data.file ]]
-        
-        pd = try(read.AnnotatedDataFrame(file.path(isa["path"], isa["assay.filenames"][i]),
-                                         row.names = NULL, blank.lines.skip = TRUE, fill = TRUE,
-                                         varMetadata.char = "$", quote="\""))
-        
-        sampleNames(pd) = pd$Raw.Spectral.Data.File
-        
-        if (length(grep("Factor.Value", colnames(isa["assay.files"][[i]]))) != 0) {
-          ## If there are explicit factors, use them
-          sclass = isa["assay.files"][[i]][ which(isa["assay.files"][[i]][[isatab.syntax$sample.name]] %in% pd$Sample.Name), grep("Factor.Value", colnames(isa["assay.files"][[i]]))[1]]
-          
-          wd <- getwd()
-          setwd(isa["path"])
-          xset = xcmsSet(files=msfiles, sclass=sclass, ...)
-          setwd(wd)
-        } else {
-          wd <- getwd()
-          setwd(isa["path"])
-          ## Otherwise just use what was there
-          xset = try(xcmsSet(msfiles, phenoData=pData(pd), ...))
-          setwd(wd)
-        }
-        return(xset)
-    }#if
-    
-  }#if 
-  }#for
-}#processAssayXcmsSet
 
 
 ### ADD COMMENT - written with R

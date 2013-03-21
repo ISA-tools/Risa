@@ -1,9 +1,18 @@
-importFrom("xcms", "xcmsSet")
+exportClass("ISAtab")
+
 export("readISAtab")
-export("processAssayXcmsSet")
 export("updateAssayMetadata")
 export("write.ISAtab")
 export("write.investigation.file")
 export("write.assay.file")
 export("write.study.file")
-exportClass("ISAtab")
+
+importFrom("xcms", "xcmsSet")
+export("processAssayXcmsSet")
+export("processAssayXcmsSet.1factor")
+export("getRawDataFiles")
+export("getMSAssayFilenames")
+export("is.ms")
+
+export("suggestBiocPackage")
+

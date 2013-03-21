@@ -6,7 +6,12 @@
 \description{
   The Risa package builds R objects from ISA-tab format files and it is a component of the ISA software infrastructure \url{http://isa-tools.org/}. The source code and latest version can be found in the GitHub repository \url{https://github.com/ISA-tools/Risa}. Please, submit all 'bugs' and feature requests through \url{https://github.com/ISA-tools/Risa/issues}.
   
-  The Risa package contains the function \code{readISAtab} that can be used to read ISA-tab files from a local zip archive or from a local folder.
+  The function \code{readISAtab} reads ISA-tab files from a local zip archive or from a local folder.
+  
+  It also contains methods to save the ISAtab files and to update the metadata after analysis. For mass spectrometry assays, the package includes several methods to build necessary object for processing using the \code{xcms} package.  
+  
+  In addition, there is a function called \code{suggestBiocPackage} that, given an object from the ISAtab-class - i.e. an ISAtab dataset - it will retrieve a list of potentially useful packages from Bioconductor, according to the assays measurement and technology types. This functionality is based on the annotations provided by the BiocViews.
+  
 }
 \author{
   Alejandra Gonzalez-Beltran, Steffen Neumann, Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra, Eamonn Maguire, Susanna-Asunta Sansone.

@@ -1,9 +1,9 @@
 \name{processAssayXcmsSet}
 \alias{processAssayXcmsSet}
 \docType{data}
-\title{ Build an xcmsSet object given a mass spectrometry assay }
+\title{ Build an xcmsSet object given a mass spectrometry assay and considering all factors defined}
 \description{
-  \code{processAssayXcmsSet} reads a ISA-tab file.
+  \code{processAssayXcmsSet} retrieves an xcmsSet object given and ISA-tab object and one of its assay filenames.
 }
 \usage{
 processAssayXcmsSet(isa, assay.filename, ...)
@@ -14,7 +14,7 @@ processAssayXcmsSet(isa, assay.filename, ...)
   \item{...}{ extra arguments that can be pass down to the xcmsSet function from the xcms package}
   }
 \value{
-  the xcmsSet object built from the assay metadata and data files
+  the xcmsSet object built from the assay metadata, considering all the factors defined, and data files
 }
 \author{
   Steffen Neumann, Alejandra Gonzalez-Beltran / 
