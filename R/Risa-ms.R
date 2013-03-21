@@ -8,12 +8,8 @@ getMSAssayFilenames <- function(isa){
 }
 
 is.ms <- function(isa, assay.filename){
-  data.filenames <- isa["data.filenames"]
-  msfiles <- try(lapply(data.filenames, function(x) x[isatab.syntax$raw.spectral.data.file]))
-  if (ncol(msfiles[[1]])==0)
-    return(FALSE)
-  else
-    return(TRUE)
+  ms.assay.filenames <- getMSAssayFilenames(isa)
+  return(assay.filename %in% ms.assay.filenames)
 }
 
 #retrieves a list of the raw data files per assay file from the ISAtab object, with full path
