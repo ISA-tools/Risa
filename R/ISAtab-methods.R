@@ -323,9 +323,7 @@ setMethod("setTreatments",
               } 
            
               treatments <- lapply(factors.df.list, function(factors.df) factors.df[!duplicated(factors.df),])           
-              if (length(treatments) == 1){
-                names(treatments) <- paste(colnames(factors.df.list[[1]]), collapse=' ')
-              }
+              names(treatments) <- sapply(factors.df.list, function(x) paste(colnames(x), collapse=' '))
             }
             
             .Object["treatments"] <- treatments            
@@ -357,7 +355,7 @@ setMethod("setGroups",
                 for(i in seq_len(length(levels(treatments[[j]])))){
                   treatment <- treatments[[j]][[i]]  
                   list <-  rep(treatment, each = length(samples.per.study[[j]]))
-                  subgroups[[i]] = samples.per.study[[j]][ apply(study.files[[j]][ names(treatments)] == as.data.frame(list) , 1, all) ]
+                  subgroups[[i]] = samples.per.study[[j]][ apply(study.files[[j]][ names(treatments)[[j]] ] == as.data.frame(list) , 1, all) ]
                   groups[[j]] <- subgroups
                 }
                                 
