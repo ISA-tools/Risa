@@ -1,6 +1,5 @@
 bioconductor.version <- 2.12
 
-
 getPackagesInBiocView <- function(view, 
                                   reposUrl = c("BiocSoftware", "BiocAnnotationData", "BiocExperimentData"),
                                   biocVersion = bioconductor.version) {
@@ -34,7 +33,7 @@ getPackagesInBiocView <- function(view,
     return(bv[[view]])
   }
 
-suggestBiocPackage <- function(isa){
+suggestBiocPackage <- function(isa, bioc.version = bioconductor.version ){
     
   mapping.file <- system.file("extdata","ISA-BiocViews-Mapping.csv", package="Risa")
   
