@@ -11,6 +11,7 @@ importFrom("xcms", "xcmsSet")
 export("processAssayXcmsSet")
 export("processAssayXcmsSet.1factor")
 export("getRawDataFiles")
+export("getMSAssayFilenames")
 
 export("suggestBiocPackage")
 

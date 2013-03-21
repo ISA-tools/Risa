@@ -1,10 +1,28 @@
 ### Methods to deal with assays whose technology type is mass spectrometry 
 
+getMSAssayFilenames <- function(isa){
+  data.filenames <- isa["data.filenames"]
+  assay.filenames <- isa["assay.filenames"]
+  ms.assay.filenames <- assay.filenames[ sapply(data.filenames, function(x) isatab.syntax$raw.spectral.data.file %in% names(x)) ]
+  return(ms.assay.filenames)
+}
+
+is.ms <- function(isa, assay.filename){
+  data.filenames <- isa["data.filenames"]
+  msfiles <- try(lapply(data.filenames, function(x) x[isatab.syntax$raw.spectral.data.file]))
+  if (ncol(msfiles[[1]])==0)
+    return(FALSE)
+  else
+    return(TRUE)
+}
+
 #retrieves a list of the raw data files per assay file from the ISAtab object, with full path
-getRawDataFiles = function(isa){  
-  msfiles <- lapply(isa["data.filenames"], function(x) x[isatab.syntax$raw.spectral.data.file])
+getRawDataFiles = function(isa, full.path = TRUE){  
+  ms.assay.filenames <- getMSAssayFilenames(isa)
+  msfiles <- lapply(isa["data.filenames"][ms.assay.filenames], function(x) x[isatab.syntax$raw.spectral.data.file])
   #msfiles is a list with one element per assay file, and each element is a list with the 'Raw Spectral Data File's
-  msfiles <- sapply(msfiles, function(x) sapply(x, function(y) paste(isa["path"], y, sep=.Platform$file.sep)))  
+  if (full.path)
+    msfiles <- sapply(msfiles, function(x) sapply(x, function(y) paste(isa["path"], y, sep=.Platform$file.sep)))  
   return(msfiles)
 }
 

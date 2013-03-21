@@ -14,22 +14,22 @@ processAssayXcmsSet.1factor(isa, assay.filename, ...)
   \item{assay.filename}{ a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
   \item{...}{ extra arguments that can be pass down to the xcmsSet function from the xcms package}
   }
-\details{
+%\details{
 %%  ~~ If necessary, more details than the description above ~~
-}
+%}
 \value{
   the xcmsSet object built from the assay metadata, considering all the factors defined, and data files
 }
-\references{
+%\references{
 %% ~put references to the literature/web site here ~
-}
+%}
 \author{
   Alejandra Gonzalez-Beltran / 
   Maintainer: Alejandra Gonzalez-Beltran  \email{isatools@googlegroups.com} 
 }
-\note{
+%\note{
 %%  ~~further notes~~
-}
+%}
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
