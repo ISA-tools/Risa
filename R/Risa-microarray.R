@@ -23,7 +23,9 @@ getMIAMEMetadata <- function(isa, assay.filename){
               name = isa@study.identifiers[[j]], 
               lab = isa@study.contacts.affiliations, 
               contact = isa@study.contacts, 
-              title = isa@study.titles[[j]])
+              title = isa@study.titles[[j]],
+              abstract = isa@study.descriptions[[j]],
+              samples = as.list(isa@samples))
 
   return(my.desc)
   }else{
