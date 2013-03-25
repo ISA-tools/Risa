@@ -6,6 +6,12 @@ isatab.syntax <- list(
   assay.prefix="a_",
   investigation.identifier="Investigation Identifier",
   study.identifier="Study Identifier",
+  study.title="Study Title",
+  study.description="Study Description",
+  study.person.last.name="Study Person Last Name",
+  study.person.first.name="Study Person First Name",
+  study.person.mid.initial="Study Person Mid Initial",
+  study.person.affiliation="Study Person Affiliation",
   study.file.name="Study File Name",
   study.assay.file.name="Study Assay File Name",
   study.assay.technology.type="Study Assay Technology Type",
@@ -21,6 +27,8 @@ isatab.syntax <- list(
   factor.value="Factor Value",
   assay.name="Assay Name"
   )
+
+trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 technology.types <- list(
   microarray="DNA microarray",

@@ -11,6 +11,10 @@ setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
   if (i=="investigation.file") { return(x@investigation.file) } else {}
   if (i=="investigation.identifier") { return(x@investigation.identifier) } else {}
   if (i=="study.identifiers") { return(x@study.identifiers) } else {}
+  if (i=="study.titles") { return(x@study.titles) } else {}
+  if (i=="study.descriptions") { return(x@study.descriptions) } else {}
+  if (i=="study.contacts") { return(x@study.contacts) } else {}
+  if (i=="study.contacts.affiliations") { return(x@study.contacts.affiliations) } else {}
   if (i=="study.filenames") { return(x@study.filenames) } else {}
   if (i=="study.files") { return(x@study.files) } else {}   
   if (i=="assay.filenames") { return(x@assay.filenames) } else {}
@@ -46,6 +50,10 @@ setReplaceMethod(f="[",signature="ISAtab", definition=function(x,i,j,value){
   if (i=="investigation.file") { x@investigation.file<-value } else {}
   if (i=="investigation.identifier") { x@investigation.identifier<-value } else {}
   if (i=="study.identifiers") { x@study.identifiers<-value } else {}
+  if (i=="study.titles") { x@study.titles<-value } else {}
+  if (i=="study.descriptions") { x@study.descriptions<-value } else {}  
+  if (i=="study.contacts") { x@study.contacts<-value } else {}
+  if (i=="study.contacts.affiliations") { x@study.contacts.affiliations<-value } else {}
   if (i=="study.filenames") { x@study.filenames<-value } else {}
   if (i=="study.files") { x@study.files<-value } else {}   
   if (i=="assay.filenames") { x@assay.filenames<-value } else {}
@@ -103,7 +111,25 @@ setMethod(
     ## Study Identifiers  - as a list of strings
     sidentifiers = ifile[grep(isatab.syntax$study.identifier, ifile[,1], useBytes=TRUE),][2][[1]]
     
-    .Object["study.identifiers"] <- sidentifiers
+    .Object["study.identifiers"] <- as.character(sidentifiers)
+    
+    stitles = ifile[grep(isatab.syntax$study.title, ifile[,1], useBytes=TRUE),][2][[1]]
+    
+    .Object["study.titles"] <- as.character(stitles)
+    
+    sdescriptions = ifile[grep(isatab.syntax$study.description, ifile[,1], useBytes=TRUE),][2][[1]]
+    
+    .Object["study.descriptions"] <- as.character(sdescriptions)
+    
+    spersonfirstnames <- trim(as.character(ifile[grep(isatab.syntax$study.person.first.name, ifile[,1], useBytes=TRUE),][2][[1]]))
+    spersonlastnames <- trim(as.character(ifile[grep(isatab.syntax$study.person.last.name, ifile[,1], useBytes=TRUE),][2][[1]]))
+    spersonmidinitials <- trim(as.character(ifile[grep(isatab.syntax$study.person.mid.initial, ifile[,1], useBytes=TRUE),][2][[1]]))
+    
+    .Object["study.contacts"] <- apply(cbind(spersonfirstnames, spersonmidinitials, spersonlastnames), 1, paste, collapse=" " )
+   
+    spersonaffiliations <- trim(as.character(ifile[grep(isatab.syntax$study.person.affiliation, ifile[,1], useBytes=TRUE),][2][[1]]))
+    
+    .Object["study.contacts.affiliations"] <- spersonaffiliations
     
     ## Study filenames (one or more)
     sfilenames = unlist(sapply(ifile[grep(isatab.syntax$study.file.name, ifile[,1], useBytes=TRUE),], function(i) grep(isatab.syntax$study.prefix, i, value=TRUE, useBytes=TRUE)))
