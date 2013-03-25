@@ -16,6 +16,7 @@ Objects can be created by calls of the form \code{new("ISAtab", ...)}.
     \item{\code{path}:}{Object of class \code{"character"}, it represents the path of the ISA-Tab dataset }
     \item{\code{investigation.filename}:}{Object of class \code{"character"}, it represents the name of the Investigation file }
     \item{\code{investigation.file}:}{Object of class \code{"data.frame"}, it is a data frame with the contents of the Investigation file }
+       \item{\code{investigation.identifier}:}{Object of class \code{"character"}, it is a string with the identifier for the investigation}
     \item{\code{study.identifiers}:}{Object of class \code{"factor"}, it is the list of study identifiers }
     \item{\code{study.filenames}:}{Object of class \code{"character"}, the names of the study files }
     \item{\code{study.files}:}{Object of class \code{"list"}, a list of data frames wiht the contents of the study files }

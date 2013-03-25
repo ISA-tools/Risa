@@ -1,5 +1,5 @@
-\name{is.ms}
-\alias{is.ms}
+\name{isMSAssay}
+\alias{isMSAssay}
 \title{
 Indicates if an assay filename corresponds to a mass spectrometry assay.
 }
@@ -7,7 +7,7 @@ Indicates if an assay filename corresponds to a mass spectrometry assay.
 Indicates if an assay filename corresponds to a mass spectrometry assay.
 }
 \usage{
-is.ms(isa, assay.filename)
+isMSAssay(isa, assay.filename)
 }
 \arguments{
   \item{isa}{
@@ -34,7 +34,7 @@ Alejandra Gonzalez-Beltran
 \examples{
 faahkoISA = readISAtab(find.package("faahKO"))
 assay.filename <- faahkoISA["assay.filenames"][[1]]
-is.ms(faahkoISA, assay.filename)
+isMSAssay(faahkoISA, assay.filename)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

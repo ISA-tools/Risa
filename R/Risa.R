@@ -4,6 +4,7 @@ isatab.syntax <- list(
   investigation.prefix="i_",
   study.prefix="s_",
   assay.prefix="a_",
+  investigation.identifier="Investigation Identifier",
   study.identifier="Study Identifier",
   study.file.name="Study File Name",
   study.assay.file.name="Study Assay File Name",
@@ -111,6 +112,22 @@ write.assay.file = function(isa, assay.filename, path = getwd()){
               file=file.path(path,isa["assay.filenames"][[i]]), 
               row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")
+}
+
+getAnnotatedDataFrameAssay <- function(isa, assay.filename)
+{
+  i <- which(names(isa["assay.files"])==assay.filename)
+      
+  dataf <- as.data.frame(isa@factors[[i]])
+  
+  colnames(dataf) <-  names(isa@factors[[i]])
+  row.names(dataf) <- isa@samples 
+  
+  dataf.desc <-  as.data.frame(names(isa@factors[[i]]))
+  
+  pdata <- new("AnnotatedDataFrame", data = dataf, varMetadata = dataf.desc)
+  
+  return(pdata)
 }
 
 processAssayType = function(isa)

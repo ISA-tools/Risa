@@ -12,7 +12,7 @@ export("processAssayXcmsSet")
 export("processAssayXcmsSet.1factor")
 export("getRawDataFiles")
 export("getMSAssayFilenames")
-export("is.ms")
+export("isMSAssay")
 
 export("suggestBiocPackage")
 

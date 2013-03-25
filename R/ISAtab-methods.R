@@ -9,6 +9,7 @@ setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
   if (i=="path") { return(x@path) } else {}
   if (i=="investigation.filename") { return(x@investigation.filename) } else {}
   if (i=="investigation.file") { return(x@investigation.file) } else {}
+  if (i=="investigation.identifier") { return(x@investigation.identifier) } else {}
   if (i=="study.identifiers") { return(x@study.identifiers) } else {}
   if (i=="study.filenames") { return(x@study.filenames) } else {}
   if (i=="study.files") { return(x@study.files) } else {}   
@@ -43,6 +44,7 @@ setReplaceMethod(f="[",signature="ISAtab", definition=function(x,i,j,value){
   if (i=="path") { x@path<-value } else {}
   if (i=="investigation.filename") { x@investigation.filename<-value } else {}
   if (i=="investigation.file") { x@investigation.file<-value } else {}
+  if (i=="investigation.identifier") { x@investigation.identifier<-value } else {}
   if (i=="study.identifiers") { x@study.identifiers<-value } else {}
   if (i=="study.filenames") { x@study.filenames<-value } else {}
   if (i=="study.files") { x@study.files<-value } else {}   
@@ -93,6 +95,10 @@ setMethod(
     ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE, na.strings = "NA")
     
     .Object["investigation.file"] <- ifile
+    
+    iidentifier <- as.character(ifile[grep(isatab.syntax$investigation.identifier, ifile[,1], useBytes=TRUE),][2][[1]])
+    
+    .Object["investigation.identifier"] <- iidentifier
         
     ## Study Identifiers  - as a list of strings
     sidentifiers = ifile[grep(isatab.syntax$study.identifier, ifile[,1], useBytes=TRUE),][2][[1]]

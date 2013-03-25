@@ -7,7 +7,7 @@ getMSAssayFilenames <- function(isa){
   return(ms.assay.filenames)
 }
 
-is.ms <- function(isa, assay.filename){
+isMSAssay <- function(isa, assay.filename){
   ms.assay.filenames <- getMSAssayFilenames(isa)
   return(assay.filename %in% ms.assay.filenames)
 }
