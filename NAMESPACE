@@ -14,5 +14,9 @@ export("getRawDataFiles")
 export("getMSAssayFilenames")
 export("isMSAssay")
 
+export("getMicroarrayAssayFilenames")
+export("isMicroarrayAssay")
+export("getMIAMEMetadata")
+
 export("suggestBiocPackage")
 

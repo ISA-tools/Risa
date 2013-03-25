@@ -23,6 +23,7 @@ isatab.syntax <- list(
   free.induction.decay.data.file="Free Induction Decay Data File",
   array.data.file="Array Data File",
   raw.spectral.data.file="Raw Spectral Data File",
+  hybridization.assay.name="Hybridization Assay Name",
   factor.name="Factor Name",
   factor.value="Factor Value",
   assay.name="Assay Name"
