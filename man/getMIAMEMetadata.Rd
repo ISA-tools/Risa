@@ -34,8 +34,13 @@ Alejandra Gonzalez-Beltran
 \seealso{
 \code{isMicroarrayAssay}
 }
-%\examples{
-%}
+\examples{
+data.dir <- system.file("extdata", package="Risa")
+isa <- readISAtab(file.path(data.dir, "CD133"))
+assay.filename <- isa@assay.filenames[[3]]
+miame <- getMIAMEMetadata(isa, assay.filename)
+str(miame)
+}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 %\keyword{ ~kwd1 }
