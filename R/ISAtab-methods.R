@@ -195,7 +195,7 @@ setMethod(
     
     ## Validate number of assay technology types == number of afiles
     if (length(assay.tech.types)!=length(afiles)){
-      stop("The number of assay files mismatches the number of assay types")
+      message("The number of assay files mismatches the number of assay types")
     }    
     .Object["assay.technology.types"] <- assay.tech.types
         
