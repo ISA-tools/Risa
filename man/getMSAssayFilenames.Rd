@@ -29,7 +29,9 @@ Alejandra Gonzalez-Beltran
 %\seealso{
 %}
 \examples{
-  faahkoISA <- readISAtab(system.file("extdata","faahKO-metadata", package="Risa"))
+  data.dir <- system.file("extdata", package="Risa")
+  isazip <- system.file("extdata","faahKO-metadata.zip", package="Risa")
+  faahkoISA <- readISAtab(zipfile = isazip, path = file.path(data.dir,"faahKOISA"), verbose =TRUE)  
   ms.assay.filenames <- getMSAssayFilenames(faahkoISA)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

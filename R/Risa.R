@@ -22,6 +22,7 @@ isatab.syntax <- list(
   raw.data.file="Raw Data File",
   free.induction.decay.data.file="Free Induction Decay Data File",
   array.data.file="Array Data File",
+  derived.array.data.file="Derived Array Data File",
   raw.spectral.data.file="Raw Spectral Data File",
   hybridization.assay.name="Hybridization Assay Name",
   factor.name="Factor Name",
@@ -53,6 +54,8 @@ readISAtabZip = function(zip, path = getwd(), verbose=FALSE)
   if (verbose)
     message("Unzipping file in directory ",path)
   d = unzip(zipfile = zip, exdir = extract <- path)  
+  if (verbose)
+    message("Unzipped files: ",d)
   isaobj = readISAtabFiles(path) 
   return(isaobj)
 }##end function readISAtabZip

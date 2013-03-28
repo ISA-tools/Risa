@@ -32,8 +32,14 @@ Alejandra Gonzalez-Beltran
 \seealso{
 \code{getMIAMEMetadata}
 }
-%\examples{
-%}
+\examples{
+data.dir <- system.file("extdata", package="Risa")
+isazip <- system.file("extdata","ARMSTRONG-S-3.zip", package="Risa")
+isa <- readISAtab(zipfile = isazip, path = file.path(data.dir,"ARMSTRONG_ISA"), verbose =TRUE)
+    
+assay.filename <- isa@assay.filenames[[1]]
+isMicroarrayAssay(isa, assay.filename)
+}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 %\keyword{ ~kwd1 }

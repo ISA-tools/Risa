@@ -36,8 +36,8 @@ Alejandra Gonzalez-Beltran
 }
 \examples{
 data.dir <- system.file("extdata", package="Risa")
-isa <- readISAtab(file.path(data.dir, "CD133"))
-assay.filename <- isa@assay.filenames[[3]]
+isa <- readISAtab(file.path(data.dir, "ARMSTRONG-S-3"))
+assay.filename <- isa@assay.filenames[[1]]
 miame <- getMIAMEMetadata(isa, assay.filename)
 str(miame)
 }

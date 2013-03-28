@@ -30,7 +30,7 @@ The result is an object from the \code{ISAtab} class.
      isaObject1 = readISAtab(path = temp)
      
   ## Example of readISAtab for a mass spectrometry experiment
-  isazip = system.file("extdata","faahKO-metadata.zip", package="Risa")
-  isaObject2 = readISAtab(zipfile = isazip, path = file.path(system.file("extdata", package="Risa"),"ISAexample"), verbose =TRUE)
+  isazip <- system.file("extdata","faahKO-metadata.zip", package="Risa")
+  isaObject2 <- readISAtab(zipfile = isazip, path = file.path(system.file("extdata", package="Risa"),"ISAexample"), verbose =TRUE)
 }
 \keyword{ISAtab datasets}

@@ -31,8 +31,11 @@ Alejandra Gonzalez-Beltran
 \seealso{
 \code{isMicroarrayAssay}
 }
-%\examples{
-%}
+\examples{
+data.dir <- system.file("extdata", package="Risa")
+isa <- readISAtab(file.path(data.dir, "ARMSTRONG-S-3"))
+getMicroarrayAssayFilenames(isa)
+}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 %\keyword{ ~kwd1 }
