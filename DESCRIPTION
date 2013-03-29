@@ -5,7 +5,7 @@ Title: Converting experimental metadata from ISA-tab into Bioconductor data stru
 Author: Alejandra Gonzalez-Beltran, Audrey Kauffmann, Steffen Neumann, Gabriella Rustici, ISA Team
 Maintainer: Alejandra Gonzalez-Beltran, ISA Team <isatools@googlegroups.com>
 Depends: R (>= 2.0.9), Biobase (>= 2.4.0), methods, Rcpp (>= 0.9.13), biocViews
-Imports: xcms
+Imports: xcms, affy
 Suggests: faahKO (>= 1.2.11)
 Description: The Investigation / Study / Assay (ISA) tab-delimited 
 	 format is a general purpose framework with which to collect and communicate 

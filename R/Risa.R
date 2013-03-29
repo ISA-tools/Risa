@@ -64,7 +64,7 @@ readISAtabFiles = function(path = getwd(), verbose=FALSE)
 {
   if (verbose)
     message("Converting ISA-Tab dataset at ",path," into R objects...")
-  isaobject <- new(Class="ISAtab",path=path)
+  isaobject <- new(Class="ISATab",path=path)
   if (verbose)
     message("... done.")
   return(isaobject) 

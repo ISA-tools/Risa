@@ -1,15 +1,15 @@
-\name{ISAtab-class}
+\name{ISATab-class}
 \Rdversion{1.1}
 \docType{class}
-\alias{ISAtab-class}
-\alias{[,ISAtab-method}
-\alias{[<-,ISAtab-method}
-\title{Class \code{"ISAtab"}, a class for maintaing ISAtab information}
+\alias{ISATab-class}
+\alias{[,ISATab-method}
+\alias{[<-,ISATab-method}
+\title{Class \code{"ISATab"}, a class for maintaing ISATab information}
 \description{
-  This class maintains informatino from an ISAtab dataset, including an investigation file, one or more study files, and one or more assay files for each study file. 
+  This class maintains informatino from an ISATab dataset, including an investigation file, one or more study files, and one or more assay files for each study file. 
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("ISAtab", ...)}.
+Objects can be created by calls of the form \code{new("ISATab", ...)}.
 }
 \section{Slots}{
   \describe{
@@ -47,7 +47,7 @@ Objects can be created by calls of the form \code{new("ISAtab", ...)}.
 }
 \section{Methods}{
   \describe{
-    \item{[}{\code{signature(x = "ISAtab")}: ... }
+    \item{[}{\code{signature(x = "ISATab")}: ... }
    }
 }
 \references{
@@ -60,9 +60,9 @@ Alejandra Gonzalez-Beltran, \email{isatools@googlegroups.com}
 No notes yet.
 }
 \seealso{
-\code{ISAtab-methods}
+\code{ISATab-methods}
 }
 \examples{
-showClass("ISAtab")
+showClass("ISATab")
 }
 \keyword{classes}
