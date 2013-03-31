@@ -125,6 +125,16 @@ write.assay.file = function(isa, assay.filename, path = getwd()){
               quote=TRUE, sep="\t", na="\"\"")
 }
 
+getStudyFilename <- function(isa, assay.filename){
+  j <- which( lapply(isa["assay.filenames.per.study"], function(x)  (assay.filename %in% x)) == TRUE)
+ return(isa@study.filenames[[j]])
+}
+
+getStudyFilenameIndex <- function(isa, assay.filename){
+  j <- which( lapply(isa["assay.filenames.per.study"], function(x)  (assay.filename %in% x)) == TRUE)
+  return(j)
+}
+
 #AnnnotatedDataFrame - previous phenoData object
 getAnnotatedDataFrameAssay <- function(isa, assay.filename)
 {

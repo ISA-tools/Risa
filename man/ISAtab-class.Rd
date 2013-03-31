@@ -43,6 +43,7 @@ Objects can be created by calls of the form \code{new("ISATab", ...)}.
     \item{\code{factors}:}{Object of class \code{"list"}, which contains R 'factor' objects for each of the studies (with factor names and factor levels).}
     \item{\code{treatments}:}{Object of class \code{"list"} of data frames with the combination of factor values, per study file, or a factor object, if there is a single study }
     \item{\code{groups}:}{Object of class \code{"list"}, with one element per study file, and each element is a list of the samples for the corresponding treatment }
+    \item{\code{assay.tabs}:}{Object of class \code{"list"}, where each element is an object of the class \code{AssayTab} or its specialisations (\code{MSAssayTab} or \code{MicroarrayAssayTab}), representing the information of each of the assay files in the investigation.}
   }
 }
 \section{Methods}{

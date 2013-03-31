@@ -47,7 +47,7 @@ AssayTab <- setClass("AssayTab",
                      assay.file="data.frame",
                      assay.technology.type="character",
                      assay.measurement.type="character",
-                     assay.names="character",
+                     assay.names="data.frame",
                      data.filenames="data.frame"
                      ))
 

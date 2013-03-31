@@ -455,14 +455,21 @@ setMethod("setAssayTabs",
             atabs <- list()
             
             afiles <- .Object["assay.files"]
+            assay.names <- lapply( afiles, function(i) i[ grep(isatab.syntax$assay.name, colnames(i) ) ]) 
             assay.filenames <- .Object["assay.filenames"]
             assay.tech.types <- .Object["assay.technology.types"]
                              
             assay.meas.types <- .Object["assay.measurement.types"]
             data.filenames <- .Object["data.filenames"]
             
+            study.filenames <- .Object["study.filenames"]
+            study.identifiers <- .Object["study.identifiers"]            
                        
             for(i in seq_len(length(assay.filenames))) {
+              
+              k <- getStudyFilenameIndex(.Object, assay.filenames[[i]])
+              study.filename <- study.filenames[[k]]
+              study.identifier <- study.identifiers[[k]]
                      
               if (class(data.filenames[[i]])!="data.frame")
                 data.filenames[[i]] <- as.data.frame(data.filenames[[i]])
@@ -472,13 +479,13 @@ setMethod("setAssayTabs",
                 
                 atabs[[i]] <- new("MSAssayTab",
                                   path=.Object["path"],
-                                  study.filename="",
-                                  study.identifier="",
+                                  study.filename=study.filename,
+                                  study.identifier=study.identifier,
                                   assay.filename=assay.filenames[[i]],
                                   assay.file=afiles[[i]],
                                   assay.technology.type=assay.tech.types[[i]],
                                   assay.measurement.type=assay.meas.types[[i]],
-                                  assay.names="",
+                                  assay.names=assay.names[[i]],
                                   data.filenames=data.filenames[[i]]
                 )
                 
@@ -489,13 +496,13 @@ setMethod("setAssayTabs",
                 
                 atabs[[i]] <- new("MicroarrayAssayTab",
                                   path=.Object["path"],
-                                  study.filename="",
-                                  study.identifier="",
+                                  study.filename=study.filename,
+                                  study.identifier=study.identifier,
                                   assay.filename=assay.filenames[[i]],
                                   assay.file=afiles[[i]],
                                   assay.technology.type=assay.tech.types[[i]],
                                   assay.measurement.type=assay.meas.types[[i]],
-                                  assay.names="",
+                                  assay.names=assay.names[[i]],
                                   data.filenames=data.filenames[[i]]
                 )
                 
@@ -506,13 +513,13 @@ setMethod("setAssayTabs",
                 
                 atabs[[i]] <- new("AssayTab",
                                   path=.Object["path"],
-                                  study.filename="",
-                                  study.identifier="",
+                                  study.filename=study.filename,
+                                  study.identifier=study.identifier,
                                   assay.filename=assay.filenames[[i]],
                                   assay.file=afiles[[i]],
                                   assay.technology.type=assay.tech.types[[i]],
                                   assay.measurement.type=assay.meas.types[[i]],
-                                  assay.names="",
+                                  assay.names=assay.names[[i]],
                                   data.filenames=data.filenames[[i]]                                                    
                 )
                 print(atabs[[i]])              

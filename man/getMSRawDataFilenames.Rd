@@ -1,10 +1,10 @@
-\name{getMSRawDataFilenames}
-\alias{getMSRawDataFilenames}
+\name{getAssayRawDataFilenames}
+\alias{getAssayRawDataFilenames}
 \title{
-Retrieve raw data files for mass spectrometry assays.
+Retrieve raw data files for an assay.
 }
 \description{
-The method \code{getMSRawDataFilenames} retrieves raw data files for mass spectrometry assays, i.e. the files reported in the column 'Raw Spectral Data File' from the assay files.
+The method \code{getAssayRawDataFilenames} retrieves raw data files for mass spectrometry assays, i.e. the files reported in the column 'Raw Spectral Data File' from the assay files.
 }
 \usage{
 getRawDataFiles(isa, full.path=TRUE)
