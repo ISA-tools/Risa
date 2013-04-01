@@ -1,4 +1,3 @@
-
 getMicroarrayAssayFilenames <- function(isa){
   assay.filenames <- isa["assay.filenames"]
   assay.files <- isa["assay.files"]

@@ -8,6 +8,7 @@ export("write.assay.file")
 export("write.study.file")
 export("getAnnotatedDataFrameAssay")
 export("getStudyFilename")
+export("getRawDataFilenames")
 
 export("getAssayRawDataFilenames")
 

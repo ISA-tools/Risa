@@ -6,7 +6,7 @@
 \alias{[<-,ISATab-method}
 \title{Class \code{"ISATab"}, a class for maintaing ISATab information}
 \description{
-  This class maintains informatino from an ISATab dataset, including an investigation file, one or more study files, and one or more assay files for each study file. 
+  This class maintains information from an ISATab dataset, including an investigation file, one or more study files, and one or more assay files for each study file. 
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("ISATab", ...)}.

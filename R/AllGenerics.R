@@ -491,8 +491,7 @@ setMethod("setAssayTabs",
                 
                 
               }else if (assay.tech.types[[i]]=="DNA microarray"){
-                
-                print("DNA microarray")
+                                
                 
                 atabs[[i]] <- new("MicroarrayAssayTab",
                                   path=.Object["path"],
@@ -508,8 +507,7 @@ setMethod("setAssayTabs",
                 
                 
               }else{
-                
-                print("other")
+                                
                 
                 atabs[[i]] <- new("AssayTab",
                                   path=.Object["path"],
@@ -521,8 +519,7 @@ setMethod("setAssayTabs",
                                   assay.measurement.type=assay.meas.types[[i]],
                                   assay.names=assay.names[[i]],
                                   data.filenames=data.filenames[[i]]                                                    
-                )
-                print(atabs[[i]])              
+                )               
                 
               }
               
@@ -536,40 +533,59 @@ setMethod("setAssayTabs",
 
 
 
-# generic method called 'getRawDataFilenames' that
+# generic method called 'getAssayRawDataFilenames' that
 # dispatches on the type of object it's applied to
 setGeneric(
-  "getAssayRawDataFilenames",
-  function(object, full.path=TRUE) {
-    standardGeneric("getAssayRawDataFilenames")
+  "getRawDataFilenames",
+  function(.Object, full.path=TRUE) {
+    standardGeneric("getRawDataFilenames")
   }
 )
 
 setMethod(
+  "getRawDataFilenames",
+  signature(.Object = "ISATab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {    
+    assay.tabs <- .Object["assay.tabs"]    
+    raw.data.filenames <- sapply(assay.tabs, function(x) getAssayRawDataFilenames(x, full.path))
+    return(raw.data.filenames)
+}
+)
+
+# generic method called 'getAssayRawDataFilenames' that
+# dispatches on the type of object it's applied to
+setGeneric(
+    "getAssayRawDataFilenames",
+    function(.Object, full.path) {
+      standardGeneric("getAssayRawDataFilenames")
+    }
+)
+  
+setMethod(
   "getAssayRawDataFilenames",
-  signature("MSAssayTab"),
-  function(object, full.path=TRUE) {
+  signature(.Object = "MSAssayTab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {
     
-    msfiles <- as.list(object["data.filenames"][isatab.syntax$raw.spectral.data.file])
+    msfiles <- as.list(.Object["data.filenames"][isatab.syntax$raw.spectral.data.file])
     if (full.path)
-      msfiles <- sapply(msfiles, function(x) sapply(x, function(y) paste(object["path"], y, sep=.Platform$file.sep)))  
+      msfiles <- sapply(msfiles, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
     return(msfiles)
   }
 )
 
 setMethod(
   "getAssayRawDataFilenames",
-  signature("MicroarrayAssayTab"),
-  function(object, full.path=TRUE) {
+  signature(.Object = "MicroarrayAssayTab", full.path ="logical"),
+  function(.Object, full.path=TRUE) {
     
     #if (!isMicroarrayAssay(isa, assay.filename))
     #  stop("The ", assay.filename, " is not a microarray assay")
     
-    microarray.files <- as.list(object["data.filenames"][isatab.syntax$array.data.file])
+    microarray.files <- as.list(.Object["data.filenames"][isatab.syntax$array.data.file])
     if (full.path)
-      microarray.files <- sapply(microarray.files, function(x) sapply(x, function(y) paste(object["path"], y, sep=.Platform$file.sep)))  
-    return(microarray.files)
-    
+      microarray.files <- sapply(microarray.files, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
+    return(microarray.files) 
   }
 )
+
 
