@@ -471,8 +471,11 @@ setMethod("setAssayTabs",
               study.filename <- study.filenames[[k]]
               study.identifier <- study.identifiers[[k]]
                      
-              if (class(data.filenames[[i]])!="data.frame")
+              if (class(data.filenames[[i]])!="data.frame"){
                 data.filenames[[i]] <- as.data.frame(data.filenames[[i]])
+                index <- grep("Data File", colnames(afiles[[i]]))
+                colnames(data.filenames[[i]]) <- colnames(afiles[[i]])[[index]]
+              }
               
               
               if (assay.tech.types[[i]]=="mass spectrometry"){
@@ -494,6 +497,22 @@ setMethod("setAssayTabs",
                                 
                 
                 atabs[[i]] <- new("MicroarrayAssayTab",
+                                  path=.Object["path"],
+                                  study.filename=study.filename,
+                                  study.identifier=study.identifier,
+                                  assay.filename=assay.filenames[[i]],
+                                  assay.file=afiles[[i]],
+                                  assay.technology.type=assay.tech.types[[i]],
+                                  assay.measurement.type=assay.meas.types[[i]],
+                                  assay.names=assay.names[[i]],
+                                  data.filenames=data.filenames[[i]]
+                )
+                
+                
+              }else if (assay.tech.types[[i]]=="NMR spectroscopy"){
+                
+                
+                atabs[[i]] <- new("NMRAssayTab",
                                   path=.Object["path"],
                                   study.filename=study.filename,
                                   study.identifier=study.identifier,
@@ -588,4 +607,38 @@ setMethod(
   }
 )
 
+setMethod(
+  "getAssayRawDataFilenames",
+  signature(.Object = "SeqAssayTab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {
+    
+    msfiles <- as.list(.Object["data.filenames"][isatab.syntax$raw.data.file])
+    if (full.path)
+      msfiles <- sapply(msfiles, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
+    return(msfiles)
+  }
+)
 
+setMethod(
+  "getAssayRawDataFilenames",
+  signature(.Object = "AssayTab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {
+    
+    raw.files <- as.list(.Object["data.filenames"][isatab.syntax$raw.data.file])
+    if (full.path)
+      msfiles <- sapply(raw.files, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
+    return(msfiles)
+  }
+)
+
+setMethod(
+  "getAssayRawDataFilenames",
+  signature(.Object = "NMRAssayTab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {
+    
+    raw.files <- as.list(.Object["data.filenames"][isatab.syntax$free.induction.decay.data.file])
+    if (full.path)
+      msfiles <- sapply(raw.files, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
+    return(msfiles)
+  }
+)

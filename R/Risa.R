@@ -35,7 +35,9 @@ trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 technology.types <- list(
   microarray="DNA microarray",
   ms="mass spectrometry",
-  fc="flow cytometry"
+  fc="flow cytometry",
+  seq="nucleotide sequencing",
+  nrm="NMR spectroscopy"
   )
 
 readISAtab = function(path = getwd(), zipfile = NULL, verbose = FALSE)

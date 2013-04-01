@@ -64,7 +64,7 @@ MSAssayTab <- setClass("MSAssayTab",
                     validity=validMSAssayTabObject)
 
 validMicroarrayAssayTabObject <- function(object) {
-  if (object@assay.technology.type=="DNA microarray") TRUE
+  if (object@assay.technology.type==technology.types$microarray) TRUE
   else paste("Technology type is not 'DNA microarray' for ", 
              object, sep="")
 }
@@ -74,4 +74,16 @@ MicroarrayAssayTab <- setClass("MicroarrayAssayTab",
                        prototype(assay.technology.type="DNA microarray"),  
                        contains="AssayTab",
                        validity=validMicroarrayAssayTabObject)
+
+SeqAssayTab <- setClass("SeqAssayTab",
+                               representation(),
+                               prototype(assay.technology.type="nucleotide sequencing"),  
+                               contains="AssayTab"
+                               )
+
+NMRAssayTab <- setClass("NMRAssayTab",
+                        representation(),
+                        prototype(assay.technology.type="NMR spectroscopy"),  
+                        contains="AssayTab"
+)
 
