@@ -552,6 +552,9 @@ setMethod("setAssayTabs",
 
 
 
+############################################################################################################
+##### getRawDataFilenames
+############################################################################################################
 # generic method called 'getAssayRawDataFilenames' that
 # dispatches on the type of object it's applied to
 setGeneric(
@@ -570,6 +573,10 @@ setMethod(
     return(raw.data.filenames)
 }
 )
+
+############################################################################################################
+##### getAssayRawDataFilenames
+############################################################################################################
 
 # generic method called 'getAssayRawDataFilenames' that
 # dispatches on the type of object it's applied to
@@ -591,6 +598,7 @@ setMethod(
     return(msfiles)
   }
 )
+
 
 setMethod(
   "getAssayRawDataFilenames",
@@ -642,3 +650,40 @@ setMethod(
     return(msfiles)
   }
 )
+
+############################################################################################################
+##### getAssayFilenames
+############################################################################################################
+
+setGeneric(
+  "getAssayNames",
+  function(.Object, full.path) {
+    standardGeneric("getAssayNames")
+  }
+)
+
+setMethod(
+  "getAssayNames",
+  signature(.Object = "MicroarrayAssayTab", full.path ="logical"),
+  function(.Object, full.path=TRUE) {
+    #  assay.filenames <- isa["assay.filenames"]
+    #  assay.files <- isa["assay.files"]
+    #  microarray.assay.filenames <- assay.filenames[ sapply(assay.files, function(x) isatab.syntax$hybridization.assay.name %in% names(x)) ]
+    #  return(microarray.assay.filenames)
+    
+    assay.filename <- .Object["assay.filename"]
+    assay.file <- .Object["assay.file"]
+    assay.names <- assay.file[ isatab.syntax$hybridization.assay.name]
+}
+)
+
+
+
+#getMicroarrayAssayFilenames <- function(isa){
+#  assay.filenames <- isa["assay.filenames"]
+#  assay.files <- isa["assay.files"]
+#  microarray.assay.filenames <- assay.filenames[ sapply(assay.files, function(x) isatab.syntax$hybridization.assay.name %in% names(x)) ]
+#  return(microarray.assay.filenames)
+#}
+
+

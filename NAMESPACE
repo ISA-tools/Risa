@@ -10,6 +10,7 @@ export("getAnnotatedDataFrameAssay")
 export("getStudyFilename")
 export("getRawDataFilenames")
 
+export("getRawDataFilenames")
 export("getAssayRawDataFilenames")
 
 importFrom("xcms", "xcmsSet")
@@ -19,10 +20,9 @@ export("getMSRawDataFilenames")
 export("getMSAssayFilenames")
 export("isMSAssay")
 
-export("getMicroarrayAssayFilenames")
+#export("getMicroarrayAssayFilenames")
 export("isMicroarrayAssay")
 export("getMIAMEMetadata")
-export("getMicroarrayRawDataFilenames")
 
 export("suggestBiocPackage")
 

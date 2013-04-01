@@ -40,16 +40,6 @@ getMicroarrayRawDataFilenames <- function(isa, full.path = TRUE){
   return(microarray.files)
 }
 
-getMicroarrayRawDataFilenamesAssay <- function(isa, assay.filename, full.path = TRUE){    
-  if (!isMicroarrayAssay(isa, assay.filename))
-    stop("The ", assay.filename, " is not a microarray assay")
-  
-  microarray.files <- isa["data.filenames"][[assay.filename]][isatab.syntax$array.data.file]
-  if (full.path)
-    microarray.files <- sapply(microarray.files, function(x) sapply(x, function(y) paste(isa["path"], y, sep=.Platform$file.sep)))  
-  return(microarray.files)
-}
-
 getMicroarrayDerivedDataFilenames <- function(isa, full.path = TRUE){  
   microarray.assay.filenames <- getMicroarrayAssayFilenames(isa)
   microarray.files <- lapply(isa["data.filenames"][microarray.assay.filenames], function(x) x[isatab.syntax$derived.array.data.file])

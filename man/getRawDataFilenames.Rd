@@ -7,11 +7,11 @@ Retrieves the raw data filenames in the ISATab dataset
 Retrieves the raw data filenames in the ISATab dataset
 }
 \usage{
-getRawDataFilenames(x)
+getRawDataFilenames(.Object, full.path=TRUE)
 }
 \arguments{
-  \item{x}{
-an ISATab object
+  \item{.Object}{ an \code{ISATab-class} object }
+\item{full.path}{a \code{boolean} value indicating if the result should include the full path of the raw data filenames or not. The default value is TRUE.
 }
 }
 %\details{

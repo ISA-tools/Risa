@@ -49,6 +49,7 @@ Objects can be created by calls of the form \code{new("ISATab", ...)}.
 \section{Methods}{
   \describe{
     \item{[}{\code{signature(x = "ISATab")}: ... }
+    \item{getRawDataFilenames}{\code{signature(.Object="ISATab", full.path=TRUE)}: get the raw data filenames for all the assays in the ISATab dataset}
    }
 }
 \references{
