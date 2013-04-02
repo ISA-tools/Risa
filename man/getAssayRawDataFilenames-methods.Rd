@@ -36,4 +36,4 @@ Retrieves the raw data filenames for an assay whose technology type is nucleotid
 }
 }}
 \keyword{methods}
-\keyword{ ~~ other possible keyword(s) ~~ }
+\keyword{raw data filenames}

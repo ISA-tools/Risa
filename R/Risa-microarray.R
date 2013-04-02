@@ -32,14 +32,6 @@ getMIAMEMetadata <- function(isa, assay.filename){
   }
 }
 
-#getMicroarrayRawDataFilenames <- function(isa, full.path = TRUE){  
-#  microarray.assay.filenames <- getMicroarrayAssayFilenames(isa)
-#  microarray.files <- lapply(isa["data.filenames"][microarray.assay.filenames], function(x) x[isatab.syntax$array.data.file])
-#  if (full.path)
-#    microarray.files <- sapply(microarray.files, function(x) sapply(x, function(y) paste(isa["path"], y, sep=.Platform$file.sep)))  
-#  return(microarray.files)
-#}
-
 getMicroarrayDerivedDataFilenames <- function(isa, full.path = TRUE){  
   microarray.assay.filenames <- getMicroarrayAssayFilenames(isa)
   microarray.files <- lapply(isa["data.filenames"][microarray.assay.filenames], function(x) x[isatab.syntax$derived.array.data.file])
@@ -47,7 +39,6 @@ getMicroarrayDerivedDataFilenames <- function(isa, full.path = TRUE){
     microarray.files <- sapply(microarray.files, function(x) sapply(x, function(y) paste(isa["path"], y, sep=.Platform$file.sep)))  
   return(microarray.files)
 }
-
 
 getMicroarrayDerivedDataFilenamesAssay <- function(isa, assay.filename, full.path = TRUE){  
   if (!isMicroarrayAssay(isa, assay.filename))

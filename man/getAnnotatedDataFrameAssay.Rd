@@ -32,7 +32,17 @@ Alejandra Gonzalez-Beltran
 \seealso{
 \code{ISATab-class}
 }
-%\examples{
-%}
+\examples{
+ faahkoISAzip <- system.file("extdata","faahKO-metadata.zip", package="Risa")
+ faahkoISA <- readISAtab(zipfile = faahkoISAzip, path = file.path(system.file("extdata", package="Risa"),"faahkoISA"), verbose =TRUE)
+ faahkoADF <- getAnnotatedDataFrameAssay(faahkoISA, faahkoISA@assay.filenames[[1]])
+ str(faahkoADF)
+ 
+ 
+ armstrongISAzip <- system.file("extdata","ARMSTRONG-S-3-metadata", package="Risa")
+ armstrongISA <- readISAtab(zipfile = armstrongISAzip, path = file.path(system.file("extdata", package="Risa"),"faahkoISA"), verbose =TRUE)
+ armstrongADF <- getAnnotatedDataFrameAssay(armstrongISA, armstrongISA@assay.filenames[[1]])
+ str(armstrongADF)
+}
 %\keyword{ ~kwd1 }
 %\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

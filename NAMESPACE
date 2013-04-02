@@ -16,7 +16,6 @@ export("getAssayRawDataFilenames")
 importFrom("xcms", "xcmsSet")
 export("processAssayXcmsSet")
 export("processAssayXcmsSet.1factor")
-#export("getMSRawDataFilenames")
 export("getMSAssayFilenames")
 export("isMSAssay")
 

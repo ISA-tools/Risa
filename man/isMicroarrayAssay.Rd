@@ -34,7 +34,7 @@ Alejandra Gonzalez-Beltran
 }
 \examples{
 data.dir <- system.file("extdata", package="Risa")
-isazip <- system.file("extdata","ARMSTRONG-S-3.zip", package="Risa")
+isazip <- system.file("extdata","ARMSTRONG-S-3-metadata.zip", package="Risa")
 isa <- readISAtab(zipfile = isazip, path = file.path(data.dir,"ARMSTRONG_ISA"), verbose =TRUE)
     
 assay.filename <- isa@assay.filenames[[1]]

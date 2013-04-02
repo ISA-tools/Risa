@@ -5,8 +5,8 @@
 \alias{getRawDataFilenames}
 \title{ ~~ Methods for Function \code{getRawDataFilenames} in Package \pkg{Risa} ~~}
 \description{
- ~~ Methods for function \code{getRawDataFilenames} in package \pkg{Risa} ~~
-Retrieves the raw data filenames in the ISATab dataset
+ ~~ Methods for function \code{getRawDataFilenames} in package \pkg{Risa} ~~\\
+To retrieve the raw data filenames in the ISATab dataset.
 }
 \section{Methods}{
 \describe{

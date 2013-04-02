@@ -72,9 +72,6 @@ readISAtabFiles = function(path = getwd(), verbose=FALSE)
   return(isaobject) 
 }##end function readISAtabFiles
 
-
-### ADD COMMENT - written with R
-### ADD validation for samples
 updateAssayMetadata = function(isa, assay.filename, col.name, values){  
   assay.file <- isa["assay.files"][[ assay.filename ]]
   if (length(values)==1){
@@ -89,8 +86,6 @@ updateAssayMetadata = function(isa, assay.filename, col.name, values){
   return(isa)
 }
 
-### TODO fix quotes when writing files
-### ADD COMMENT - written with R 
 write.ISAtab = function(isa, path = getwd()){
   write.investigation.file(isa, path)
   for(i in seq_len(length(isa["study.filenames"]))){
@@ -98,8 +93,7 @@ write.ISAtab = function(isa, path = getwd()){
   }
   for(i in seq_len(length(isa["assay.filenames"]))){
     write.assay.file(isa, isa["assay.filenames"][[i]], path)
-  }
-  
+  }  
 }
 
 write.investigation.file = function(isa, path = getwd()){
