@@ -258,13 +258,20 @@ setMethod(
     
     assay.filenames.per.sample <- unlist(lapply(seq_len(length(samples)), 
                                                 function(j) lapply(seq_len(length(afilenames)), 
-                                                                   function(i)   if (samples[[j]] %in% afiles[[i]][[isatab.syntax$sample.name]]) {
-                                                                     afilenames[[i]]
-                                                                   }
+                                                                   function(i)   
+                                                                     if (samples[[j]] %in% afiles[[i]][[isatab.syntax$sample.name]]) {
+                                                                        afilenames[[i]]
+                                                                    }else {
+                                                                      message("The sample ",samples[[j]], " is not listed in the assay file whose filename is ", afilenames[[i]])
+                                                                    }
                                                 )))
         
     
-    .Object["assay.filenames.per.sample"] <- assay.filenames.per.sample
+    if (is.null(assay.filenames.per.sample)){
+     message("assay.filenames.per.sample not assigned") 
+    }else{      
+       .Object["assay.filenames.per.sample"] <- assay.filenames.per.sample
+    }
         
       
     .Object <- setAssayDependentSlots(.Object)
