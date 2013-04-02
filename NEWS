@@ -9,6 +9,9 @@ Changes for 1.1.0
   - the method getRawDataFiles retrieves a list with all the files listed under the column 'Raw Spectral Data File' within the mass spectrometry assays.
   - the method is.ms receives an object from the ISAtab-class and an assay filename as parameter, and retrieves TRUE if the assay filename is a mass spectrometry assay, or FALSE otherwise.
 4. A method called suggestBiocPackage was added, which retrieves a list of packages in Bioconductor that might be relevant to the ISAtab dataset, according to its assays' mesaurement and technology types. This method relies on the BiocViews annotations for each of the packages available in Bioconductor in a specific version.
+5. Added AssayTab-class and subclasses for MS, Microarray, Seq and NMR.
+6. Defined method getAssayRawDataFilenames and getRawDataFilenames
+7. Defined method getExpressionSet for microarray assays relying on affy package.
 
 Changes for 1.0.0
 ------------------

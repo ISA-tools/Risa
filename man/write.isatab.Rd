@@ -19,7 +19,9 @@ write.ISAtab(isa, path = getwd())
 \seealso{ \code{write.investigation.file}, \code{write.study.file}, \code{write.assay.file}, \code{readISAtab} }
 \examples{
     ### Example of writing the study file of faahKO ISA-Tab dataset into the temp director
-    faahkoISA <- readISAtab(system.file("extdata","faahKO-metadata", package="Risa"))
+    data.dir <- system.file("extdata", package="Risa")
+    isazip <- system.file("extdata","faahKO-metadata.zip", package="Risa")
+    faahkoISA <- readISAtab(zipfile = isazip, path = file.path(data.dir,"faahKOISA"), verbose =TRUE)      
     temp = tempdir()
     write.ISAtab(faahkoISA, temp)
 }

@@ -1,15 +1,20 @@
 ## getters
-#' extract slots of ISAtab class
+#' extract slots of ISATab class
 #'
 #' @name [
-#' @aliases [,ISAtab-method
+#' @aliases [,ISATab-method
 #' @docType methods
 #' @rdname extract-methods
-setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
+setMethod(f="[",signature="ISATab", definition=function(x, i,j, drop) {
   if (i=="path") { return(x@path) } else {}
   if (i=="investigation.filename") { return(x@investigation.filename) } else {}
   if (i=="investigation.file") { return(x@investigation.file) } else {}
+  if (i=="investigation.identifier") { return(x@investigation.identifier) } else {}
   if (i=="study.identifiers") { return(x@study.identifiers) } else {}
+  if (i=="study.titles") { return(x@study.titles) } else {}
+  if (i=="study.descriptions") { return(x@study.descriptions) } else {}
+  if (i=="study.contacts") { return(x@study.contacts) } else {}
+  if (i=="study.contacts.affiliations") { return(x@study.contacts.affiliations) } else {}
   if (i=="study.filenames") { return(x@study.filenames) } else {}
   if (i=="study.files") { return(x@study.files) } else {}   
   if (i=="assay.filenames") { return(x@assay.filenames) } else {}
@@ -31,19 +36,25 @@ setMethod(f="[",signature="ISAtab", definition=function(x, i,j, drop) {
   if (i=="factors") { return(x@factors) } else {}
   if (i=="treatments") { return(x@treatments) } else {}
   if (i=="groups") { return(x@groups) } else {}
+  if (i=="assay.tabs") { return(x@assay.tabs) } else {}
 }
 ) 
 
 ## setter methods
 #' @name [
-#' @aliases [<-,ISAtab-method
+#' @aliases [<-,ISATab-method
 #' @docType methods
 #' @rdname extract-methods
-setReplaceMethod(f="[",signature="ISAtab", definition=function(x,i,j,value){
+setReplaceMethod(f="[",signature="ISATab", definition=function(x,i,j,value){
   if (i=="path") { x@path<-value } else {}
   if (i=="investigation.filename") { x@investigation.filename<-value } else {}
   if (i=="investigation.file") { x@investigation.file<-value } else {}
+  if (i=="investigation.identifier") { x@investigation.identifier<-value } else {}
   if (i=="study.identifiers") { x@study.identifiers<-value } else {}
+  if (i=="study.titles") { x@study.titles<-value } else {}
+  if (i=="study.descriptions") { x@study.descriptions<-value } else {}  
+  if (i=="study.contacts") { x@study.contacts<-value } else {}
+  if (i=="study.contacts.affiliations") { x@study.contacts.affiliations<-value } else {}
   if (i=="study.filenames") { x@study.filenames<-value } else {}
   if (i=="study.files") { x@study.files<-value } else {}   
   if (i=="assay.filenames") { x@assay.filenames<-value } else {}
@@ -65,13 +76,40 @@ setReplaceMethod(f="[",signature="ISAtab", definition=function(x,i,j,value){
   if (i=="factors") { x@factors<-value } else {} 
   if (i=="treatments") { x@treatments<-value } else {} 
   if (i=="groups") { x@groups<-value } else {} 
+  if (i=="assay.tabs") { x@assay.tabs<-value } else {} 
   return (x)
   }
 )
 
+
+## getters
+#' extract slots of AssayTab class
+#'
+#' @name [
+#' @aliases [,AssayTab-method
+#' @docType methods
+#' @rdname extract-methods
+setMethod(f="[",signature="AssayTab", definition=function(x, i,j, drop) {
+  if (i=="path") { return(x@path) } else {}
+  if (i=="data.filenames") { return(x@data.filenames) } else {}
+}
+) 
+
+## setter methods
+#' @name [
+#' @aliases [<-,AssayTab-method
+#' @docType methods
+#' @rdname extract-methods
+setReplaceMethod(f="[",signature="AssayTab", definition=function(x,i,j,value){
+  if (i=="path") { x@path<-value } else {}
+  if (i=="data.filenames") { x@data.filenames<-value } else {}
+}
+)
+
+
 setMethod(
   f="initialize",
-  signature="ISAtab",
+  signature="ISATab",
   definition=function(.Object,path){
     
     # Assignment of the slots
@@ -93,11 +131,33 @@ setMethod(
     ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE, na.strings = "NA")
     
     .Object["investigation.file"] <- ifile
+    
+    iidentifier <- as.character(ifile[grep(isatab.syntax$investigation.identifier, ifile[,1], useBytes=TRUE),][2][[1]])
+    
+    .Object["investigation.identifier"] <- iidentifier
         
     ## Study Identifiers  - as a list of strings
     sidentifiers = ifile[grep(isatab.syntax$study.identifier, ifile[,1], useBytes=TRUE),][2][[1]]
     
-    .Object["study.identifiers"] <- sidentifiers
+    .Object["study.identifiers"] <- as.character(sidentifiers)
+    
+    stitles = ifile[grep(isatab.syntax$study.title, ifile[,1], useBytes=TRUE),][2][[1]]
+    
+    .Object["study.titles"] <- as.character(stitles)
+    
+    sdescriptions = ifile[grep(isatab.syntax$study.description, ifile[,1], useBytes=TRUE),][2][[1]]
+    
+    .Object["study.descriptions"] <- as.character(sdescriptions)
+    
+    spersonfirstnames <- trim(as.character(ifile[grep(isatab.syntax$study.person.first.name, ifile[,1], useBytes=TRUE),][2][[1]]))
+    spersonlastnames <- trim(as.character(ifile[grep(isatab.syntax$study.person.last.name, ifile[,1], useBytes=TRUE),][2][[1]]))
+    spersonmidinitials <- trim(as.character(ifile[grep(isatab.syntax$study.person.mid.initial, ifile[,1], useBytes=TRUE),][2][[1]]))
+    
+    .Object["study.contacts"] <- apply(cbind(spersonfirstnames, spersonmidinitials, spersonlastnames), 1, paste, collapse=" " )
+   
+    spersonaffiliations <- trim(as.character(ifile[grep(isatab.syntax$study.person.affiliation, ifile[,1], useBytes=TRUE),][2][[1]]))
+    
+    .Object["study.contacts.affiliations"] <- spersonaffiliations
     
     ## Study filenames (one or more)
     sfilenames = unlist(sapply(ifile[grep(isatab.syntax$study.file.name, ifile[,1], useBytes=TRUE),], function(i) grep(isatab.syntax$study.prefix, i, value=TRUE, useBytes=TRUE)))
@@ -163,7 +223,7 @@ setMethod(
     
     ## Validate number of assay technology types == number of afiles
     if (length(assay.tech.types)!=length(afiles)){
-      stop("The number of assay files mismatches the number of assay types")
+      message("The number of assay files mismatches the number of assay types")
     }    
     .Object["assay.technology.types"] <- assay.tech.types
         
@@ -198,14 +258,22 @@ setMethod(
     
     assay.filenames.per.sample <- unlist(lapply(seq_len(length(samples)), 
                                                 function(j) lapply(seq_len(length(afilenames)), 
-                                                                   function(i)   if (samples[[j]] %in% afiles[[i]][[isatab.syntax$sample.name]]) {
-                                                                     afilenames[[i]]
-                                                                   }
+                                                                   function(i)   
+                                                                     if (samples[[j]] %in% afiles[[i]][[isatab.syntax$sample.name]]) {
+                                                                        afilenames[[i]]
+                                                                    }else {
+                                                                      message("The sample ",samples[[j]], " is not listed in the assay file whose filename is ", afilenames[[i]])
+                                                                    }
                                                 )))
         
     
-    .Object["assay.filenames.per.sample"] <- assay.filenames.per.sample
-   
+    if (is.null(assay.filenames.per.sample)){
+     message("assay.filenames.per.sample not assigned") 
+    }else{      
+       .Object["assay.filenames.per.sample"] <- assay.filenames.per.sample
+    }
+        
+      
     .Object <- setAssayDependentSlots(.Object)
     
     .Object <- setFactors(.Object)
@@ -214,13 +282,17 @@ setMethod(
     
     .Object <- setGroups(.Object)
     
+    .Object <- setAssayTabs(.Object)
+    
     return(.Object) 
     }
   )
 
+
+
 setGeneric("setAssayFile",function(.Object,assay.filename,assay.file){standardGeneric("setAssayFile")})
 setMethod("setAssayFile",
-          signature(.Object = "ISAtab", assay.filename = "character", assay.file = "data.frame"),
+          signature(.Object = "ISATab", assay.filename = "character", assay.file = "data.frame"),
           function (.Object, assay.filename, assay.file) 
           {
             .Object["assay.files"][[assay.filename]] <- assay.file
@@ -231,7 +303,7 @@ setMethod("setAssayFile",
 
 setGeneric("setAssayDependentSlots",function(.Object){standardGeneric("setAssayDependentSlots")})
 setMethod("setAssayDependentSlots",
-          signature(.Object = "ISAtab"),
+          signature(.Object = "ISATab"),
           function (.Object) 
           { 
             afiles <- .Object["assay.files"]
@@ -288,7 +360,7 @@ setMethod("setAssayDependentSlots",
 
 setGeneric("setFactors",function(.Object){standardGeneric("setFactors")})
 setMethod("setFactors",
-          signature(.Object = "ISAtab"),
+          signature(.Object = "ISATab"),
           function (.Object) 
           { 
             study.files <- .Object["study.files"]  
@@ -309,7 +381,7 @@ setMethod("setFactors",
 
 setGeneric("setTreatments",function(.Object){standardGeneric("setTreatments")})
 setMethod("setTreatments",
-          signature(.Object = "ISAtab"),
+          signature(.Object = "ISATab"),
           function (.Object) 
           { 
             factors <- .Object["factors"] 
@@ -334,7 +406,7 @@ setMethod("setTreatments",
 
 setGeneric("setGroups",function(.Object){standardGeneric("setGroups")})
 setMethod("setGroups",
-          signature(.Object = "ISAtab"),
+          signature(.Object = "ISATab"),
           function (.Object) 
           {                     
             treatments <- .Object["treatments"]            
@@ -379,3 +451,256 @@ setMethod("setGroups",
             return(.Object)
           }
 )
+
+
+setGeneric("setAssayTabs",function(.Object){standardGeneric("setAssayTabs")})
+setMethod("setAssayTabs",
+          signature(.Object = "ISATab"),
+          function (.Object) 
+          {
+            
+            atabs <- list()
+            
+            afiles <- .Object["assay.files"]
+            assay.names <- lapply( afiles, function(i) i[ grep(isatab.syntax$assay.name, colnames(i) ) ]) 
+            assay.filenames <- .Object["assay.filenames"]
+            assay.tech.types <- .Object["assay.technology.types"]
+                             
+            assay.meas.types <- .Object["assay.measurement.types"]
+            data.filenames <- .Object["data.filenames"]
+            
+            study.filenames <- .Object["study.filenames"]
+            study.identifiers <- .Object["study.identifiers"]            
+                       
+            for(i in seq_len(length(assay.filenames))) {
+              
+              k <- getStudyFilenameIndex(.Object, assay.filenames[[i]])
+              study.filename <- study.filenames[[k]]
+              study.identifier <- study.identifiers[[k]]
+                     
+              if (class(data.filenames[[i]])!="data.frame"){
+                data.filenames[[i]] <- as.data.frame(data.filenames[[i]])
+                index <- grep("Data File", colnames(afiles[[i]]))
+                colnames(data.filenames[[i]]) <- colnames(afiles[[i]])[[index]]
+              }
+              
+              
+              if (assay.tech.types[[i]]=="mass spectrometry"){
+                
+                atabs[[i]] <- new("MSAssayTab",
+                                  path=.Object["path"],
+                                  study.filename=study.filename,
+                                  study.identifier=study.identifier,
+                                  assay.filename=assay.filenames[[i]],
+                                  assay.file=afiles[[i]],
+                                  assay.technology.type=assay.tech.types[[i]],
+                                  assay.measurement.type=assay.meas.types[[i]],
+                                  assay.names=assay.names[[i]],
+                                  data.filenames=data.filenames[[i]]
+                )
+                
+                
+              }else if (assay.tech.types[[i]]=="DNA microarray"){
+                                
+                
+                atabs[[i]] <- new("MicroarrayAssayTab",
+                                  path=.Object["path"],
+                                  study.filename=study.filename,
+                                  study.identifier=study.identifier,
+                                  assay.filename=assay.filenames[[i]],
+                                  assay.file=afiles[[i]],
+                                  assay.technology.type=assay.tech.types[[i]],
+                                  assay.measurement.type=assay.meas.types[[i]],
+                                  assay.names=assay.names[[i]],
+                                  data.filenames=data.filenames[[i]]
+                )
+                
+                
+              }else if (assay.tech.types[[i]]=="NMR spectroscopy"){
+                
+                
+                atabs[[i]] <- new("NMRAssayTab",
+                                  path=.Object["path"],
+                                  study.filename=study.filename,
+                                  study.identifier=study.identifier,
+                                  assay.filename=assay.filenames[[i]],
+                                  assay.file=afiles[[i]],
+                                  assay.technology.type=assay.tech.types[[i]],
+                                  assay.measurement.type=assay.meas.types[[i]],
+                                  assay.names=assay.names[[i]],
+                                  data.filenames=data.filenames[[i]]
+                )
+                
+                
+              }else{
+                                
+                
+                atabs[[i]] <- new("AssayTab",
+                                  path=.Object["path"],
+                                  study.filename=study.filename,
+                                  study.identifier=study.identifier,
+                                  assay.filename=assay.filenames[[i]],
+                                  assay.file=afiles[[i]],
+                                  assay.technology.type=assay.tech.types[[i]],
+                                  assay.measurement.type=assay.meas.types[[i]],
+                                  assay.names=assay.names[[i]],
+                                  data.filenames=data.filenames[[i]]                                                    
+                )               
+                
+              }
+              
+            } #for
+            
+            .Object["assay.tabs"] <- atabs
+            
+            return(.Object)
+          }
+)
+
+
+
+############################################################################################################
+##### getRawDataFilenames
+############################################################################################################
+# generic method called 'getAssayRawDataFilenames' that
+# dispatches on the type of object it's applied to
+setGeneric(
+  "getRawDataFilenames",
+  function(.Object, full.path=TRUE) {
+    standardGeneric("getRawDataFilenames")
+  }
+)
+
+setMethod(
+  "getRawDataFilenames",
+  signature(.Object = "ISATab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {    
+    assay.tabs <- .Object["assay.tabs"]    
+    raw.data.filenames <- sapply(assay.tabs, function(x) getAssayRawDataFilenames(x, full.path))
+    return(raw.data.filenames)
+}
+)
+
+############################################################################################################
+##### getAssayRawDataFilenames
+############################################################################################################
+
+# generic method called 'getAssayRawDataFilenames' that
+# dispatches on the type of object it's applied to
+setGeneric(
+    "getAssayRawDataFilenames",
+    function(.Object, full.path) {
+      standardGeneric("getAssayRawDataFilenames")
+    }
+)
+  
+setMethod(
+  "getAssayRawDataFilenames",
+  signature(.Object = "MSAssayTab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {
+    
+    msfiles <- as.list(.Object["data.filenames"][isatab.syntax$raw.spectral.data.file])
+    if (full.path)
+      msfiles <- sapply(msfiles, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
+    return(msfiles)
+  }
+)
+
+
+setMethod(
+  "getAssayRawDataFilenames",
+  signature(.Object = "MicroarrayAssayTab", full.path ="logical"),
+  function(.Object, full.path=TRUE) {
+    
+    #if (!isMicroarrayAssay(isa, assay.filename))
+    #  stop("The ", assay.filename, " is not a microarray assay")
+    
+    microarray.files <- as.list(.Object["data.filenames"][isatab.syntax$array.data.file])
+    if (full.path)
+      microarray.files <- sapply(microarray.files, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
+    return(microarray.files) 
+  }
+)
+
+setMethod(
+  "getAssayRawDataFilenames",
+  signature(.Object = "SeqAssayTab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {
+    
+    msfiles <- as.list(.Object["data.filenames"][isatab.syntax$raw.data.file])
+    if (full.path)
+      msfiles <- sapply(msfiles, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
+    return(msfiles)
+  }
+)
+
+setMethod(
+  "getAssayRawDataFilenames",
+  signature(.Object = "AssayTab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {
+    
+    raw.files <- as.list(.Object["data.filenames"][isatab.syntax$raw.data.file])
+    if (full.path)
+      msfiles <- sapply(raw.files, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
+    return(msfiles)
+  }
+)
+
+setMethod(
+  "getAssayRawDataFilenames",
+  signature(.Object = "NMRAssayTab", full.path = "logical"),
+  function(.Object, full.path=TRUE) {
+    
+    raw.files <- as.list(.Object["data.filenames"][isatab.syntax$free.induction.decay.data.file])
+    if (full.path)
+      msfiles <- sapply(raw.files, function(x) sapply(x, function(y) paste(.Object["path"], y, sep=.Platform$file.sep)))  
+    return(msfiles)
+  }
+)
+
+############################################################################################################
+##### getAssayFilenames
+############################################################################################################
+
+setGeneric(
+  "getAssayNames",
+  function(.Object, full.path) {
+    standardGeneric("getAssayNames")
+  }
+)
+
+setMethod(
+  "getAssayNames",
+  signature(.Object = "MicroarrayAssayTab", full.path ="logical"),
+  function(.Object, full.path=TRUE) {
+    #  assay.filenames <- isa["assay.filenames"]
+    #  assay.files <- isa["assay.files"]
+    #  microarray.assay.filenames <- assay.filenames[ sapply(assay.files, function(x) isatab.syntax$hybridization.assay.name %in% names(x)) ]
+    #  return(microarray.assay.filenames)
+    
+    assay.filename <- .Object["assay.filename"]
+    assay.file <- .Object["assay.file"]
+    assay.names <- assay.file[ isatab.syntax$hybridization.assay.name]
+}
+)
+
+
+
+#getMicroarrayAssayFilenames <- function(isa){
+#  assay.filenames <- isa["assay.filenames"]
+#  assay.files <- isa["assay.files"]
+#  microarray.assay.filenames <- assay.filenames[ sapply(assay.files, function(x) isatab.syntax$hybridization.assay.name %in% names(x)) ]
+#  return(microarray.assay.filenames)
+#}
+
+############################################################################################################
+##### getDerivedDataFilenames
+############################################################################################################
+
+setGeneric(
+  "getDerivedDataFilenames",
+  function(.Object, full.path) {
+    standardGeneric("getDerivedDataFilenames")
+  }
+)
+

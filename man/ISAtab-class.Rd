@@ -1,22 +1,27 @@
-\name{ISAtab-class}
+\name{ISATab-class}
 \Rdversion{1.1}
 \docType{class}
-\alias{ISAtab-class}
-\alias{[,ISAtab-method}
-\alias{[<-,ISAtab-method}
-\title{Class \code{"ISAtab"}, a class for maintaing ISAtab information}
+\alias{ISATab-class}
+\alias{[,ISATab-method}
+\alias{[<-,ISATab-method}
+\title{Class \code{"ISATab"}, a class for maintaing ISATab information}
 \description{
-  This class maintains informatino from an ISAtab dataset, including an investigation file, one or more study files, and one or more assay files for each study file. 
+  This class maintains information from an ISATab dataset, including an investigation file, one or more study files, and one or more assay files for each study file. 
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("ISAtab", ...)}.
+Objects can be created by calls of the form \code{new("ISATab", ...)}.
 }
 \section{Slots}{
   \describe{
     \item{\code{path}:}{Object of class \code{"character"}, it represents the path of the ISA-Tab dataset }
     \item{\code{investigation.filename}:}{Object of class \code{"character"}, it represents the name of the Investigation file }
     \item{\code{investigation.file}:}{Object of class \code{"data.frame"}, it is a data frame with the contents of the Investigation file }
-    \item{\code{study.identifiers}:}{Object of class \code{"factor"}, it is the list of study identifiers }
+       \item{\code{investigation.identifier}:}{Object of class \code{"character"}, it is a string with the identifier for the investigation}
+    \item{\code{study.identifiers}:}{Object of class \code{"character"}, it is the list of study identifiers }
+    \item{\code{study.titles}:}{Object of class \code{"character"}, it is the list of study titles }
+    \item{\code{study.descriptions}:}{Object of class \code{"character"}, it is the list of study descriptions }
+    \item{\code{study.contacts}:}{Object of class \code{"character"}, it is the list of study contacts }
+    \item{\code{study.contacts.affiliations}:}{Object of class \code{"character"}, it is the list of affiliations of the study contacts }
     \item{\code{study.filenames}:}{Object of class \code{"character"}, the names of the study files }
     \item{\code{study.files}:}{Object of class \code{"list"}, a list of data frames wiht the contents of the study files }
     \item{\code{assay.filenames}:}{Object of class \code{"character"}, the names of the assay files }
@@ -38,11 +43,13 @@ Objects can be created by calls of the form \code{new("ISAtab", ...)}.
     \item{\code{factors}:}{Object of class \code{"list"}, which contains R 'factor' objects for each of the studies (with factor names and factor levels).}
     \item{\code{treatments}:}{Object of class \code{"list"} of data frames with the combination of factor values, per study file, or a factor object, if there is a single study }
     \item{\code{groups}:}{Object of class \code{"list"}, with one element per study file, and each element is a list of the samples for the corresponding treatment }
+    \item{\code{assay.tabs}:}{Object of class \code{"list"}, where each element is an object of the class \code{AssayTab} or its specialisations (\code{MSAssayTab} or \code{MicroarrayAssayTab}), representing the information of each of the assay files in the investigation.}
   }
 }
 \section{Methods}{
   \describe{
-    \item{[}{\code{signature(x = "ISAtab")}: ... }
+    \item{[}{\code{signature(x = "ISATab")}: ... }
+    \item{getRawDataFilenames}{\code{signature(.Object="ISATab", full.path=TRUE)}: get the raw data filenames for all the assays in the ISATab dataset}
    }
 }
 \references{
@@ -55,9 +62,9 @@ Alejandra Gonzalez-Beltran, \email{isatools@googlegroups.com}
 No notes yet.
 }
 \seealso{
-\code{ISAtab-methods}
+\code{ISATab-methods}
 }
 \examples{
-showClass("ISAtab")
+showClass("ISATab")
 }
 \keyword{classes}
