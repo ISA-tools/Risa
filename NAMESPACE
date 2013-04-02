@@ -1,4 +1,4 @@
-exportClass("ISAtab")
+exportClass("ISATab")
 
 export("readISAtab")
 export("updateAssayMetadata")
@@ -6,13 +6,23 @@ export("write.ISAtab")
 export("write.investigation.file")
 export("write.assay.file")
 export("write.study.file")
+export("getAnnotatedDataFrameAssay")
+export("getStudyFilename")
+export("getRawDataFilenames")
+
+export("getRawDataFilenames")
+export("getAssayRawDataFilenames")
 
 importFrom("xcms", "xcmsSet")
 export("processAssayXcmsSet")
 export("processAssayXcmsSet.1factor")
-export("getRawDataFiles")
 export("getMSAssayFilenames")
-export("is.ms")
+export("isMSAssay")
+
+export("getMicroarrayAssayFilenames")
+export("isMicroarrayAssay")
+export("getMIAMEMetadata")
+export("getExpressionSet")
 
 export("suggestBiocPackage")
 
