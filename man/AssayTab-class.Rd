@@ -4,6 +4,10 @@
 \alias{AssayTab-class}
 \alias{[,AssayTab-method}
 \alias{[<-,AssayTab-method}
+\alias{MSAssayTab-class}
+\alias{MicroarrayAssayTab-class}
+\alias{SeqAssayTab}
+\alias{NMRAssayTab}
 \title{Class \code{"AssayTab"}, a class for maintaing the information of AssayTab}
 \description{
   This class maintains information from an AssayTab dataset, including an investigation file, one or more study files, and one or more assay files for each study file. 
@@ -27,6 +31,7 @@ Objects can be created by calls of the form \code{new("AssayTab", ...)}.
 \section{Methods}{
   \describe{
     \item{[}{\code{signature(x = "AssayTab")}: ... }
+    \item{getAssayRawDataFilenames}{\code{signature(.Object = "AssayTab", full.path="logical")}: returns the raw data filenames for this assay}
    }
 }
 %\references{
@@ -38,9 +43,13 @@ Alejandra Gonzalez-Beltran, \email{isatools@googlegroups.com}
 %No notes yet.
 %}
 \seealso{
-\code{ISATab-class},\code{ISATab-methods}
+\code{ISATab-class},\code{ISATab-methods}, 
 }
 \examples{
 showClass("AssayTab")
+showClass("MSAssayTab")
+showClass("MicroarrayAssayTab")
+showClass("SeqAssayTab")
+showClass("NMRAssayTab")
 }
 \keyword{classes}

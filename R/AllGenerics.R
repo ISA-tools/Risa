@@ -686,4 +686,14 @@ setMethod(
 #  return(microarray.assay.filenames)
 #}
 
+############################################################################################################
+##### getDerivedDataFilenames
+############################################################################################################
+
+setGeneric(
+  "getDerivedDataFilenames",
+  function(.Object, full.path) {
+    standardGeneric("getDerivedDataFilenames")
+  }
+)
 

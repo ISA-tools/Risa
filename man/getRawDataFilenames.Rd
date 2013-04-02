@@ -1,4 +1,5 @@
 \name{getRawDataFilenames}
+\docType{methods}
 \alias{getRawDataFilenames}
 \title{
 Retrieves the raw data filenames in the ISATab dataset

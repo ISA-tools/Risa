@@ -32,13 +32,13 @@ getMIAMEMetadata <- function(isa, assay.filename){
   }
 }
 
-getMicroarrayRawDataFilenames <- function(isa, full.path = TRUE){  
-  microarray.assay.filenames <- getMicroarrayAssayFilenames(isa)
-  microarray.files <- lapply(isa["data.filenames"][microarray.assay.filenames], function(x) x[isatab.syntax$array.data.file])
-  if (full.path)
-    microarray.files <- sapply(microarray.files, function(x) sapply(x, function(y) paste(isa["path"], y, sep=.Platform$file.sep)))  
-  return(microarray.files)
-}
+#getMicroarrayRawDataFilenames <- function(isa, full.path = TRUE){  
+#  microarray.assay.filenames <- getMicroarrayAssayFilenames(isa)
+#  microarray.files <- lapply(isa["data.filenames"][microarray.assay.filenames], function(x) x[isatab.syntax$array.data.file])
+#  if (full.path)
+#    microarray.files <- sapply(microarray.files, function(x) sapply(x, function(y) paste(isa["path"], y, sep=.Platform$file.sep)))  
+#  return(microarray.files)
+#}
 
 getMicroarrayDerivedDataFilenames <- function(isa, full.path = TRUE){  
   microarray.assay.filenames <- getMicroarrayAssayFilenames(isa)
@@ -71,7 +71,9 @@ getExpressionSet <- function(isa, assay.filename){
   
   miame <- getMIAMEMetadata(isa, assay.filename)
   
-  cel.files <- getMicroarrayRawDataFilenamesAssay(isa, assay.filename, full.path=FALSE)
+  i <- which(names(isa["assay.files"])==assay.filename)
+  
+  cel.files <- getAssayRawDataFilenames(isa@assay.tabs[[i]], full.path=FALSE)
   
   fnames <- as.vector(cel.files[[1]])
   
