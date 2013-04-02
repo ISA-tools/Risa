@@ -30,7 +30,7 @@ Alejandra Gonzalez-Beltran
 %\note{
 %}
 \seealso{
-\code{ISATab-class}
+\code{ISATab-class}, \code{AnnotatedDataFrame}
 }
 \examples{
  faahkoISAzip <- system.file("extdata","faahKO-metadata.zip", package="Risa")
@@ -39,8 +39,8 @@ Alejandra Gonzalez-Beltran
  str(faahkoADF)
  
  
- armstrongISAzip <- system.file("extdata","ARMSTRONG-S-3-metadata", package="Risa")
- armstrongISA <- readISAtab(zipfile = armstrongISAzip, path = file.path(system.file("extdata", package="Risa"),"faahkoISA"), verbose =TRUE)
+ armstrongISAzip <- system.file("extdata","ARMSTRONG-S-3-metadata.zip", package="Risa")
+ armstrongISA <- readISAtab(zipfile = armstrongISAzip, path = file.path(system.file("extdata", package="Risa"),"armstrongISA"), verbose =TRUE)
  armstrongADF <- getAnnotatedDataFrameAssay(armstrongISA, armstrongISA@assay.filenames[[1]])
  str(armstrongADF)
 }
