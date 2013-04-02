@@ -22,6 +22,7 @@ export("isMSAssay")
 export("getMicroarrayAssayFilenames")
 export("isMicroarrayAssay")
 export("getMIAMEMetadata")
+export("getExpressionSet")
 
 export("suggestBiocPackage")
 

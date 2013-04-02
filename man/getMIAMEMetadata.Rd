@@ -35,11 +35,11 @@ Alejandra Gonzalez-Beltran
 \code{isMicroarrayAssay}
 }
 \examples{
-data.dir <- system.file("extdata", package="Risa")
-isa <- readISAtab(file.path(data.dir, "ARMSTRONG-S-3"))
-assay.filename <- isa@assay.filenames[[1]]
-miame <- getMIAMEMetadata(isa, assay.filename)
-str(miame)
+ armstrongISAzip <- system.file("extdata","ARMSTRONG-S-3-metadata.zip", package="Risa")
+ armstrongISA <- readISAtab(zipfile = armstrongISAzip, path = file.path(system.file("extdata", package="Risa"),"armstrongISA"), verbose =TRUE)
+ assay.filename <- armstrongISA@assay.filenames[[1]]
+ miame <- getMIAMEMetadata(armstrongISA, assay.filename)
+ str(miame)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
