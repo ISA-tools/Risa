@@ -1,5 +1,6 @@
 \name{getAssayRawDataFilenames-methods}
 \docType{methods}
+\alias{getAssayRawDataFilenames}
 \alias{getAssayRawDataFilenames-methods}
 \alias{getAssayRawDataFilenames,AssayTab,logical-method}
 \alias{getAssayRawDataFilenames,MicroarrayAssayTab,logical-method}
