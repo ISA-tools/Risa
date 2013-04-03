@@ -32,9 +32,9 @@ Alejandra Gonzalez-Beltran
 \code{isMicroarrayAssay}
 }
 \examples{
-data.dir <- system.file("extdata", package="Risa")
-isa <- readISAtab(file.path(data.dir, "ARMSTRONG-S-3"))
-getMicroarrayAssayFilenames(isa)
+armstrongISAzip <- system.file("extdata","ARMSTRONG-S-3-metadata.zip", package="Risa")
+armstrongISA <- readISAtab(zipfile = armstrongISAzip, path = file.path(system.file("extdata", package="Risa"),"armstrongISA"), verbose =TRUE)
+getMicroarrayAssayFilenames(armstrongISA)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
