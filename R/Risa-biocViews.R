@@ -41,11 +41,15 @@ suggestBiocPackage <- function(isa, bioc.version = bioconductor.version ){
   
   assay.measurement.types <- isa["assay.measurement.types"]
   
-  measurement.types.views <- mapping[["BiocViews"]][ mapping[["ISA.measurement.type"]] == assay.measurement.types ]
+  matching.measurement.types <- mapping[["ISA.measurement.type"]] == assay.measurement.types
+  
+  measurement.types.views <- mapping[["BiocViews"]][ matching.measurement.types ]
   
   assay.technology.types <- isa["assay.technology.types"]
   
-  technology.types.views <- mapping[["BiocViews"]][ mapping[["ISA.technology.type"]] == assay.technology.types ]
+  reduced.mapping <- mapping[which(matching.measurement.types),]
+  
+  technology.types.views <- reduced.mapping[["BiocViews.1"]][   reduced.mapping[["ISA.technology.type"]] == assay.technology.types ]
   
   views <- setdiff(union(technology.types.views, measurement.types.views),"")
   
