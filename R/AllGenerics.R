@@ -371,7 +371,8 @@ setMethod("setFactors",
                 factors.list[[i]] <- lapply(factor.values, factor)  
               }else{
                 study.filenames <- .Object["study.filenames"]
-                message("No 'Factor Value' column defined in study file ",study.filenames[[i]], ". Factors slot will be an empty list")
+                factors.list[[i]] <- list()                
+                message("No 'Factor Value' column defined in study file ",study.filenames[[i]], ". Factors slot will be an empty list for that study.")
               }
             }           
             .Object["factors"] <- factors.list
