@@ -240,7 +240,7 @@ setMethod(
                     function(j) (lapply(seq_len(length(afiles)), 
                                         function(i) sfiles[[j]]$Sample.Name %in% afiles[[i]]$Sample.Name)))
         
-    samples = unlist(lapply(sfiles, function(i) i[,grep(isatab.syntax$sample.name, colnames(i))]))
+    samples = unique(unlist(lapply(sfiles, function(i) i[,grep(isatab.syntax$sample.name, colnames(i))])))
     
     .Object["samples"] <- samples
     
@@ -255,17 +255,18 @@ setMethod(
     names(samples.per.study) <- sidentifiers
     
     .Object["samples.per.study"] <- samples.per.study
+      
+    assay.filenames.per.sample <- list()
+    for (k in seq_len(length(samples))){
+      for (j in seq_len(length(afilenames))){
+        if (samples[[k]] %in% afiles[[j]][[isatab.syntax$sample.name]]) {
+          if (length(assay.filenames.per.sample) < k)
+            assay.filenames.per.sample[[k]] <- list()
+          assay.filenames.per.sample[[k]] <- c(assay.filenames.per.sample[[k]],afilenames[[j]])
+        }
+      }     
+    }                                                                                                                                                                                                                               
     
-    assay.filenames.per.sample <- unlist(lapply(seq_len(length(samples)), 
-                                                function(j) lapply(seq_len(length(afilenames)), 
-                                                                   function(i)   
-                                                                     if (samples[[j]] %in% afiles[[i]][[isatab.syntax$sample.name]]) {
-                                                                        afilenames[[i]]
-                                                                    }else {
-                                                                      message("The sample ",samples[[j]], " is not listed in the assay file whose filename is ", afilenames[[i]])
-                                                                    }
-                                                )))
-        
     
     if (is.null(assay.filenames.per.sample)){
      message("assay.filenames.per.sample not assigned") 
