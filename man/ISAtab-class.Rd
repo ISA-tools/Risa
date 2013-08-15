@@ -35,7 +35,7 @@ Objects can be created by calls of the form \code{new("ISATab", ...)}.
     \item{\code{samples}:}{Object of class \code{"character"} }
     \item{\code{samples.per.study}:}{Object of class \code{"list"}, }
     \item{\code{samples.per.assay.filename}:}{Object of class \code{"list"},the samples classified according to the assay filename they belong to }
-    \item{\code{assay.filenames.per.sample}:}{Object of class \code{"character"}, the names of the assay files classified per sample name }
+    \item{\code{assay.filenames.per.sample}:}{Object of class \code{"list"}, where each element is a list of assay file names per each sample name }
     \item{\code{sample.to.rawdatafile}:}{Object of class \code{"list"}, a list of data frames with samples associated with raw data files}
     \item{\code{sample.to.assayname}:}{Object of class \code{"list"}, maintains the association between samples and assay names }
     \item{\code{rawdatafile.to.sample}:}{Object of class \code{"list"}, mantains the association raw data file and samples }
