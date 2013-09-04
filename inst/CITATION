@@ -1,0 +1,16 @@
+citHeader("To cite the Risa package in publications use:")
+
+citEntry(entry="article",  
+   author=c(
+   person("Alejandra", "Gonz\\'{a}lez-Beltr\\'{a}n"), person("Steffen", "Neumann"), person("Eamonn","Maguire"),
+   person("Philippe","Rocca-Serra"), person("Susanna-Assunta","Sansone")),
+   title="{T}he {R}isa {R}/{B}ioconductor package: integrative data analysis
+  from experimental metadata and back again",
+   journal="BMC Bioinformatics",
+   year="2013 (in Press)",
+   volume="",
+   pages="",
+   url="",
+   textVersion = paste("Gonzalez-Beltran A., Neumann S., Maguire E., Rocca-Serra P., Sansone S.A.",
+                       "The Risa R/Bioconductor package: integrative data analysis from experimental metadata and back again",
+                       "BMC Bioinformatics, 2013, in Press"))
