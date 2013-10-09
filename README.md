@@ -3,7 +3,15 @@
 </p>
 
 
-Risa is an R package that supports parsing, saving and updating ISA-tab datasets. It also builds bridges from the ISA-Tab syntax to analysis pipelines for specific assay types, such as mass spectrometry and DNA microarray assays, by building R objects from the metadata required for other packages downstream, such as xcms and affy, respectively.  The Risa package is available since Bioconductor 2.11 at [http://www.bioconductor.org/packages/release/bioc/html/Risa.html].
+Risa is an R package that is part of the ISA tools suite (http://isa-tools.org). Risa supports parsing, saving and updating ISA-tab datasets. It also builds bridges from the ISA-Tab syntax to analysis pipelines for specific assay types, such as mass spectrometry and DNA microarray assays, by building R objects from the metadata required for other packages downstream, such as xcms and affy, respectively. In addition, Risa includes functionality to suggest packages in BioConductor that might be relevant for the assay types in the ISA-TAB dataset being considered. This recommentation functionality relies on the BioCViews annotations provided by each BioConductor package.
+
+
+
+The Risa package is available in Bioconductor:
+  - [release version](http://www.bioconductor.org/packages/release/bioc/html/Risa.html)
+  - [development version](http://www.bioconductor.org/packages/devel/bioc/html/Risa.html)
+
+For more information about the ISA tools, consider: 
 
 - General info: <http://isa-tools.org>
 - Tools' overview in this short paper: <http://bioinformatics.oxfordjournals.org/content/26/18/2354.full.pdf+html>
