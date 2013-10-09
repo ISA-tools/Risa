@@ -8,8 +8,8 @@ Risa is an R package that is part of the ISA tools suite (http://isa-tools.org).
 
 
 The Risa package is available in Bioconductor:
-  - [release version](http://www.bioconductor.org/packages/release/bioc/html/Risa.html).
-  - [development version](http://www.bioconductor.org/packages/devel/bioc/html/Risa.html).
+  - [release version](http://www.bioconductor.org/packages/release/bioc/html/Risa.html)
+  - [development version](http://www.bioconductor.org/packages/devel/bioc/html/Risa.html)
 
 For more information about the ISA tools, consider: 
 
