@@ -119,7 +119,7 @@ setMethod(
     d = dir(path)
     
     ## Investigation filename
-    ifilename = grep(isatab.syntax$investigation.prefix, d, value=TRUE)
+    ifilename = grep(paste("^", isatab.syntax$investigation.prefix, sep=""), d, value=TRUE)
     if (length(ifilename)==0)
       stop("Did not find any investigation file at folder ", path)
     else if (!file.exists(file.path(path, ifilename)))
