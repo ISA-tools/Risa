@@ -21,6 +21,14 @@ For more information about the ISA tools, consider:
 - IRC: [irc://irc.freenode.net/#isatab](irc://irc.freenode.net/#isatab)
 - [Development blog](http://isatools.wordpress.com) 
 
+### Read the Paper in BMC Bioinformatics!
+Access the Open Access BMC Bioinformatics article on Risa [here](http://www.biomedcentral.com/1471-2105/15/S1/S11).
+
+Alejandra González-Beltrán, Steffen Neumann, Eamonn Maguire, Susanna-Assunta Sansone and Philippe Rocca-Serra.  
+The Risa R/Bioconductor package: integrative data analysis from experimental metadata and back again 
+BMC Bioinformatics 2014, 15(Suppl 1):S11  [doi:10.1186/1471-2105-15-S1-S11](http://dx.doi.org/10.1186/1471-2105-15-S1-S11)
+
+
 ## Development
 
 If you have feature requests or find any issues when using the tracker, please let us know through the issues tracker at [https://github.com/ISA-tools/Risa/issues]. 
