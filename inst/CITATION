@@ -7,10 +7,10 @@ citEntry(entry="article",
    title="{T}he {R}isa {R}/{B}ioconductor package: integrative data analysis
   from experimental metadata and back again",
    journal="BMC Bioinformatics",
-   year="2013 (in Press)",
-   volume="",
-   pages="",
-   url="",
+   year="2014",
+   volume="15",
+   pages="(Suppl 1):S11",
+   url="http://www.biomedcentral.com/1471-2105/15/S1/S11",
    textVersion = paste("Gonzalez-Beltran A., Neumann S., Maguire E., Rocca-Serra P., Sansone S.A.",
                        "The Risa R/Bioconductor package: integrative data analysis from experimental metadata and back again",
-                       "BMC Bioinformatics, 2013, in Press"))
+                       "BMC Bioinformatics, 2014, 15(Suppl 1):S11"))
