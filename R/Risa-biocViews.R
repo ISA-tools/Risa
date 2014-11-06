@@ -1,11 +1,10 @@
-bioconductor.version <- 2.12
+bioconductor.version <- 3.1
 
 getPackagesInBiocView <- function(view, 
                                   reposUrl = c("BiocSoftware", "BiocAnnotationData", "BiocExperimentData"),
                                   biocVersion = bioconductor.version) {
         
-#    suppressPackageStartupMessages(require("biocViews"))
-    data(biocViewsVocab)
+    data("biocViewsVocab")
     
     reposUrl <- match.arg(reposUrl)
     
@@ -24,7 +23,7 @@ getPackagesInBiocView <- function(view,
                  biocPaths, 
                  sep = "/") 
     
-    bv <- getBiocViews(reposUrl, biocViewsVocab, "NoViewProvided")
+    bv <- getBiocViews(reposUrl, get("biocViewsVocab"), "NoViewProvided")
     
     if (!view %in% names(bv)) {
       warning("BiocView ", view, " not found.")
