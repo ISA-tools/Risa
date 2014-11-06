@@ -56,7 +56,7 @@ getExpressionSet <- function(isa, assay.filename){
   if (!isMicroarrayAssay(isa, assay.filename))
     stop("The ", assay.filename, " is not a microarray assay")
 
-  suppressPackageStartupMessages(require("affy"))
+#  suppressPackageStartupMessages(require("affy"))
   
   pd <- getAnnotatedDataFrameAssay(isa, assay.filename)
   

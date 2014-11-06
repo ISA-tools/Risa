@@ -4,7 +4,7 @@ getPackagesInBiocView <- function(view,
                                   reposUrl = c("BiocSoftware", "BiocAnnotationData", "BiocExperimentData"),
                                   biocVersion = bioconductor.version) {
         
-    suppressPackageStartupMessages(require("biocViews"))
+#    suppressPackageStartupMessages(require("biocViews"))
     data(biocViewsVocab)
     
     reposUrl <- match.arg(reposUrl)
