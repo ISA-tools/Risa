@@ -31,7 +31,7 @@ BMC Bioinformatics 2014, 15(Suppl 1):S11  [doi:10.1186/1471-2105-15-S1-S11](http
 
 ## Development
 
-If you have feature requests or find any issues when using the tracker, please let us know through the issues tracker at [https://github.com/ISA-tools/Risa/issues]. 
+If you have feature requests or find any issues when using Risa, please let us know through the issues tracker at [https://github.com/ISA-tools/Risa/issues]. 
 
 ### Contributing
 
