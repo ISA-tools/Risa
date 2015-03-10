@@ -1,3 +1,9 @@
+import("Biobase")
+import("Rcpp")
+import("affy")
+import("biocViews")
+import("methods")
+
 exportClass("ISATab")
 
 export("readISAtab")
