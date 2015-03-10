@@ -130,7 +130,9 @@ setMethod(
     .Object["investigation.filename"] <- ifilename
     
     ## Reading in investigation file into a data frame
-    ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE, na.strings = "NA")
+    number.columns <- max(count.fields(file.path(path, ifilename), sep = "\t", comment.char = "#", quote = "\"'", blank.lines.skip = TRUE), na.rm = TRUE)
+    
+    ifile = read.table(file.path(path, ifilename), sep="\t", fill=TRUE, na.strings = "NA", comment.char = "#", blank.lines.skip = TRUE , col.names = paste0("V",seq_len(number.columns)))
     
     .Object["investigation.file"] <- ifile
     
@@ -181,7 +183,7 @@ setMethod(
     .Object["study.files"] <- sfiles
     
     ## List of assay filenames 
-    #afilenames is a list with all the assay filenames (without association to studies)    
+    #afilenames is a list with all the assay filenames (without association to studies)      
     afilenames = unlist(sapply(ifile[grep(isatab.syntax$study.assay.file.name, ifile[,1], useBytes=TRUE),], function(i) grep(isatab.syntax$assay.prefix, i, value=TRUE, useBytes=TRUE)))    
     
     .Object["assay.filenames"] <- afilenames
