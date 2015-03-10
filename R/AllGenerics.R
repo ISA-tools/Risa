@@ -118,13 +118,15 @@ setMethod(
     #### Parse ISATab files
     d = dir(path)
     
-    ## Investigation filename
-    ifilename = grep(paste("^", isatab.syntax$investigation.prefix, sep=""), d, value=TRUE)
+    ## Investigation filename, and avoid editor autosave-files
+    ifilename = grep(paste("^", Risa:::isatab.syntax$investigation.prefix, ".*[a-zA-Z]$", sep=""), d, value=TRUE, perl=TRUE)
     if (length(ifilename)==0)
       stop("Did not find any investigation file at folder ", path)
+    else if (length(ifilename)>1)
+      stop("Found too many possible investigation files: ", ifilename)
     else if (!file.exists(file.path(path, ifilename)))
       stop("Did not find investigation file: ", ifilename)
-    
+          
     .Object["investigation.filename"] <- ifilename
     
     ## Reading in investigation file into a data frame
@@ -179,8 +181,8 @@ setMethod(
     .Object["study.files"] <- sfiles
     
     ## List of assay filenames 
-    #afilenames is a list with all the assay filenames (without association to studies)
-    afilenames = unlist(sapply(ifile[grep(isatab.syntax$study.assay.file.name, ifile[,1], useBytes=TRUE),], function(i) grep(isatab.syntax$assay.prefix, i, value=TRUE, useBytes=TRUE)))
+    #afilenames is a list with all the assay filenames (without association to studies)    
+    afilenames = unlist(sapply(ifile[grep(isatab.syntax$study.assay.file.name, ifile[,1], useBytes=TRUE),], function(i) grep(isatab.syntax$assay.prefix, i, value=TRUE, useBytes=TRUE)))    
     
     .Object["assay.filenames"] <- afilenames
         
