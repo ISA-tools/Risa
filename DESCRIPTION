@@ -1,5 +1,5 @@
 Package: Risa
-Version: 1.9.0
+Version: 1.9.1
 Date: 2013-08-15
 Title: Converting experimental metadata from ISA-tab into Bioconductor data structures
 Author: Alejandra Gonzalez-Beltran, Audrey Kauffmann, Steffen Neumann, Gabriella Rustici, ISA Team
@@ -18,5 +18,5 @@ Description: The Investigation / Study / Assay (ISA) tab-delimited
    The package is extendable and efforts are undergoing to support metadata associated to proteomics assays.
 License: LGPL
 biocViews: Annotation, DataImport, MassSpectrometry
-URL: <http://isatab.sourceforge.net/>
+URL: <http://www.isa-tools.org/>
 
