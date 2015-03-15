@@ -1,5 +1,16 @@
 NEWS for Risa package
 
+Changes for 1.9.1
+-----------------
+
+1. Added citation information.
+2. The identification of investigation files now avoids editor backup files (ignoring files like  "i_Investigation~")
+3. Fixed issue where the investigation file wasn't fully read, due to the number of columns in higher rows being greater than the first five rows (as used by read.table)
+4. Moved inst/doc to vignettes folder as required since R 3.1.0
+5. Imported packages in Depends
+6. Removed 'library' or 'require' calls to packages already attached by Depends.
+7. Fixed no visible binding for global variable.
+
 Changes for 1.3.3
 -----------------
 
