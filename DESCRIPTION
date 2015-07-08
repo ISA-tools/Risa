@@ -1,5 +1,5 @@
 Package: Risa
-Version: 1.11.0
+Version: 1.11.1
 Date: 2013-08-15
 Title: Converting experimental metadata from ISA-tab into Bioconductor data structures
 Author: Alejandra Gonzalez-Beltran, Audrey Kauffmann, Steffen Neumann, Gabriella Rustici, ISA Team
