@@ -3,7 +3,9 @@
 \docType{class}
 \alias{AssayTab-class}
 \alias{[,AssayTab-method}
+\alias{[,AssayTab,ANY,ANY,ANY-method}
 \alias{[<-,AssayTab-method}
+\alias{[<-,AssayTab,ANY,ANY,ANY-method}
 \alias{MSAssayTab-class}
 \alias{MicroarrayAssayTab-class}
 \alias{SeqAssayTab}

@@ -3,7 +3,9 @@
 \docType{class}
 \alias{ISATab-class}
 \alias{[,ISATab-method}
+\alias{[,ISATab,ANY,ANY,ANY-method}
 \alias{[<-,ISATab-method}
+\alias{[<-,ISATab,ANY,ANY,ANY-method}
 \title{Class \code{"ISATab"}, a class for maintaing ISATab information}
 \description{
   This class maintains information from an ISATab dataset, including an investigation file, one or more study files, and one or more assay files for each study file. 
