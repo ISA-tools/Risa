@@ -5,7 +5,8 @@ check:
 	R CMD check .
 
 install.deps:
-	R -q -e 'source("http://bioconductor.org/biocLite.R") ; biocLite("faahKO")'
+	R -q -e 'install.packages(c("Rcpp"))'
+	R -q -e 'source("http://bioconductor.org/biocLite.R") ; biocLite(c("biocViews", "affy", "xcms", "faahKO"))'
 
 clean:
 	$(RM) -r ..Rcheck
