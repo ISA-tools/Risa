@@ -6,7 +6,6 @@ context('Basic tests.')
 ################################################################
 
 TEST.DIR <- file.path(getwd(), '..')
-OUTPUT.DIR <- file.path(TEST.DIR, 'output')
 RES.DIR  <- file.path(TEST.DIR, 'res')
 
 # Load faahKO ISA {{{1
@@ -43,13 +42,30 @@ test_isa2w4m_faahko <- function() {
 ################################################################
 
 test_isa2w4m_mtbls404 <- function() {
+
+	# Load ISA
 	isa <- readISAtab(file.path(RES.DIR, 'MTBLS404'))
 	testthat::expect_is(isa, "ISATab")
+
+	# Convert to W4M
 	w4m <- isa2w4m(isa)
 	testthat::expect_is(w4m, 'list')
 	testthat::expect_length(w4m, 3)
 	testthat::expect_false(is.null(names(w4m)))
 	testthat::expect_true(all(c('samp', 'var', 'mat') %in% names(w4m)))
+
+	# Load expected outputs
+	samp <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-sample-metadata.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
+	var <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-variable-metadata.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
+	mat <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-sample-variable-matrix.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
+
+	# Convert factors to strings
+	out.var <- data.frame(lapply(w4m$var, function(v) if (is.factor(v)) as.character(v) else v), stringsAsFactors = FALSE)
+
+	# Compare outputs
+	testthat::expect_identical(w4m$samp, samp)
+	testthat::expect_identical(out.var, var)
+	testthat::expect_identical(w4m$mat, mat)
 }
 
 # Main {{{1

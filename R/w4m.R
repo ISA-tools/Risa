@@ -74,7 +74,7 @@
 
 	# Normalize
 	if (normalize) {
-		sample.metadata <- cbind(data.frame(sample.name = make.names(sample.names, uniq = TRUE)), sample.metadata)
+		sample.metadata <- cbind(data.frame(sample.name = make.names(sample.names, uniq = TRUE), stringsAsFactors = FALSE), sample.metadata)
 		colnames(sample.metadata) <- make.names(colnames(sample.metadata), uniq = TRUE)
 	}
 
@@ -129,7 +129,7 @@
 	variable.metadata <- measures$df[ ! colnames(measures$df) %in% sample.names]
 
 	# Add variable names as columns
-	variable.metadata <- cbind(data.frame(variable.name = variable.names), variable.metadata)
+	variable.metadata <- cbind(data.frame(variable.name = variable.names, stringsAsFactors = FALSE), variable.metadata)
 
 	# Normalize
 	if (normalize)
@@ -148,7 +148,7 @@
 	sample.variable.matrix <- measures$df[sample.names]
 
 	# Add variable names as columns
-	sample.variable.matrix <- cbind(data.frame(variable.name = variable.names), sample.variable.matrix)
+	sample.variable.matrix <- cbind(data.frame(variable.name = variable.names, stringsAsFactors = FALSE), sample.variable.matrix)
 
 	# Normalize sample names
 	if (normalize)
