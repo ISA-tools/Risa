@@ -2,10 +2,17 @@
 
 context('Basic tests.')
 
+# Constants {{{1
+################################################################
+
+TEST.DIR <- file.path(getwd(), '..')
+OUTPUT.DIR <- file.path(TEST.DIR, 'output')
+RES.DIR  <- file.path(TEST.DIR, 'res')
+
 # Load faahKO ISA {{{1
 ################################################################
 
-load_faahko_isa <- function() {
+test_load_faahko_isa <- function() {
 	faahkoISA <- readISAtab(find.package("faahKO"))
 	testthat::expect_is(faahkoISA, "ISATab")
 }
@@ -13,7 +20,7 @@ load_faahko_isa <- function() {
 # Build XCMS set from faahKO {{{1
 ################################################################
 
-build_xcms_set_from_faahko <- function() {
+test_build_xcms_set_from_faahko <- function() {
 	faahkoISA <- readISAtab(find.package("faahKO"))
 	testthat::expect_is(faahkoISA, "ISATab")
 	assay.filename <- faahkoISA["assay.filenames"][1]
@@ -22,8 +29,33 @@ build_xcms_set_from_faahko <- function() {
 	testthat::expect_is(faahkoXset, "xcmsSet")
 }
 
+# Test isa2w4m on faahKO {{{1
+################################################################
+
+test_isa2w4m_faahko <- function() {
+	faahkoISA <- readISAtab(find.package("faahKO"))
+	testthat::expect_is(faahkoISA, "ISATab")
+	w4m <- isa2w4m(faahkoISA)
+	testthat::expect_is(w4m, 'NULL') # faahKO contains no measurement file (m_*.txt), so isa2w4m() fails.
+}
+
+# Test isa2w4m on MTBLS404 {{{1
+################################################################
+
+test_isa2w4m_mtbls404 <- function() {
+	isa <- readISAtab(file.path(RES.DIR, 'MTBLS404'))
+	testthat::expect_is(isa, "ISATab")
+	w4m <- isa2w4m(isa)
+	testthat::expect_is(w4m, 'list')
+	testthat::expect_length(w4m, 3)
+	testthat::expect_false(is.null(names(w4m)))
+	testthat::expect_true(all(c('samp', 'var', 'mat') %in% names(w4m)))
+}
+
 # Main {{{1
 ################################################################
 
-test_that("Load ISA.", load_faahko_isa())
-test_that("We can build an XCMS set.", build_xcms_set_from_faahko())
+test_that("Load ISA.", test_load_faahko_isa())
+test_that("We can build an XCMS set.", test_build_xcms_set_from_faahko())
+test_that("Conversion from ISA to W4M format for faahKO fails.", test_isa2w4m_faahko())
+test_that("Conversion from MTBLS404 ISA to W4M format works.", test_isa2w4m_mtbls404())
