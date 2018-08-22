@@ -44,7 +44,7 @@ test_isa2w4m_faahko <- function() {
 test_isa2w4m_mtbls404 <- function() {
 
 	# Load ISA
-	isa <- readISAtab(file.path(RES.DIR, 'MTBLS404'))
+	isa <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
 	testthat::expect_is(isa, "ISATab")
 
 	# Convert to W4M

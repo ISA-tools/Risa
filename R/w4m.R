@@ -1,5 +1,10 @@
 # vi: fdm=marker
 
+# Constants {{{1
+################################################################
+
+.NA.STRINGS <- c('NA', '')
+
 # Get study {{{1
 ################################################################
 
@@ -96,7 +101,7 @@
 	m_file <- m_file[ ! duplicated(m_file)]
 	if (length(m_file) != 1)
 		stop(paste("More than one metabolite assignement file found in assay \"", assay$filename, "\": ", paste(m_file, collapse = ", "), ".", sep = ''))
-	m.df <- read.table(file = file.path(isa['path'], m_file), sep = "\t", header = TRUE, check.names = FALSE)
+	m.df <- read.table(file = file.path(isa['path'], m_file), sep = "\t", header = TRUE, check.names = FALSE, na.strings = .NA.STRINGS)
 
 	return(list(df = m.df, file = m_file))
 }

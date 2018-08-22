@@ -40,33 +40,33 @@ technology.types <- list(
   nrm="NMR spectroscopy"
   )
 
-readISAtab = function(path = getwd(), zipfile = NULL, verbose = FALSE)
+readISAtab = function(path = getwd(), zipfile = NULL, verbose = FALSE, na.strings = "NA")
 {
   if (!is.null(zipfile)){
-    readISAtabZip(zipfile, path, verbose)
+    readISAtabZip(zipfile, path, verbose, na.strings = na.strings)
   }
   else{
-    readISAtabFiles(path, verbose)
+    readISAtabFiles(path, verbose, na.strings = na.strings)
   }
 }
 
 ## This function only works if the zip file does not contain a directory (but the ISA-TAB files themselves)
-readISAtabZip = function(zip, path = getwd(), verbose=FALSE)
+readISAtabZip = function(zip, path = getwd(), verbose=FALSE, na.strings = "NA")
 { 
   if (verbose)
     message("Unzipping file in directory ",path)
   d = unzip(zipfile = zip, exdir = extract <- path)  
   if (verbose)
     message("Unzipped files: ",d)
-  isaobj = readISAtabFiles(path) 
+  isaobj = readISAtabFiles(path = path, verbose = verbose, na.strings = na.strings)
   return(isaobj)
 }##end function readISAtabZip
 
-readISAtabFiles = function(path = getwd(), verbose=FALSE)
+readISAtabFiles = function(path = getwd(), verbose=FALSE, na.strings = "NA")
 {
   if (verbose)
     message("Converting ISA-Tab dataset at ",path," into R objects...")
-  isaobject <- new(Class="ISATab",path=path)
+  isaobject <- new(Class = "ISATab", path = path, na.strings = na.strings)
   if (verbose)
     message("... done.")
   return(isaobject) 

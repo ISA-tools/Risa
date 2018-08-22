@@ -110,7 +110,7 @@ setReplaceMethod(f="[",signature="AssayTab", definition=function(x,i,j,value){
 setMethod(
   f="initialize",
   signature="ISATab",
-  definition=function(.Object,path){
+  definition=function(.Object, path, na.strings = "NA") {
     
     # Assignment of the slots
     .Object["path"] <- path
@@ -178,7 +178,7 @@ setMethod(
       stop("Did not find some of the study files: ", sfilenames)
     
     ## Reading study files into a list of data frames
-    sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))
+    sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE, na.strings = na.strings))
     
     .Object["study.files"] <- sfiles
     
@@ -199,7 +199,7 @@ setMethod(
         
     ## Reading in assay files 
     # afiles is a list of data frames (containing all the assay files)
-    afiles <- lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE,  check.names=FALSE))
+    afiles <- lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE,  check.names=FALSE, na.strings = na.strings))
     names(afiles) <- afilenames
     
     .Object["assay.files"] <- afiles
@@ -207,7 +207,7 @@ setMethod(
     # afiles.per.study is a list (one element per study) of lists (one element per assay) 
     afiles.per.study = lapply(seq_len(length(afilenames.per.study)), 
                               function(j) (lapply(seq_len(length(afilenames.per.study[[j]])),
-                                                  function(i) read.table(file.path(path,afilenames.per.study[[j]][[i]]), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))))
+                                                  function(i) read.table(file.path(path,afilenames.per.study[[j]][[i]]), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE, na.strings = na.strings))))
     names(afiles.per.study) <- sidentifiers
     
     .Object["assay.files.per.study"] <- afiles.per.study
