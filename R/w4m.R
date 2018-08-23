@@ -93,16 +93,15 @@
 
 	measures <- NULL
 
-	if (assay$filename %in% names(isa@maf.dataframes.per.assay.filename)) {
+	if (assay$filename %in% names(isa@maf.filenames.per.assay.filename)) {
 
 		maf_files <- isa@maf.filenames.per.assay.filename[[assay$filename]]
 		if ( ! is.null(maf_files)) {
 
-			maf_dfs <- isa@maf.dataframes.per.assay.filename[[assay$filename]]
-
 			if (length(maf_files) != 1)
 				stop(paste("More than one metabolite assignement file found in assay \"", assay$filename, "\": ", paste(maf_files, collapse = ", "), ".", sep = ''))
-			measures <- list(df = maf_dfs[[1]], file = maf_files[[1]])
+
+			measures <- list(df = isa@maf.dataframes[[maf_files[[1]]]], file = maf_files[[1]])
 		}
 	}
 
@@ -220,7 +219,7 @@ isa2w4m <- function(isa, study.filename = NULL, assays = NULL, assay.filename = 
 		assay <- .get.assay(isa, study$name, assay.index)
 
 		# Get measures
-		measures <-  .get.measures(isa, assay)
+		measures <- .get.measures(isa, assay)
 		if (is.null(measures))
 			next
 

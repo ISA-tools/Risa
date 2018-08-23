@@ -36,8 +36,9 @@ ISATab <- setClass("ISATab",
                      treatments="list", 
                      groups="list",
                      assay.tabs="list",
-                     maf.filenames.per.assay.filename = 'list',
-                     maf.dataframes.per.assay.filename = 'list'
+                     maf.dataframes = 'list',
+                     maf.filenames = 'character',
+                     maf.filenames.per.assay.filename = 'list'
                      )) 
 
 

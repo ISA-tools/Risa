@@ -86,17 +86,29 @@ updateAssayMetadata = function(isa, assay.filename, col.name, values){
   return(isa)
 }
 
-write.ISAtab = function(isa, path = getwd()){
-  write.investigation.file(isa, path)
-  for(i in seq_len(length(isa["study.filenames"]))){
-    write.study.file(isa, isa["study.filenames"][[i]], path)
-  }
-  for(i in seq_len(length(isa["assay.filenames"]))){
-    write.assay.file(isa, isa["assay.filenames"][[i]], path)
-  }
+# Write ISA-Tab on disk {{{1
+################################################################
 
-  # TODO Write MAF files
+write.ISAtab = function(isa, path = getwd()){
+
+	# Write investigation file
+	write.investigation.file(isa, path)
+
+	# Write study files
+	for (f in isa["study.filenames"])
+		write.study.file(isa, f, path)
+
+	# Write assay files
+	for (f in isa["assay.filenames"])
+		write.assay.file(isa, f, path)
+
+	# Write MAF files
+	for (f in isa["maf.filenames"])
+		write.maf.file(isa, f, path)
 }
+
+# Write investigation file {{{1
+################################################################
 
 write.investigation.file = function(isa, path = getwd()){
   write.table(isa["investigation.file"], 
@@ -104,6 +116,9 @@ write.investigation.file = function(isa, path = getwd()){
               row.names=FALSE, col.names=FALSE, 
               quote=TRUE, sep="\t", na="\"\"")
 }
+
+# Write study file {{{1
+################################################################
 
 write.study.file = function(isa, study.filename, path = getwd()){
   i <- which(isa["study.filenames"]==study.filename)
@@ -114,6 +129,9 @@ write.study.file = function(isa, study.filename, path = getwd()){
               quote=TRUE, sep="\t", na="\"\"")
 }
 
+# Write assay file {{{1
+################################################################
+
 write.assay.file = function(isa, assay.filename, path = getwd()){
   i <- which(names(isa["assay.files"])==assay.filename)
   assay.file <- isa["assay.files"][[assay.filename ]]
@@ -121,6 +139,18 @@ write.assay.file = function(isa, assay.filename, path = getwd()){
               file=file.path(path,isa["assay.filenames"][[i]]), 
               row.names=FALSE, col.names=TRUE, 
               quote=TRUE, sep="\t", na="\"\"")
+}
+
+# Write maf file {{{1
+################################################################
+
+write.maf.file = function(isa, maf.filename, path = getwd()) {
+
+	if ( ! maf.filename %in% names(isa@maf.dataframes))
+		stop('Unknown MAF file "', maf.filename, '". No dataframe recorded for that filename.')
+
+	if ( ! is.null(isa@maf.dataframes[[maf.filename]]))
+		write.table(isa@maf.dataframes[[maf.filename]], file = file.path(path, maf.filename), row.names=FALSE, col.names=TRUE, quote=TRUE, sep="\t", na="\"\"")
 }
 
 getStudyFilename <- function(isa, assay.filename){

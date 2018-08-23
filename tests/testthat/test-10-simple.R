@@ -7,6 +7,7 @@ context('Basic tests.')
 
 TEST.DIR <- file.path(getwd(), '..')
 RES.DIR  <- file.path(TEST.DIR, 'res')
+OUT.DIR  <- file.path(TEST.DIR, 'output')
 
 # Load faahKO ISA {{{1
 ################################################################
@@ -68,6 +69,22 @@ test_isa2w4m_mtbls404 <- function() {
 	testthat::expect_identical(w4m$mat, mat)
 }
 
+# Test ISA writing {{{1
+################################################################
+
+test_isa_writing <- function() {
+
+	# Load ISA
+	isa <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
+	testthat::expect_is(isa, "ISATab")
+
+	# Write ISA
+	output.dir <- file.path(OUT.DIR, 'MTBLS404')
+	dir.create(output.dir, recursive = TRUE, showWarnings = FALSE)
+	write.ISAtab(isa, output.dir)
+	# TODO test files
+}
+
 # Main {{{1
 ################################################################
 
@@ -75,3 +92,5 @@ test_that("Load ISA.", test_load_faahko_isa())
 test_that("We can build an XCMS set.", test_build_xcms_set_from_faahko())
 test_that("Conversion from ISA to W4M format for faahKO fails.", test_isa2w4m_faahko())
 test_that("Conversion from MTBLS404 ISA to W4M format works.", test_isa2w4m_mtbls404())
+test_that("We can write ISA ?_*.txt files on disk.", test_isa_writing())
+# TODO URGENT test that we can put back modified W4M files into ISA
