@@ -62,7 +62,7 @@
 
 	study.assays <- isa@assay.files.per.study[[study.name]]
 	study.assay.df <- study.assays[[assay.index]]
-	study.assay.filename <- isa@assay.filenames[[assay.index]]
+	study.assay.filename <- isa@assay.filenames[[assay.index]] # FIXME URGENT Wrong ! Must use assay.filenames.per.study instead of assay.filenames.
 
 	return(list(filename = study.assay.filename, df = study.assay.df))
 }
@@ -91,19 +91,22 @@
 
 .get.measures <- function(isa, assay) {
 
-	# Check presence of MAF files
-	maf.field <- "Metabolite Assignment File"
-	if ( ! maf.field %in% colnames(assay$df))
-		return(NULL)
+	measures <- NULL
 
-	# Get data file
-	m_file <- assay$df[[maf.field]]
-	m_file <- m_file[ ! duplicated(m_file)]
-	if (length(m_file) != 1)
-		stop(paste("More than one metabolite assignement file found in assay \"", assay$filename, "\": ", paste(m_file, collapse = ", "), ".", sep = ''))
-	m.df <- read.table(file = file.path(isa['path'], m_file), sep = "\t", header = TRUE, check.names = FALSE, na.strings = .NA.STRINGS)
+	if (assay$filename %in% names(isa@maf.dataframes.per.assay.filename)) {
 
-	return(list(df = m.df, file = m_file))
+		maf_files <- isa@maf.filenames.per.assay.filename[[assay$filename]]
+		if ( ! is.null(maf_files)) {
+
+			maf_dfs <- isa@maf.dataframes.per.assay.filename[[assay$filename]]
+
+			if (length(maf_files) != 1)
+				stop(paste("More than one metabolite assignement file found in assay \"", assay$filename, "\": ", paste(maf_files, collapse = ", "), ".", sep = ''))
+			measures <- list(df = maf_dfs[[1]], file = maf_files[[1]])
+		}
+	}
+
+	return(measures)
 }
 
 # Get sample names {{{1
@@ -179,6 +182,25 @@
 	return(variable.names)
 }
 
+# Convert W4M 3 files format to ISA {{{1
+################################################################
+
+w4m2isa <- function(isa, w4m, study.filename = NULL, assays = NULL, assay.filename = NULL) {
+
+	# An existing ISA object will be used for updating.
+
+	# Get study & assays
+	study <- .get.study(isa, study.filename = study.filename)
+	assay.indices <- if (is.null(assays)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename)
+	if (length(assay.indices) != length(w4m))
+		stop(paste0(length(assay.indices), ' assays selected, but only ', length(w4m), ' W4M inputs provided.'))
+
+	# Loop on assay indices
+	for (assay.index in (assay.indices)) {
+	}
+
+	return(isa)
+}
 
 # Convert ISA to W4M 3 files format {{{1
 ################################################################
@@ -187,17 +209,18 @@ isa2w4m <- function(isa, study.filename = NULL, assays = NULL, assay.filename = 
 
 	output <- NULL
 
-	# Get study
+	# Get study & assays
 	study <- .get.study(isa, study.filename = study.filename)
+	assay.indices <- if (is.null(assays)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename)
 
 	# Loop on assay indices to extract
-	for (assay.index in (if (is.null(assays)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename))) {
+	for (assay.index in (assay.indices)) {
 
 		# Get assay
 		assay <- .get.assay(isa, study$name, assay.index)
 
 		# Get measures
-		measures <- .get.measures(isa, assay)
+		measures <-  .get.measures(isa, assay)
 		if (is.null(measures))
 			next
 
@@ -215,22 +238,6 @@ isa2w4m <- function(isa, study.filename = NULL, assays = NULL, assay.filename = 
 
 		# Extract matrix
 		sample.variable.matrix <- .make.matrix(measures = measures, sample.names = sample.names, variable.names = variable.names, normalize = TRUE)
-
-#		# Filter out NA values
-#		if ( ! is.null(opt[['samp-na-filering']])) {
-#			opt[['samp-na-filering']] <- make.names(opt[['samp-na-filering']])
-#			cols.to.filter <- colnames(sample.metadata) %in% opt[['samp-na-filering']]
-#			good.rows <- complete.cases(sample.metadata[, cols.to.filter, drop = FALSE])
-#			sample.variable.matrix <- sample.variable.matrix[, c(TRUE, good.rows), drop = FALSE]
-#			sample.metadata <- sample.metadata[good.rows, , drop = FALSE]
-#		}
-#		if ( ! is.null(opt[['var-na-filering']])) {
-#			opt[['var-na-filering']] <- make.names(opt[['var-na-filering']])
-#			cols.to.filter <- colnames(variable.metadata) %in% opt[['var-na-filering']]
-#			good.rows <- complete.cases(variable.metadata[, cols.to.filter, drop = FALSE])
-#			sample.variable.matrix <- sample.variable.matrix[good.rows, , drop = FALSE]
-#			variable.metadata <- variable.metadata[good.rows, , drop = FALSE]
-#		}
 
 		# Build output
 		x <- list(samp = sample.metadata, var = variable.metadata, mat = sample.variable.matrix)

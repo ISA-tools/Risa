@@ -93,7 +93,9 @@ write.ISAtab = function(isa, path = getwd()){
   }
   for(i in seq_len(length(isa["assay.filenames"]))){
     write.assay.file(isa, isa["assay.filenames"][[i]], path)
-  }  
+  }
+
+  # TODO Write MAF files
 }
 
 write.investigation.file = function(isa, path = getwd()){
