@@ -82,7 +82,7 @@ test_isa_writing <- function() {
 	output.dir <- file.path(OUT.DIR, 'MTBLS404')
 	dir.create(output.dir, recursive = TRUE, showWarnings = FALSE)
 	write.ISAtab(isa, output.dir)
-	# TODO test files
+	# TODO test that content of output files is the same as content of reference files (even if they are not written exactly the same).
 }
 
 # Main {{{1
@@ -93,4 +93,6 @@ test_that("We can build an XCMS set.", test_build_xcms_set_from_faahko())
 test_that("Conversion from ISA to W4M format for faahKO fails.", test_isa2w4m_faahko())
 test_that("Conversion from MTBLS404 ISA to W4M format works.", test_isa2w4m_mtbls404())
 test_that("We can write ISA ?_*.txt files on disk.", test_isa_writing())
-# TODO URGENT test that we can put back modified W4M files into ISA
+# TODO test that we can put back modified W4M files into ISA
+# TODO write method w4m2isa.
+# TODO test that we can convert back from W4M and get the same data/files exactly.
