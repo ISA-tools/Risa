@@ -60,9 +60,8 @@
 
 .get.assay <- function(isa, study.name, assay.index) {
 
-	study.assays <- isa@assay.files.per.study[[study.name]]
-	study.assay.df <- study.assays[[assay.index]]
-	study.assay.filename <- isa@assay.filenames[[assay.index]] # FIXME URGENT Wrong ! Must use assay.filenames.per.study instead of assay.filenames.
+	study.assay.df <- isa@assay.files.per.study[[study.name]][[assay.index]]
+	study.assay.filename <- isa@assay.filenames.per.study[[study.name]][[assay.index]]
 
 	return(list(filename = study.assay.filename, df = study.assay.df))
 }
