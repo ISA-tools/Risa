@@ -72,7 +72,7 @@
 .make.sample.metadata <- function(study, assay, sample.names, normalize = TRUE) {
 
 	# Create sample metadata by merging assay and study metadata
-	colnames(study$df) <- make.names(colnames(study$df), uniq = TRUE)
+	colnames(study$df) <- make.names(colnames(study$df), uniq = TRUE) # TODO make.names should be optional
 	colnames(assay$df) <- make.names(colnames(assay$df), uniq = TRUE)
 	sample.metadata <- merge(assay$df, study$df, by = "Sample.Name", sort = FALSE)
 
@@ -166,12 +166,12 @@
 # Make variable names {{{1
 ################################################################
 
-.make.variable.names <- function(measures) {
+.make.variable.names <- function(maf.df) {
 
-	variable.names <- character(nrow(measures$df))
+	variable.names <- character(nrow(maf.df))
 	for (f in c('mass_to_charge', 'retention_time'))
-		if (f %in% colnames(measures$df)) {
-			col.vals <- as.character(measures$df[[f]])
+		if (f %in% colnames(maf.df)) {
+			col.vals <- as.character(maf.df[[f]])
 			col.vals <- ifelse(is.na(col.vals), '', col.vals)
 			variable.names <- paste(variable.names, ifelse(nchar(variable.names) > 0 & nchar(col.vals) > 0, '_', ''), col.vals, sep = '')
 		}
@@ -180,21 +180,97 @@
 	return(variable.names)
 }
 
+# Update assay {{{1
+################################################################
+
+.update.assay <- function(isa, study.name, assay.index, w4m.samp) {
+
+	# Get study and assay data frame
+	study.df <- isa@study.files[[study.name]]
+	study.assay.df <- isa@assay.files.per.study[[study.name]][[assay.index]]
+
+	# TODO Remove rows when some samples have been deleted
+
+	# Modify assay data frame
+	cols <- colnames(w4m.samp)
+	cols <- cols[ ! cols %in% colnames(study.df)]
+	cols <- cols[ ! cols %in% colnames(study.assay.df)]
+	study.assay.df <- merge(study.assay.df, w4m.samp[cols], by.x = "Sample Name", by.y = "Sample.Name", sort = FALSE)
+
+	# Update assay data frame
+	isa@assay.files.per.study[[study.name]][[assay.index]] <- study.assay.df 
+}
+
+# Update MAF {{{1
+################################################################
+
+.update.maf <- function(isa, study.name, assay.index, assay.filename, w4m.var, w4m.mat) {
+
+	# Get MAF data frame
+	if (assay.filename %in% names(isa@maf.filenames.per.assay.filename)) {
+		maf.files <- isa@maf.filenames.per.assay.filename[[assay$filename]]
+		if ( ! is.null(maf.files)) {
+
+			if (length(maf.files) != 1)
+				stop(paste("More than one metabolite assignement file found in assay \"", assay$filename, "\": ", paste(maf.files, collapse = ", "), ".", sep = ''))
+
+			# Get MAF data frame
+			maf.df <- isa@maf.dataframes[[maf.files[[1]]]]
+
+			# Add variable names column
+			maf.df["Variable Name"] <- .make.variable.names(maf.df)
+
+			# Remove sample columns
+			# TODO
+
+			# Remove rows
+			# TODO
+
+			# Add new columns from W4M variable data frame
+			cols <- colnames(w4m.var)
+			cols <- cols[ ! cols %in% colnames(maf.df)]
+			maf.df <- merge(maf.df, w4m.var[cols], by.x = "Variable Name", by.y = "variable.name", sort = FALSE)
+
+			# Update MAF data frame
+			isa@maf.dataframes[[maf.files[[1]]]] <- maf.df 
+		}
+	}
+}
+
 # Convert W4M 3 files format to ISA {{{1
 ################################################################
 
+# TODO write documentation
 w4m2isa <- function(isa, w4m, study.filename = NULL, assays = NULL, assay.filename = NULL) {
 
-	# An existing ISA object will be used for updating.
+	# The existing ISA object is updated with W4M values.
 
 	# Get study & assays
 	study <- .get.study(isa, study.filename = study.filename)
 	assay.indices <- if (is.null(assays)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename)
-	if (length(assay.indices) != length(w4m))
+	if (length(assay.indices) != length(w4m) || (length(assay.indices) == 1 && all(c('samp', 'var', 'mat') %in% names(w4m))))
 		stop(paste0(length(assay.indices), ' assays selected, but only ', length(w4m), ' W4M inputs provided.'))
 
 	# Loop on assay indices
 	for (assay.index in (assay.indices)) {
+
+		if (all(c('samp', 'var', 'mat') %in% names(w4m))) {
+			w4m.samp <- w4m$samp
+			w4m.var <- w4m$var
+			w4m.mat <- w4m$mat
+		}
+		else {
+			w4m.samp <- w4m[[assay.index]]$samp
+			w4m.var <- w4m[[assay.index]]$var
+			w4m.mat <- w4m[[assay.index]]$mat
+		}
+
+		# No need to update ISA study data frame. W4M tools only add new columns, and never modify values on existing columns. All new columns of W4M sample data frame will be added to ISA assay data frame.
+#		.update.study(isa, study.name = study$name, w4m.samp = w4m.samp)
+		# XXX Except when lines have been removed in W4M sample data frame.
+
+		.update.assay(isa, study.name = study$name, assay.index, w4m.samp = w4m.samp)
+		.update.maf(isa, study.name = study$name, assay.index, assay.filename = assay.filename, w4m.var = w4m.var, w4m.mat = w4m.mat)
 	}
 
 	return(isa)
@@ -223,7 +299,7 @@ isa2w4m <- function(isa, study.filename = NULL, assays = NULL, assay.filename = 
 			next
 
 		# Create variable names
-		variable.names <- .make.variable.names(measures)
+		variable.names <- .make.variable.names(measures$df)
 
 		# Get sample names
 		sample.names <- .get.sample.names(assay, measures)
