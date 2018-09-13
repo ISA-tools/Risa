@@ -195,7 +195,14 @@
 	cols <- colnames(w4m.samp)
 	cols <- cols[ ! cols %in% colnames(study.df)]
 	cols <- cols[ ! cols %in% colnames(study.assay.df)]
-	study.assay.df <- merge(study.assay.df, w4m.samp[cols], by.x = "Sample Name", by.y = "Sample.Name", sort = FALSE)
+	if ( ! "Sample Name" %in% colnames(study.assay.df))
+		stop("Cannot find column \"Sample Name\" into ISA assay data frame.")
+ 	if ( ! "Sample.Name" %in% colnames(w4m.samp))
+		stop("Cannot find column \"Sample.Name\" into W4M sample data frame.")
+	if ( ! identical(study.assay.df[["Sample Name"]], w4m.samp[["Sample.Name"]]))
+		stop("\"Sample Name\" column of ISA assay data frame and \"Sample.Name\" column of W4M sample data frame aren't identical.")
+	study.assay.df <- cbind(study.assay.df, w4m.samp[cols])
+#	study.assay.df <- merge(study.assay.df, w4m.samp[cols], by.x = "Sample Name", by.y = "Sample.Name", sort = FALSE)
 
 	# Update assay data frame
 	isa@assay.files.per.study[[study.name]][[assay.index]] <- study.assay.df 
@@ -204,15 +211,16 @@
 # Update MAF {{{1
 ################################################################
 
-.update.maf <- function(isa, study.name, assay.index, assay.filename, w4m.var, w4m.mat) {
+.update.maf <- function(isa, study.name, assay.index, w4m.var, w4m.mat) {
 
+	assay.filename <- isa@assay.filenames.per.study[[study.name]][[assay.index]]
 	# Get MAF data frame
 	if (assay.filename %in% names(isa@maf.filenames.per.assay.filename)) {
-		maf.files <- isa@maf.filenames.per.assay.filename[[assay$filename]]
+		maf.files <- isa@maf.filenames.per.assay.filename[[assay.filename]]
 		if ( ! is.null(maf.files)) {
 
 			if (length(maf.files) != 1)
-				stop(paste("More than one metabolite assignement file found in assay \"", assay$filename, "\": ", paste(maf.files, collapse = ", "), ".", sep = ''))
+				stop(paste("More than one metabolite assignement file found in assay \"", assay.filename, "\": ", paste(maf.files, collapse = ", "), ".", sep = ''))
 
 			# Get MAF data frame
 			maf.df <- isa@maf.dataframes[[maf.files[[1]]]]
@@ -229,7 +237,16 @@
 			# Add new columns from W4M variable data frame
 			cols <- colnames(w4m.var)
 			cols <- cols[ ! cols %in% colnames(maf.df)]
-			maf.df <- merge(maf.df, w4m.var[cols], by.x = "Variable Name", by.y = "variable.name", sort = FALSE)
+			if ( ! "Variable Name" %in% colnames(maf.df))
+				stop("Cannot find column \"Variable Name\" into ISA MAF data frame.")
+ 			if ( ! "variable.name" %in% colnames(w4m.var))
+				stop("Cannot find column \"variable.name\" into W4M variable data frame.")
+			if ( ! identical(maf.df[["Variable Name"]], w4m.var[["variable.name"]]))
+				stop("\"Variable Name\" column of ISA MAF data frame and \"variable.name\" column of W4M variable data frame aren't identical.")
+	# TODO check variable names in columns (they must be of same length, and ordered the same way)
+	# TODO use cbind instead of merge
+			maf.df <- cbind(maf.df, w4m.var[cols])
+#			maf.df <- merge(maf.df, w4m.var[cols], by.x = "Variable Name", by.y = "variable.name", sort = FALSE)
 
 			# Update MAF data frame
 			isa@maf.dataframes[[maf.files[[1]]]] <- maf.df 
@@ -248,7 +265,7 @@ w4m2isa <- function(isa, w4m, study.filename = NULL, assays = NULL, assay.filena
 	# Get study & assays
 	study <- .get.study(isa, study.filename = study.filename)
 	assay.indices <- if (is.null(assays)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename)
-	if (length(assay.indices) != length(w4m) || (length(assay.indices) == 1 && all(c('samp', 'var', 'mat') %in% names(w4m))))
+	if ( ! (length(assay.indices) == length(w4m) || (length(assay.indices) == 1 && all(c('samp', 'var', 'mat') %in% names(w4m)))))
 		stop(paste0(length(assay.indices), ' assays selected, but only ', length(w4m), ' W4M inputs provided.'))
 
 	# Loop on assay indices
@@ -269,8 +286,8 @@ w4m2isa <- function(isa, w4m, study.filename = NULL, assays = NULL, assay.filena
 #		.update.study(isa, study.name = study$name, w4m.samp = w4m.samp)
 		# XXX Except when lines have been removed in W4M sample data frame.
 
-		.update.assay(isa, study.name = study$name, assay.index, w4m.samp = w4m.samp)
-		.update.maf(isa, study.name = study$name, assay.index, assay.filename = assay.filename, w4m.var = w4m.var, w4m.mat = w4m.mat)
+		.update.assay(isa, study.name = study$name, assay.index = assay.index, w4m.samp = w4m.samp)
+		.update.maf(isa, study.name = study$name, assay.index = assay.index, w4m.var = w4m.var, w4m.mat = w4m.mat)
 	}
 
 	return(isa)
