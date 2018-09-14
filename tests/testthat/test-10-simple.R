@@ -49,11 +49,15 @@ test_isa2w4m_mtbls404 <- function() {
 	testthat::expect_is(isa, "ISATab")
 
 	# Convert to W4M
-	w4m <- isa2w4m(isa)
+	w4m <- isa2w4m(isa, normalize = TRUE)
 	testthat::expect_is(w4m, 'list')
 	testthat::expect_length(w4m, 3)
 	testthat::expect_false(is.null(names(w4m)))
 	testthat::expect_true(all(c('samp', 'var', 'mat') %in% names(w4m)))
+
+	# Save W4M data frames
+	for (x in c('samp', 'var', 'mat'))
+		write.table(w4m[[x]], file = file.path(TEST.DIR, paste0('test_isa2w4m_mtbls404-', x, '.tsv')), row.names = FALSE, sep = "\t")
 
 	# Load expected outputs
 	samp <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-sample-metadata.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
@@ -104,17 +108,8 @@ test_w4m2isa <- function() {
 	# Test that ISA has not changed
 	study.name <- isa.ref@study.identifiers[[1]]
 	testthat::expect_identical(isa.ref@study.files[[study.name]], isa@study.files[[study.name]])
-	print('-------------------------------- test_w4m2isa')
 	isa.ref.assay.cols <- colnames(isa.ref@assay.files.per.study[[study.name]][[1]])
-	print(isa.ref.assay.cols)
-	print('-------------------------------- test_w4m2isa')
 	isa.assay.cols <- colnames(isa@assay.files.per.study[[study.name]][[1]])
-	print(isa.assay.cols)
-	print('-------------------------------- test_w4m2isa')
-	print(isa.assay.cols[isa.assay.cols %in% isa.ref.assay.cols])
-	print('-------------------------------- test_w4m2isa')
-	print(isa.assay.cols[ ! isa.assay.cols %in% isa.ref.assay.cols])
-	print('-------------------------------- test_w4m2isa')
 	testthat::expect_identical(isa.ref@assay.files.per.study[[study.name]][[1]], isa@assay.files.per.study[[study.name]][[1]])
 	assay.filename <- isa@assay.filenames.per.study[[study.name]][[1]]
 	maf.files <- isa@maf.filenames.per.assay.filename[[assay.filename]]
