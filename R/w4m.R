@@ -72,9 +72,16 @@
 .make.sample.metadata <- function(study, assay, sample.names, normalize = TRUE) {
 
 	# Create sample metadata by merging assay and study metadata
-	colnames(study$df) <- make.names(colnames(study$df), uniq = TRUE) # TODO make.names should be optional
-	colnames(assay$df) <- make.names(colnames(assay$df), uniq = TRUE)
-	sample.metadata <- merge(assay$df, study$df, by = "Sample.Name", sort = FALSE)
+	sample.name.col <- 'Sample Name'
+	if (normalize) {
+		colnames(study$df) <- make.names(colnames(study$df), uniq = TRUE) # TODO make.names should be optional
+		colnames(assay$df) <- make.names(colnames(assay$df), uniq = TRUE)
+		sample.name.col <- 'Sample.Name'
+	}
+	study.df <- merge(assay$df[sample.name.col], study$df, by = sample.name.col, sort = FALSE)
+	cols <- colnames(assay$df)
+	cols <- cols[ ! cols %in% sample.name.col]
+	sample.metadata <- cbind(study.df, assay$df[cols])
 
 	# Normalize
 	if (normalize) {
@@ -197,15 +204,17 @@
 	cols <- cols[ ! cols %in% colnames(study.assay.df)]
 	if ( ! "Sample Name" %in% colnames(study.assay.df))
 		stop("Cannot find column \"Sample Name\" into ISA assay data frame.")
- 	if ( ! "Sample.Name" %in% colnames(w4m.samp))
+ 	if ( ! "Sample Name" %in% colnames(w4m.samp))
 		stop("Cannot find column \"Sample.Name\" into W4M sample data frame.")
-	if ( ! identical(study.assay.df[["Sample Name"]], w4m.samp[["Sample.Name"]]))
-		stop("\"Sample Name\" column of ISA assay data frame and \"Sample.Name\" column of W4M sample data frame aren't identical.")
+	if ( ! identical(study.assay.df[["Sample Name"]], w4m.samp[["Sample Name"]]))
+		stop("\"Sample Name\" column of ISA assay data frame and \"Sample Name\" column of W4M sample data frame aren't identical.")
 	study.assay.df <- cbind(study.assay.df, w4m.samp[cols])
-#	study.assay.df <- merge(study.assay.df, w4m.samp[cols], by.x = "Sample Name", by.y = "Sample.Name", sort = FALSE)
+#	study.assay.df <- merge(study.assay.df, w4m.samp[cols], by = "Sample Name", sort = FALSE)
 
 	# Update assay data frame
 	isa@assay.files.per.study[[study.name]][[assay.index]] <- study.assay.df 
+
+	return(isa)
 }
 
 # Update MAF {{{1
@@ -252,6 +261,8 @@
 			isa@maf.dataframes[[maf.files[[1]]]] <- maf.df 
 		}
 	}
+
+	return(isa)
 }
 
 # Convert W4M 3 files format to ISA {{{1
@@ -286,8 +297,8 @@ w4m2isa <- function(isa, w4m, study.filename = NULL, assays = NULL, assay.filena
 #		.update.study(isa, study.name = study$name, w4m.samp = w4m.samp)
 		# XXX Except when lines have been removed in W4M sample data frame.
 
-		.update.assay(isa, study.name = study$name, assay.index = assay.index, w4m.samp = w4m.samp)
-		.update.maf(isa, study.name = study$name, assay.index = assay.index, w4m.var = w4m.var, w4m.mat = w4m.mat)
+		isa <- .update.assay(isa, study.name = study$name, assay.index = assay.index, w4m.samp = w4m.samp)
+		isa <- .update.maf(isa, study.name = study$name, assay.index = assay.index, w4m.var = w4m.var, w4m.mat = w4m.mat)
 	}
 
 	return(isa)
@@ -296,7 +307,7 @@ w4m2isa <- function(isa, w4m, study.filename = NULL, assays = NULL, assay.filena
 # Convert ISA to W4M 3 files format {{{1
 ################################################################
 
-isa2w4m <- function(isa, study.filename = NULL, assays = NULL, assay.filename = NULL, drop = TRUE) {
+isa2w4m <- function(isa, study.filename = NULL, assays = NULL, assay.filename = NULL, drop = TRUE, normalize = FALSE) {
 
 	output <- NULL
 
@@ -322,13 +333,13 @@ isa2w4m <- function(isa, study.filename = NULL, assays = NULL, assay.filename = 
 		sample.names <- .get.sample.names(assay, measures)
 
 		# Extract sample metadata
-		sample.metadata <- .make.sample.metadata(study, assay, sample.names = sample.names, normalize = TRUE)
+		sample.metadata <- .make.sample.metadata(study, assay, sample.names = sample.names, normalize = normalize)
 
 		# Extract variable metadata
-		variable.metadata <- .make.variable.metadata(measures = measures, sample.names = sample.names, variable.names = variable.names, normalize = TRUE)
+		variable.metadata <- .make.variable.metadata(measures = measures, sample.names = sample.names, variable.names = variable.names, normalize = normalize)
 
 		# Extract matrix
-		sample.variable.matrix <- .make.matrix(measures = measures, sample.names = sample.names, variable.names = variable.names, normalize = TRUE)
+		sample.variable.matrix <- .make.matrix(measures = measures, sample.names = sample.names, variable.names = variable.names, normalize = normalize)
 
 		# Build output
 		x <- list(samp = sample.metadata, var = variable.metadata, mat = sample.variable.matrix)

@@ -91,25 +91,56 @@ test_isa_writing <- function() {
 test_w4m2isa <- function() {
 
 	# Load ISA
-	isa <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
-	testthat::expect_is(isa, "ISATab")
+	isa.ref <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
+	testthat::expect_is(isa.ref, "ISATab")
 
 	# Convert to W4M
-	w4m <- isa2w4m(isa)
+	w4m <- isa2w4m(isa.ref)
 	# TODO test also with drop = FALSE
 
 	# Convert back to ISA
-	w4m2isa(isa, w4m)
+	isa <- w4m2isa(isa.ref, w4m)
 
 	# Test that ISA has not changed
-	isa.ref <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
-	testthat::expect_is(isa.ref, "ISATab")
 	study.name <- isa.ref@study.identifiers[[1]]
 	testthat::expect_identical(isa.ref@study.files[[study.name]], isa@study.files[[study.name]])
+	print('-------------------------------- test_w4m2isa')
+	isa.ref.assay.cols <- colnames(isa.ref@assay.files.per.study[[study.name]][[1]])
+	print(isa.ref.assay.cols)
+	print('-------------------------------- test_w4m2isa')
+	isa.assay.cols <- colnames(isa@assay.files.per.study[[study.name]][[1]])
+	print(isa.assay.cols)
+	print('-------------------------------- test_w4m2isa')
+	print(isa.assay.cols[isa.assay.cols %in% isa.ref.assay.cols])
+	print('-------------------------------- test_w4m2isa')
+	print(isa.assay.cols[ ! isa.assay.cols %in% isa.ref.assay.cols])
+	print('-------------------------------- test_w4m2isa')
 	testthat::expect_identical(isa.ref@assay.files.per.study[[study.name]][[1]], isa@assay.files.per.study[[study.name]][[1]])
 	assay.filename <- isa@assay.filenames.per.study[[study.name]][[1]]
 	maf.files <- isa@maf.filenames.per.assay.filename[[assay.filename]]
 	testthat::expect_identical(isa.ref@maf.dataframes[[maf.files[[1]]]], isa@maf.dataframes[[maf.files[[1]]]])
+}
+
+# Test w4misa with added columns {{{1
+################################################################
+
+test_w4m2isa_added_cols <- function() {
+
+	# Load ISA
+	isa.ref <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
+	testthat::expect_is(isa.ref, "ISATab")
+
+	# Convert to W4M
+	w4m <- isa2w4m(isa.ref)
+
+	# Add columns
+	new.samp.col <- 'new.col'
+	w4m$samp[[new.samp.col]] <- 1
+
+	# Convert back to ISA
+	isa <- w4m2isa(isa.ref, w4m)
+	study.name <- isa@study.identifiers[[1]]
+	testthat::expect_true(new.samp.col %in% colnames(isa@assay.files.per.study[[study.name]][[1]]))
 }
 
 # Main {{{1
@@ -121,7 +152,7 @@ test_that("Conversion from ISA to W4M format for faahKO fails.", test_isa2w4m_fa
 test_that("Conversion from MTBLS404 ISA to W4M format works.", test_isa2w4m_mtbls404())
 test_that("We can write ISA ?_*.txt files on disk.", test_isa_writing())
 test_that("w4m2isa run on unmodified W4M data frames gives back the same ISA data frames.", test_w4m2isa())
-# TODO test that we can put back modified W4M files into ISA
+test_that("w4m2isa run correctly when columns have been added.", test_w4m2isa_added_cols())
 
 # TODO test w4m2isa when samples have been removed.
 # TODO test w4m2isa when variables have been removed.
