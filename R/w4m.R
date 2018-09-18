@@ -208,7 +208,7 @@
 	if ( ! "Sample Name" %in% colnames(study.assay.df))
 		stop("Cannot find column \"Sample Name\" into ISA assay data frame.")
  	if ( ! "Sample Name" %in% colnames(w4m.samp))
-		stop("Cannot find column \"Sample.Name\" into W4M sample data frame.")
+		stop("Cannot find column \"Sample Name\" into W4M sample data frame.")
 	if ( ! identical(study.assay.df[["Sample Name"]], w4m.samp[["Sample Name"]]))
 		stop("\"Sample Name\" column of ISA assay data frame and \"Sample Name\" column of W4M sample data frame aren't identical.")
 	study.assay.df <- cbind(study.assay.df, w4m.samp[cols])
