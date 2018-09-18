@@ -15,12 +15,10 @@
 			stop(paste("Cannot find study \"", study.filename, "\".", sep = ''))
 		study.name <- isa@study.identifiers[[which(study.filename == isa@study.filenames)]]
 	} else { # Take the first study
-		cat("No study name set, choose first study.\n")
 		study.name <- isa@study.identifiers[[1]]
 	}
 	if (length(study.name) != 1)
 		stop("No study found.")
-	cat(paste("Study \"", study.name, "\" has been selected.\n", sep = ""))
 
 	study.df <- isa@study.files[[study.name]]
 
@@ -78,10 +76,13 @@
 		colnames(assay$df) <- make.names(colnames(assay$df), uniq = TRUE)
 		sample.name.col <- 'Sample.Name'
 	}
-	study.df <- merge(assay$df[sample.name.col], study$df, by = sample.name.col, sort = FALSE)
+	study.df <- merge(assay$df[sample.name.col], study$df, by = sample.name.col, sort = FALSE, no.dups = FALSE)
+	colnames(study.df) <- c(sample.name.col, colnames(study$df)[colnames(study$df) != sample.name.col])
 	cols <- colnames(assay$df)
-	cols <- cols[ ! cols %in% sample.name.col]
-	sample.metadata <- cbind(study.df, assay$df[cols])
+	cols.select <- ! cols %in% sample.name.col
+	assay.sub.df <- assay$df[cols.select]
+	colnames(assay.sub.df) <- cols[cols.select]
+	sample.metadata <- cbind(study.df, assay.sub.df)
 
 	# Normalize
 	if (normalize) {
@@ -143,6 +144,7 @@
 
 	# Add variable names as columns
 	variable.metadata <- cbind(data.frame(variable.name = variable.names, stringsAsFactors = FALSE), variable.metadata)
+	colnames(variable.metadata)[[1]] <- 'Variable Name'
 
 	# Normalize
 	if (normalize)
@@ -162,10 +164,11 @@
 
 	# Add variable names as columns
 	sample.variable.matrix <- cbind(data.frame(variable.name = variable.names, stringsAsFactors = FALSE), sample.variable.matrix)
+	colnames(sample.variable.matrix)[[1]] <- 'Variable Name'
 
 	# Normalize sample names
 	if (normalize)
-		colnames(sample.variable.matrix) <- c('variable.name', make.names(sample.names, uniq = TRUE))
+		colnames(sample.variable.matrix) <- make.names(colnames(sample.variable.matrix), uniq = TRUE)
 
 	return(sample.variable.matrix)
 }
@@ -234,8 +237,8 @@
 			# Get MAF data frame
 			maf.df <- isa@maf.dataframes[[maf.files[[1]]]]
 
-			# Add variable names column
-			maf.df["Variable Name"] <- .make.variable.names(maf.df)
+			# Get variable names
+			maf.df.var.names <- if ('Variable Name' %in% colnames(maf.df)) maf.df[['Variable Name']] else .make.variable.names(maf.df)
 
 			# Remove sample columns
 			# TODO
@@ -245,20 +248,21 @@
 
 			# Add new columns from W4M variable data frame
 			cols <- colnames(w4m.var)
+			cols <- cols[ ! cols %in% 'Variable Name']
 			cols <- cols[ ! cols %in% colnames(maf.df)]
-			if ( ! "Variable Name" %in% colnames(maf.df))
-				stop("Cannot find column \"Variable Name\" into ISA MAF data frame.")
- 			if ( ! "variable.name" %in% colnames(w4m.var))
-				stop("Cannot find column \"variable.name\" into W4M variable data frame.")
-			if ( ! identical(maf.df[["Variable Name"]], w4m.var[["variable.name"]]))
-				stop("\"Variable Name\" column of ISA MAF data frame and \"variable.name\" column of W4M variable data frame aren't identical.")
-	# TODO check variable names in columns (they must be of same length, and ordered the same way)
-	# TODO use cbind instead of merge
-			maf.df <- cbind(maf.df, w4m.var[cols])
-#			maf.df <- merge(maf.df, w4m.var[cols], by.x = "Variable Name", by.y = "variable.name", sort = FALSE)
+ 			if ( ! "Variable Name" %in% colnames(w4m.var))
+				stop("Cannot find column \"Variable Name\" into W4M variable data frame.")
 
-			# Update MAF data frame
-			isa@maf.dataframes[[maf.files[[1]]]] <- maf.df 
+			if (length(cols) > 0) {
+				if ( ! identical(maf.df.var.names, w4m.var[["Variable Name"]]))
+					stop("Variable names found for ISA MAF data frame and \"Variable Name\" column of W4M variable data frame aren't identical.")
+
+				# Append new columns found in variable data frame
+				maf.df <- cbind(maf.df, w4m.var[cols])
+
+				# Update MAF data frame
+				isa@maf.dataframes[[maf.files[[1]]]] <- maf.df 
+			}
 		}
 	}
 

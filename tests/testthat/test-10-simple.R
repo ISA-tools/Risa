@@ -39,10 +39,10 @@ test_isa2w4m_faahko <- function() {
 	testthat::expect_is(w4m, 'NULL') # faahKO contains no measurement file (m_*.txt), so isa2w4m() fails.
 }
 
-# Test isa2w4m on MTBLS404 {{{1
+# Test isa2w4m on MTBLS404, with normalization {{{1
 ################################################################
 
-test_isa2w4m_mtbls404 <- function() {
+test_isa2w4m_mtbls404_normalize <- function() {
 
 	# Load ISA
 	isa <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
@@ -57,15 +57,54 @@ test_isa2w4m_mtbls404 <- function() {
 
 	# Save W4M data frames
 	for (x in c('samp', 'var', 'mat'))
-		write.table(w4m[[x]], file = file.path(TEST.DIR, paste0('test_isa2w4m_mtbls404-', x, '.tsv')), row.names = FALSE, sep = "\t")
+		write.table(w4m[[x]], file = file.path(TEST.DIR, paste0('test_isa2w4m_mtbls404-', x, '_normalized.tsv')), row.names = FALSE, sep = "\t")
 
 	# Load expected outputs
-	samp <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-sample-metadata.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
-	var <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-variable-metadata.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
-	mat <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-sample-variable-matrix.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
+	samp <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-sample-metadata_normalized.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
+	var <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-variable-metadata_normalized.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
+	mat <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-sample-variable-matrix_normalized.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
 
 	# Convert factors to strings
 	out.var <- data.frame(lapply(w4m$var, function(v) if (is.factor(v)) as.character(v) else v), stringsAsFactors = FALSE)
+
+	# Compare outputs
+	testthat::expect_identical(w4m$samp, samp)
+	testthat::expect_identical(out.var, var)
+	testthat::expect_identical(w4m$mat, mat)
+}
+
+# Test isa2w4m on MTBLS404, without normalization {{{1
+################################################################
+
+test_isa2w4m_mtbls404_dont_normalize <- function() {
+
+	# Load ISA
+	isa <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
+	testthat::expect_is(isa, "ISATab")
+
+	# Convert to W4M
+	w4m <- isa2w4m(isa, normalize = FALSE)
+	testthat::expect_is(w4m, 'list')
+	testthat::expect_length(w4m, 3)
+	testthat::expect_false(is.null(names(w4m)))
+	testthat::expect_true(all(c('samp', 'var', 'mat') %in% names(w4m)))
+
+	# Save W4M data frames
+	for (x in c('samp', 'var', 'mat'))
+		write.table(w4m[[x]], file = file.path(TEST.DIR, paste0('test_isa2w4m_mtbls404-', x, '_not_normalized.tsv')), row.names = FALSE, sep = "\t")
+
+	# Check column names, no names must end with .x, .y, .[0-9]
+	for (x in c('samp', 'var', 'mat'))
+		testthat::expect_length(grep('^.*\\.([0-9xy])$', colnames(w4m[[x]])), 0)
+
+	# Load expected outputs
+	samp <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-sample-metadata_not_normalized.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
+	var <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-variable-metadata_not_normalized.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
+	mat <- read.table(file = file.path(RES.DIR, 'MTBLS404', 'MTBLS404-w4m-sample-variable-matrix_not_normalized.tsv'), header = TRUE, sep = "\t", stringsAsFactors = FALSE, check.names = FALSE, comment.char = '')
+
+	# Convert factors to strings
+	out.var <- data.frame(lapply(w4m$var, function(v) if (is.factor(v)) as.character(v) else v), stringsAsFactors = FALSE)
+	colnames(out.var) <- colnames(w4m$var)
 
 	# Compare outputs
 	testthat::expect_identical(w4m$samp, samp)
@@ -89,7 +128,7 @@ test_isa_writing <- function() {
 	# TODO test that content of output files is the same as content of reference files (even if they are not written exactly the same).
 }
 
-# Test w4misa {{{1
+# Test w4m2isa {{{1
 ################################################################
 
 test_w4m2isa <- function() {
@@ -108,8 +147,6 @@ test_w4m2isa <- function() {
 	# Test that ISA has not changed
 	study.name <- isa.ref@study.identifiers[[1]]
 	testthat::expect_identical(isa.ref@study.files[[study.name]], isa@study.files[[study.name]])
-	isa.ref.assay.cols <- colnames(isa.ref@assay.files.per.study[[study.name]][[1]])
-	isa.assay.cols <- colnames(isa@assay.files.per.study[[study.name]][[1]])
 	testthat::expect_identical(isa.ref@assay.files.per.study[[study.name]][[1]], isa@assay.files.per.study[[study.name]][[1]])
 	assay.filename <- isa@assay.filenames.per.study[[study.name]][[1]]
 	maf.files <- isa@maf.filenames.per.assay.filename[[assay.filename]]
@@ -144,7 +181,8 @@ test_w4m2isa_added_cols <- function() {
 test_that("Load ISA.", test_load_faahko_isa())
 test_that("We can build an XCMS set.", test_build_xcms_set_from_faahko())
 test_that("Conversion from ISA to W4M format for faahKO fails.", test_isa2w4m_faahko())
-test_that("Conversion from MTBLS404 ISA to W4M format works.", test_isa2w4m_mtbls404())
+test_that("Conversion from MTBLS404 ISA to W4M format works, with normalization.", test_isa2w4m_mtbls404_normalize())
+test_that("Conversion from MTBLS404 ISA to W4M format works, without normalization.", test_isa2w4m_mtbls404_dont_normalize())
 test_that("We can write ISA ?_*.txt files on disk.", test_isa_writing())
 test_that("w4m2isa run on unmodified W4M data frames gives back the same ISA data frames.", test_w4m2isa())
 test_that("w4m2isa run correctly when columns have been added.", test_w4m2isa_added_cols())
