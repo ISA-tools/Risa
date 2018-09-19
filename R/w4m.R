@@ -199,16 +199,21 @@
 	study.df <- isa@study.files[[study.name]]
 	study.assay.df <- isa@assay.files.per.study[[study.name]][[assay.index]]
 
-	# TODO Remove rows when some samples have been deleted
+	# Check that the "Sample Name" column exists
+	if ( ! "Sample Name" %in% colnames(study.assay.df))
+		stop("Cannot find column \"Sample Name\" into ISA assay data frame.")
+ 	if ( ! "Sample Name" %in% colnames(w4m.samp))
+		stop("Cannot find column \"Sample Name\" into W4M sample data frame.")
+
+	# Remove rows when some samples have been deleted
+	removed.samples = ! study.assay.df[["Sample Name"]] %in% w4m.samp[["Sample Name"]]
+	if (any(removed.samples))
+		study.assay.df <- study.assay.df[ ! removed.samples, ]
 
 	# Modify assay data frame
 	cols <- colnames(w4m.samp)
 	cols <- cols[ ! cols %in% colnames(study.df)]
 	cols <- cols[ ! cols %in% colnames(study.assay.df)]
-	if ( ! "Sample Name" %in% colnames(study.assay.df))
-		stop("Cannot find column \"Sample Name\" into ISA assay data frame.")
- 	if ( ! "Sample Name" %in% colnames(w4m.samp))
-		stop("Cannot find column \"Sample Name\" into W4M sample data frame.")
 	if ( ! identical(study.assay.df[["Sample Name"]], w4m.samp[["Sample Name"]]))
 		stop("\"Sample Name\" column of ISA assay data frame and \"Sample Name\" column of W4M sample data frame aren't identical.")
 	study.assay.df <- cbind(study.assay.df, w4m.samp[cols])
