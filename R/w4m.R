@@ -217,7 +217,6 @@
 	if ( ! identical(study.assay.df[["Sample Name"]], w4m.samp[["Sample Name"]]))
 		stop("\"Sample Name\" column of ISA assay data frame and \"Sample Name\" column of W4M sample data frame aren't identical.")
 	study.assay.df <- cbind(study.assay.df, w4m.samp[cols])
-#	study.assay.df <- merge(study.assay.df, w4m.samp[cols], by = "Sample Name", sort = FALSE)
 
 	# Update assay data frame
 	isa@assay.files.per.study[[study.name]][[assay.index]] <- study.assay.df 

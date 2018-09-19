@@ -195,7 +195,13 @@ test_w4m2isa_with_removed_samples <- function() {
 	samp.name.col <- 'Sample Name'
 	testthat::expect_true(samp.name.col %in% colnames(w4m$samp))
 	samp.to.remove <- w4m$samp[5, samp.name.col]
-	w4m$samp <- w4m$samp[w4m$samp[[samp.name.col]] == samp.to.remove, ]
+	n.samp.to.remove <- sum(w4m$samp[[samp.name.col]] == samp.to.remove)
+	print('-------------------------------- test_w4m2isa_with_removed_samples 5')
+	print(samp.to.remove)
+	print('-------------------------------- test_w4m2isa_with_removed_samples 5.1')
+	print(n.samp.to.remove)
+	print('-------------------------------- test_w4m2isa_with_removed_samples 6')
+	w4m$samp <- w4m$samp[w4m$samp[[samp.name.col]] != samp.to.remove, ]
 	w4m$mat <- w4m$mat[ ! colnames(w4m$mat) %in% samp.to.remove]
 
 	# Convert back to ISA
@@ -207,7 +213,7 @@ test_w4m2isa_with_removed_samples <- function() {
 	print('-------------------------------- test_w4m2isa_with_removed_samples 11')
 	print(nrow(isa.ref@assay.files.per.study[[study.name]][[1]]))
 	print('-------------------------------- test_w4m2isa_with_removed_samples 12')
-	testthat::expect_equal(nrow(isa@assay.files.per.study[[study.name]][[1]]), nrow(isa.ref@assay.files.per.study[[study.name]][[1]]) - 1)
+	testthat::expect_equal(nrow(isa@assay.files.per.study[[study.name]][[1]]), nrow(isa.ref@assay.files.per.study[[study.name]][[1]]) - n.samp.to.remove)
 	assay.filename <- isa@assay.filenames.per.study[[study.name]][[1]]
 	maf.files <- isa@maf.filenames.per.assay.filename[[assay.filename]]
 	testthat::expect_false(samp.to.remove %in% colnames(isa@maf.dataframes[[maf.files[[1]]]]))
