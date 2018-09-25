@@ -227,7 +227,7 @@
 # Update MAF {{{1
 ################################################################
 
-.update.maf <- function(isa, study.name, assay.index, w4m.var, w4m.mat) {
+.update.maf <- function(isa, study.name, assay.index, w4m.var, w4m.samp) {
 
 	assay.filename <- isa@assay.filenames.per.study[[study.name]][[assay.index]]
 	# Get MAF data frame
@@ -244,10 +244,14 @@
 			# Get variable names
 			maf.df.var.names <- if ('Variable Name' %in% colnames(maf.df)) maf.df[['Variable Name']] else .make.variable.names(maf.df)
 
+			# Check that the "Sample Name" column exists
+ 			if ( ! "Sample Name" %in% colnames(w4m.samp))
+				stop("Cannot find column \"Sample Name\" into W4M sample data frame.")
+
 			# Remove sample columns
 			# TODO
 
-			# Remove rows
+			# Remove variable rows
 			# TODO
 
 			# Add new columns from W4M variable data frame
