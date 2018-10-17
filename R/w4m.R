@@ -1,11 +1,112 @@
 # vi: fdm=marker
-
-# Constants {{{1
+# Convert W4M 3 files format to ISA {{{1
 ################################################################
 
-.NA.STRINGS <- c('NA', '')
+w4m2isa <- function(isa, w4m, study.filename = NULL, assay.filename = NULL) {
 
-# Get study {{{1
+	# The existing ISA object is updated with W4M values.
+
+	# Transform w4m into a list of W4M inputs
+	if (all(c('samp', 'var', 'mat') %in% names(w4m)))
+		w4m <- list(w4m)
+
+	# Get study & assays
+	study <- .get.study(isa, study.filename = study.filename)
+	assay.indices <- if (is.null(assay.filename)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename)
+	if (length(assay.indices) != length(w4m))
+		stop(paste0(length(assay.indices), ' assays selected, but only ', length(w4m), ' W4M inputs provided.'))
+
+	# Loop on assay indices
+	for (i in seq_along(assay.indices)) {
+
+		assay.index <- assay.indices[[i]]
+
+		# No need to update ISA study data frame. W4M tools only add new columns, and never modify values on existing columns. All new columns of W4M sample data frame will be added to ISA assay data frame.
+#		.update.study(isa, study.name = study$name, w4m.samp = w4m.samp)
+		# XXX Except when lines have been removed in W4M sample data frame.
+
+		isa <- .update.study(isa, study.name = study$name, w4m = w4m[[i]])
+		isa <- .update.maf(isa, study.name = study$name, assay.index = assay.index, w4m = w4m[[i]]) # Update MAF data frame before updating asssay data frame, since it uses the assay data frame.
+		isa <- .update.assay(isa, study.name = study$name, assay.index = assay.index, w4m = w4m[[i]])
+	}
+
+	return(isa)
+}
+
+# Convert ISA to W4M 3 files format {{{1
+################################################################
+
+isa2w4m <- function(isa, study.filename = NULL, assay.filename = NULL, drop = TRUE, normalize = FALSE) {
+
+	output <- NULL
+
+	# Get study & assays
+	study <- .get.study(isa, study.filename = study.filename)
+	assay.indices <- if (is.null(assay.filename)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename)
+
+	# Loop on assay indices to extract
+	for (assay.index in (assay.indices)) {
+
+		# Get assay
+		assay <- .get.assay(isa, study$name, assay.index)
+
+		# Get measures
+		measures <- .get.measures(isa, assay)
+		if (is.null(measures))
+			next
+
+		# Create variable names
+		variable.names <- .make.variable.names(measures$df)
+
+		# Get sample names
+		sample.names <- .get.sample.names(assay.df = assay$df, maf.df = measures$df)
+
+		# Extract sample metadata
+		sample.metadata <- .make.sample.metadata(study, assay, sample.names = sample.names, normalize = normalize)
+
+		# Extract variable metadata
+		variable.metadata <- .make.variable.metadata(measures = measures, sample.names = sample.names, variable.names = variable.names, normalize = normalize)
+
+		# Extract matrix
+		sample.variable.matrix <- .make.matrix(measures = measures, sample.names = sample.names, variable.names = variable.names, normalize = normalize)
+
+		# Build output
+		x <- list(samp = sample.metadata, var = variable.metadata, mat = sample.variable.matrix)
+		output <- c(output, list(x))
+	}
+
+	# Drop
+	if (drop && ! is.null(output) && is.null(names(output)) && length(output))
+		output <- output[[1]]
+
+	return(output)
+}
+
+# Get extract name column {{{1
+################################################################
+
+getExtractNameColumn <- function(w4m) {
+	"The extract name is like the sample name, but is unique for each extract analysed, even if a sample has been analysed twice."
+
+	samp.name.col <- NULL
+
+	# Get sample names
+	sample.names <- colnames(w4m$mat)
+
+	# Loop on all columns of sample data frame
+	for (c in colnames(w4m$samp))
+		if (all(w4m$samp[[c]] %in% sample.names) && all( ! duplicated(w4m$samp[[c]]))) {
+			samp.name.col <- c
+			break
+		}
+
+	return(samp.name.col)
+}
+
+# PRIVATE METHODS {{{1
+################################################################
+
+# Get study {{{2
 ################################################################
 
 .get.study <- function(isa, study.filename = NULL) {
@@ -25,7 +126,7 @@
 	return(list(name = study.name, df = study.df))
 }
 
-# Get number of assays {{{1
+# Get number of assays {{{2
 ################################################################
 
 .get.nb.assays <- function(isa, study.name) {
@@ -33,7 +134,7 @@
 	return(length(study.assays))
 }
 
-# Get chosen assay index {{{1
+# Get chosen assay index {{{2
 ################################################################
 
 .get.chosen.assay.index <- function(isa, study.name, assay.filename = NULL) {
@@ -53,7 +154,7 @@
 	return(assay.index)
 }
 
-# Get assay {{{1
+# Get assay {{{2
 ################################################################
 
 .get.assay <- function(isa, study.name, assay.index) {
@@ -64,7 +165,7 @@
 	return(list(filename = study.assay.filename, df = study.assay.df))
 }
 
-# Make sample metadata {{{1
+# Make sample metadata {{{2
 ################################################################
 
 .make.sample.metadata <- function(study, assay, sample.names, normalize = TRUE) {
@@ -72,8 +173,8 @@
 	# Create sample metadata by merging assay and study metadata
 	sample.name.col <- 'Sample Name'
 	if (normalize) {
-		colnames(study$df) <- make.names(colnames(study$df), uniq = TRUE) # TODO make.names should be optional
-		colnames(assay$df) <- make.names(colnames(assay$df), uniq = TRUE)
+		colnames(study$df) <- make.names(colnames(study$df), unique = TRUE) # TODO make.names should be optional
+		colnames(assay$df) <- make.names(colnames(assay$df), unique = TRUE)
 		sample.name.col <- 'Sample.Name'
 	}
 	study.df <- merge(assay$df[sample.name.col], study$df, by = sample.name.col, sort = FALSE, no.dups = FALSE)
@@ -86,14 +187,14 @@
 
 	# Normalize
 	if (normalize) {
-		sample.metadata <- cbind(data.frame(sample.name = make.names(sample.names, uniq = TRUE), stringsAsFactors = FALSE), sample.metadata)
-		colnames(sample.metadata) <- make.names(colnames(sample.metadata), uniq = TRUE)
+		sample.metadata <- cbind(data.frame(sample.name = make.names(sample.names, unique = TRUE), stringsAsFactors = FALSE), sample.metadata)
+		colnames(sample.metadata) <- make.names(colnames(sample.metadata), unique = TRUE)
 	}
 
 	return(sample.metadata)
 }
 
-# Get measures {{{1
+# Get measures {{{2
 ################################################################
 
 .get.measures <- function(isa, assay) {
@@ -115,29 +216,8 @@
 	return(measures)
 }
 
-# Get extract name column {{{1
-################################################################
 
-# TODO Document this method
-getExtractNameColumn <- function(w4m) {
-	"The extract name is like the sample name, but is unique for each extract analysed, even if a sample has been analysed twice."
-
-	samp.name.col <- NULL
-
-	# Get sample names
-	sample.names <- colnames(w4m$mat)
-
-	# Loop on all columns of sample data frame
-	for (c in colnames(w4m$samp))
-		if (all(w4m$samp[[c]] %in% sample.names) && all( ! duplicated(w4m$samp[[c]]))) {
-			samp.name.col <- c
-			break
-		}
-
-	return(samp.name.col)
-}
-
-# Get sample names {{{1
+# Get sample names {{{2
 ################################################################
 
 .get.sample.names <- function (assay.df, samp.name.col = NULL, maf.df = NULL) {
@@ -160,7 +240,7 @@ getExtractNameColumn <- function(w4m) {
 	return(sample.names)
 }
 
-# Make variable metadata {{{1
+# Make variable metadata {{{2
 ################################################################
 
 .make.variable.metadata <- function(measures, sample.names, variable.names, normalize = TRUE) {
@@ -173,12 +253,12 @@ getExtractNameColumn <- function(w4m) {
 
 	# Normalize
 	if (normalize)
-		colnames(variable.metadata) <- make.names(colnames(variable.metadata), uniq = TRUE)
+		colnames(variable.metadata) <- make.names(colnames(variable.metadata), unique = TRUE)
 
 	return(variable.metadata)
 }
 
-# Make matrix {{{1
+# Make matrix {{{2
 ################################################################
 
 .make.matrix <- function(measures, sample.names, variable.names, normalize = TRUE) {
@@ -193,12 +273,12 @@ getExtractNameColumn <- function(w4m) {
 
 	# Normalize sample names
 	if (normalize)
-		colnames(sample.variable.matrix) <- make.names(colnames(sample.variable.matrix), uniq = TRUE)
+		colnames(sample.variable.matrix) <- make.names(colnames(sample.variable.matrix), unique = TRUE)
 
 	return(sample.variable.matrix)
 }
 
-# Make variable names {{{1
+# Make variable names {{{2
 ################################################################
 
 .make.variable.names <- function(maf.df) {
@@ -210,12 +290,12 @@ getExtractNameColumn <- function(w4m) {
 			col.vals <- ifelse(is.na(col.vals), '', col.vals)
 			variable.names <- paste(variable.names, ifelse(nchar(variable.names) > 0 & nchar(col.vals) > 0, '_', ''), col.vals, sep = '')
 		}
-	variable.names <- make.names(variable.names, uniq = TRUE)
+	variable.names <- make.names(variable.names, unique = TRUE)
 
 	return(variable.names)
 }
 
-# Update assay {{{1
+# Update assay {{{2
 ################################################################
 
 .update.assay <- function(isa, study.name, assay.index, w4m) {
@@ -250,7 +330,7 @@ getExtractNameColumn <- function(w4m) {
 	return(isa)
 }
 
-# Update MAF {{{1
+# Update MAF {{{2
 ################################################################
 
 .update.maf <- function(isa, study.name, assay.index, w4m) {
@@ -313,7 +393,7 @@ getExtractNameColumn <- function(w4m) {
 	return(isa)
 }
 
-# Update study {{{1
+# Update study {{{2
 ################################################################
 
 .update.study <- function(isa, study.name, w4m) {
@@ -338,86 +418,3 @@ getExtractNameColumn <- function(w4m) {
 	return(isa)
 }
 
-# Convert W4M 3 files format to ISA {{{1
-################################################################
-
-# TODO write documentation
-w4m2isa <- function(isa, w4m, study.filename = NULL, assays = NULL, assay.filename = NULL) {
-
-	# The existing ISA object is updated with W4M values.
-
-	# Transform w4m into a list of W4M inputs
-	if (all(c('samp', 'var', 'mat') %in% names(w4m)))
-		w4m <- list(w4m)
-
-	# Get study & assays
-	study <- .get.study(isa, study.filename = study.filename)
-	assay.indices <- if (is.null(assays)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename)
-	if (length(assay.indices) != length(w4m))
-		stop(paste0(length(assay.indices), ' assays selected, but only ', length(w4m), ' W4M inputs provided.'))
-
-	# Loop on assay indices
-	for (i in seq_along(assay.indices)) {
-
-		assay.index <- assay.indices[[i]]
-
-		# No need to update ISA study data frame. W4M tools only add new columns, and never modify values on existing columns. All new columns of W4M sample data frame will be added to ISA assay data frame.
-#		.update.study(isa, study.name = study$name, w4m.samp = w4m.samp)
-		# XXX Except when lines have been removed in W4M sample data frame.
-
-		isa <- .update.study(isa, study.name = study$name, w4m = w4m[[i]])
-		isa <- .update.maf(isa, study.name = study$name, assay.index = assay.index, w4m = w4m[[i]]) # Update MAF data frame before updating asssay data frame, since it uses the assay data frame.
-		isa <- .update.assay(isa, study.name = study$name, assay.index = assay.index, w4m = w4m[[i]])
-	}
-
-	return(isa)
-}
-
-# Convert ISA to W4M 3 files format {{{1
-################################################################
-
-isa2w4m <- function(isa, study.filename = NULL, assays = NULL, assay.filename = NULL, drop = TRUE, normalize = FALSE) {
-
-	output <- NULL
-
-	# Get study & assays
-	study <- .get.study(isa, study.filename = study.filename)
-	assay.indices <- if (is.null(assays)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename)
-
-	# Loop on assay indices to extract
-	for (assay.index in (assay.indices)) {
-
-		# Get assay
-		assay <- .get.assay(isa, study$name, assay.index)
-
-		# Get measures
-		measures <- .get.measures(isa, assay)
-		if (is.null(measures))
-			next
-
-		# Create variable names
-		variable.names <- .make.variable.names(measures$df)
-
-		# Get sample names
-		sample.names <- .get.sample.names(assay.df = assay$df, maf.df = measures$df)
-
-		# Extract sample metadata
-		sample.metadata <- .make.sample.metadata(study, assay, sample.names = sample.names, normalize = normalize)
-
-		# Extract variable metadata
-		variable.metadata <- .make.variable.metadata(measures = measures, sample.names = sample.names, variable.names = variable.names, normalize = normalize)
-
-		# Extract matrix
-		sample.variable.matrix <- .make.matrix(measures = measures, sample.names = sample.names, variable.names = variable.names, normalize = normalize)
-
-		# Build output
-		x <- list(samp = sample.metadata, var = variable.metadata, mat = sample.variable.matrix)
-		output <- c(output, list(x))
-	}
-
-	# Drop
-	if (drop && ! is.null(output) && is.null(names(output)) && length(output))
-		output <- output[[1]]
-
-	return(output)
-}

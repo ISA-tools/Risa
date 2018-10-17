@@ -257,4 +257,4 @@ test_that("w4m2isa runs on unmodified W4M data frames gives back the same ISA da
 test_that("w4m2isa runs correctly when columns have been added.", test_w4m2isa_added_cols())
 test_that("w4m2isa runs correctly when samples have been removed.", test_w4m2isa_with_removed_samples())
 test_that("w4m2isa runs correctly when variables have been removed.", test_w4m2isa_with_removed_variables())
-# TODO test w4m2isa when both samples and variables have been removed.
+test_that("w4m2isa runs correctly when variables have been removed.", test_w4m2isa_with_removed_variables())

@@ -46,6 +46,9 @@ Objects can be created by calls of the form \code{new("ISATab", ...)}.
     \item{\code{treatments}:}{Object of class \code{"list"} of data frames with the combination of factor values, per study file, or a factor object, if there is a single study }
     \item{\code{groups}:}{Object of class \code{"list"}, with one element per study file, and each element is a list of the samples for the corresponding treatment }
     \item{\code{assay.tabs}:}{Object of class \code{"list"}, where each element is an object of the class \code{AssayTab} or its specialisations (\code{MSAssayTab} or \code{MicroarrayAssayTab}), representing the information of each of the assay files in the investigation.}
+	\item{\code{maf.dataframes}}{Object of class \code{"list"}, containing all MAF data frames loaded for the MAF files. The names of the list are the MAF filenames that you can found inside the \code{maf.filenames} attribute.}
+	\item{\code{maf.filenames}}{Object of class \code{"character"}, containing the names of all the MAF files.}
+	\item{\code{maf.filenames.per.assay.filename}}{Object of class \code{"list"}, containing the names of MAF files for each assay filename.}
   }
 }
 \section{Methods}{
