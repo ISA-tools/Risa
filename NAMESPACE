@@ -3,6 +3,8 @@ import("Rcpp")
 import("affy")
 import("biocViews")
 import("methods")
+importFrom("stats", "na.omit")
+importFrom("utils", "count.fields", "data", "read.csv", "read.table", "unzip", "write.table")
 
 exportClass("ISATab")
 
@@ -32,3 +34,6 @@ export("getExpressionSet")
 
 export("suggestBiocPackage")
 
+export("isa2w4m")
+export("w4m2isa")
+export("getExtractNameColumn")

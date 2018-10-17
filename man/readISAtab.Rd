@@ -7,11 +7,12 @@ Reads an ISAtab dataset into an R object.
 \description{
 Reads an ISAtab dataset given as a zip file or as a set of files in a specific folder, and builds an object from the ISAtab class.
 }
-\usage{readISAtab(path = getwd(), zipfile = NULL, verbose = FALSE)}
+\usage{readISAtab(path = getwd(), zipfile = NULL, verbose = FALSE, na.strings = "NA")}
 \arguments{
   \item{path}{the name of the directory in which the ISAtab files are located (if the parameter zipfile is not provided or if it is equal to NULL), or the name of the directory where the zip file will be extracted (if the parameter zipfile is not NULL.) The default is the working directory.}
   \item{zipfile}{ a zip archive containing ISAtab files. The default value is NULL.}
   \item{verbose}{a boolean indicating to show messages for the different steps, if TRUE, or not to show them, if FALSE}
+  \item{na.strings}{The strings that will be recognized as NA values.}
 }
 \value{
 The result is an object from the \code{ISAtab} class.

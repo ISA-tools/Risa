@@ -18,9 +18,10 @@
   
   The Risa package bridges the ISA metadata with analysis pipelines in R, and this is the reason of its name: R + ISA = Risa. Anecdotically, we note that Risa is the Pleasure Planet in Star Trek (see \url{http://en.memory-alpha.org/wiki/Risa}) and that 'Risa' means laughter in Spanish.
   
+  Two methods are also available for bridging with the Workflow4Metabolomics (see \url{http://workflow4metabolomics.org}) format. One, \code{isa2w4m()} for converting to W4M format, and the other, \code{w4m2isa()} for updating an ISA with modifications made on a W4M object.
 }
 \author{
-  Alejandra Gonzalez-Beltran, Steffen Neumann, Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra, Eamonn Maguire, Susanna-Asunta Sansone.
+  Alejandra Gonzalez-Beltran, Steffen Neumann, Audrey Kauffmann, Gabriella Rustici, Philippe Rocca-Serra, Eamonn Maguire, Susanna-Asunta Sansone, Pierrick Roger.
   Maintainer: Alejandra Gonzalez-Beltran \email{isatools@googlegroups.com}  
 }
 \seealso{ \code{readISAtab}, \code{processAssayXcmsSet}, \code{updateAssayMetadata}, \code{write.ISAtab} }

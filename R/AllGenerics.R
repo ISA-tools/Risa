@@ -37,6 +37,9 @@ setMethod(f="[",signature="ISATab", definition=function(x, i,j, drop) {
   if (i=="treatments") { return(x@treatments) } else {}
   if (i=="groups") { return(x@groups) } else {}
   if (i=="assay.tabs") { return(x@assay.tabs) } else {}
+  if (i=="maf.filenames.per.assay.filename") { return(x@maf.filenames.per.assay.filename) } else {}
+  if (i=="maf.filenames") { return(x@maf.filenames) } else {}
+  if (i=="maf.dataframes") { return(x@maf.dataframes) } else {}
 }
 ) 
 
@@ -77,6 +80,9 @@ setReplaceMethod(f="[",signature="ISATab", definition=function(x,i,j,value){
   if (i=="treatments") { x@treatments<-value } else {} 
   if (i=="groups") { x@groups<-value } else {} 
   if (i=="assay.tabs") { x@assay.tabs<-value } else {} 
+  if (i=="maf.filenames.per.assay.filename") { x@maf.filenames.per.assay.filename<-value } else {} 
+  if (i=="maf.filenames") { x@maf.filenames<-value } else {} 
+  if (i=="maf.dataframes") { x@maf.dataframes<-value } else {} 
   return (x)
   }
 )
@@ -106,11 +112,56 @@ setReplaceMethod(f="[",signature="AssayTab", definition=function(x,i,j,value){
 }
 )
 
+# Get MAF files per assay filename (called by ISATab constructor) 
+################################################################
+
+.get.maf.files.per.assay.filename <- function(assay.dataframes.per.study, assay.filenames.per.study) {
+
+	files <- list()
+
+	# Loop on all studies
+	for (i in seq_along(assay.filenames.per.study)) {
+
+		# Loop on assays
+		for (j in seq_along(assay.filenames.per.study[[i]])) {
+
+			# Is there a column with MAF filenames?
+			maf.field <- "Metabolite Assignment File"
+			m_files <- NULL
+			if (maf.field %in% colnames(assay.dataframes.per.study[[i]][[j]])) {
+
+				# Get list of MAF files for this assay
+				m_files <- assay.dataframes.per.study[[i]][[j]][[maf.field]]
+
+				# Remove duplicates
+				m_files <- m_files[ ! duplicated(m_files)]
+			}
+			files[assay.filenames.per.study[[i]][[j]]] <- m_files
+		}
+	}
+
+	return(files)
+}
+
+# Get MAF data frames (called by ISATab constructor) 
+################################################################
+
+.get.maf.dataframes <- function(isa.path, maf.filenames, na.strings = 'NA') {
+
+
+	maf_dfs <- lapply(file.path(isa.path, maf.filenames), function(f) if (file.exists(f)) read.table(file = f, sep = "\t", header = TRUE, check.names = FALSE, na.strings = na.strings) else NULL)
+	names(maf_dfs) <- maf.filenames
+
+	return(maf_dfs)
+}
+
+# ISATab constructor
+################################################################
 
 setMethod(
   f="initialize",
   signature="ISATab",
-  definition=function(.Object,path){
+  definition=function(.Object, path, na.strings = "NA") {
     
     # Assignment of the slots
     .Object["path"] <- path
@@ -178,7 +229,7 @@ setMethod(
       stop("Did not find some of the study files: ", sfilenames)
     
     ## Reading study files into a list of data frames
-    sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))
+    sfiles = lapply(sfilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE, na.strings = na.strings))
     
     .Object["study.files"] <- sfiles
     
@@ -199,7 +250,7 @@ setMethod(
         
     ## Reading in assay files 
     # afiles is a list of data frames (containing all the assay files)
-    afiles <- lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE,  check.names=FALSE))
+    afiles <- lapply(afilenames, function(i) read.table(file.path(path, i), sep="\t", header=TRUE, stringsAsFactors=FALSE,  check.names=FALSE, na.strings = na.strings))
     names(afiles) <- afilenames
     
     .Object["assay.files"] <- afiles
@@ -207,7 +258,7 @@ setMethod(
     # afiles.per.study is a list (one element per study) of lists (one element per assay) 
     afiles.per.study = lapply(seq_len(length(afilenames.per.study)), 
                               function(j) (lapply(seq_len(length(afilenames.per.study[[j]])),
-                                                  function(i) read.table(file.path(path,afilenames.per.study[[j]][[i]]), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE))))
+                                                  function(i) read.table(file.path(path,afilenames.per.study[[j]][[i]]), sep="\t", header=TRUE, stringsAsFactors=FALSE, check.names=FALSE, na.strings = na.strings))))
     names(afiles.per.study) <- sidentifiers
     
     .Object["assay.files.per.study"] <- afiles.per.study
@@ -244,6 +295,17 @@ setMethod(
                     function(j) (lapply(seq_len(length(afiles)), 
                                         function(i) sfiles[[j]]$Sample.Name %in% afiles[[i]]$Sample.Name)))
         
+    # Load measurements
+    .Object["maf.filenames.per.assay.filename"] <- .get.maf.files.per.assay.filename(assay.dataframes.per.study = .Object["assay.files.per.study"], assay.filenames.per.study = .Object["assay.filenames.per.study"])
+    if (is.null(.Object["maf.filenames.per.assay.filename"]) || length(.Object["maf.filenames.per.assay.filename"]) == 0)
+	    all.maf.filenames <- character()
+    else {
+    	all.maf.filenames <- unlist(.Object["maf.filenames.per.assay.filename"])
+    	all.maf.filenames <- all.maf.filenames[ ! duplicated(all.maf.filenames)]
+	}
+    .Object['maf.filenames'] <- all.maf.filenames
+    .Object["maf.dataframes"] <- .get.maf.dataframes(isa.path = .Object['path'], maf.filenames = .Object["maf.filenames"], na.strings = na.strings)
+
     samples = unique(unlist(lapply(sfiles, function(i) i[,grep(isatab.syntax$sample.name, colnames(i))])))
     
     .Object["samples"] <- samples

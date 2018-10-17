@@ -1,0 +1,111 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	"NCBITAXON"	"EFO"	"NCIT"	"BTO"	
+Term Source File	"http://data.bioontology.org/ontologies/NCBITAXON"	"http://data.bioontology.org/ontologies/EFO"	"http://data.bioontology.org/ontologies/NCIT"	"http://data.bioontology.org/ontologies/BTO"	
+Term Source Version	"6"	"113"	"44"	"29"	
+Term Source Description	"National Center for Biotechnology Information (NCBI) Organismal Classification"	"Experimental Factor Ontology"	"National Cancer Institute Thesaurus"	"BRENDA Tissue and Enzyme Source Ontology"	
+INVESTIGATION
+Investigation Identifier	"MTBLS404"
+Investigation Title	""
+Investigation Description	""
+Investigation Submission Date	""
+Investigation Public Release Date	""
+Comment[Created With Configuration]	""
+Comment[Last Opened With Configuration]	""
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID	""
+Investigation Publication DOI	""
+Investigation Publication Author List	""
+Investigation Publication Title	""
+Investigation Publication Status	""
+Investigation Publication Status Term Accession Number	""
+Investigation Publication Status Term Source REF	""
+INVESTIGATION CONTACTS
+Investigation Person Last Name	""
+Investigation Person First Name	""
+Investigation Person Mid Initials	""
+Investigation Person Email	""
+Investigation Person Phone	""
+Investigation Person Fax	""
+Investigation Person Address	""
+Investigation Person Affiliation	""
+Investigation Person Roles	""
+Investigation Person Roles Term Accession Number	""
+Investigation Person Roles Term Source REF	""
+STUDY
+Study Identifier	"MTBLS404"
+Study Title	"Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses. ('Sacurine' data set)"
+Study Description	"Urine metabolomics is widely used for biomarker research in the fields of medicine and toxicology. As a consequence, characterization of the variations of the urine metabolome under basal conditions becomes critical in order to avoid confounding effects in cohort studies. Such physiological information is however very scarce in the literature and in metabolomics databases so far. Here we studied the influence of age, body mass index (BMI), and gender on metabolite concentrations in a large cohort of 183 adults by using liquid chromatography coupled with high-resolution mass spectrometry (LC-HRMS). We implemented a comprehensive statistical workflow for univariate hypothesis testing and modeling by orthogonal partial least-squares (OPLS).</br> This repository contains the data set from the negative ionization mode: 2 batches, 234 files (24 blanks + 26 QCs + 184 samples) in the Thermo .RAW (6.8 Go) and .mzML (18 Go) formats. The comprehensive analysis of this data set is publicly available on the Workflow4metabolomics.org e-infrastructure with two reference histories: 'W4M00002_Sacurine-comprehensive' corresponds to the preprocessing of the .mzML files, followed by signal drift and batch effect correction, normalization, filtering, statistics, and annotation of the peak table; 'W4M00001_Sacurine- statistics' starts with the peak table restricted to the 113 identified metabolites (see Roux et al. [1] for a full description and information about the annotation), and contains the statistical analysis (as described in associated publication except that the publication also describes the positive ionization mode). The intensities of the table provided in the m_sacurine.txt ISA file correspond to the peak table restricted to the 113 identified metabolites (i.e. are identical to the input of the 'W4M00001_Sacurine-statistics' history). Note that in both histories, the HU_096 sample is filtered out during the Hotelling/Quantile/MissingValue quality control sample filter, leading to 183 samples for the subsequent statistical analyzes. Notes: The 'sampling' field indicates the 9 successive weeks during which samples were collected. The 'subset' field indicates a subset of 36 files (6 blanks + 10 QCs + 20 samples) which still contain significant physiological variations (and can be used as e.g. demo or teaching material).</br> Acknowledgements: The authors are grateful to Philippe Rocca-Serra for his help in preparing the ISA files.</br> </p> Ref:</br> [1] Roux A, Xu Y, Heilier JF, Olivier MF, Ezan E, Tabet JC, Junot C. 2012. Annotation of the Human Adult Urinary Metabolome and Metabolite Identification Using Ultra High Performance Liquid Chromatography Coupled to a Linear Quadrupole Ion Trap-Orbitrap Mass Spectrometer. Anal Chem. Aug 7;84(15):6429-37. doi: 10.1021/ac300829f."
+Study Submission Date	"2016-11-14"
+Study Public Release Date	"2017-01-20"
+Study File Name	"s_sacurine.txt"
+Comment[Study Grant Number]	"ANR-11-INBS-0010"
+Comment[Study Funding Agency]	"Agence Nationale de la Recherche"
+STUDY DESIGN DESCRIPTORS
+Study Design Type	"Cohort Study"
+Study Design Type Term Accession Number	"http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C15208"
+Study Design Type Term Source REF	"NCIT"
+Comment[Number Of Study Groups]	"1"
+Comment[Number Of Subjects Per Study Group]	"183"
+STUDY PUBLICATIONS
+Study PubMed ID	"26088811"
+Study Publication DOI	"10.1021/acs.jproteome.5b00354"
+Study Publication Author List	"Thevenot EA, Roux A, Xu Y, Ezan E, Junot C."
+Study Publication Title	"Analysis of the human adult urinary metabolome variations with age, body mass index and gender by implementing a comprehensive workflow for univariate and OPLS statistical analyses."
+Study Publication Status	"published"
+Study Publication Status Term Accession Number	""
+Study Publication Status Term Source REF	""
+STUDY FACTORS
+Study Factor Name	"age"	"body mass index"	"gender"
+Study Factor Type	"age"	"body mass index"	"sex"
+Study Factor Type Term Accession Number	"http://www.ebi.ac.uk/efo/EFO_0000246"	"http://www.ebi.ac.uk/efo/EFO_0004340"	"http://purl.obolibrary.org/obo/PATO_0000047"
+Study Factor Type Term Source REF	"EFO"	"EFO"	"EFO"
+STUDY ASSAYS
+Study Assay File Name	"a_sacurine.txt"
+Study Assay Measurement Type	"metabolite profiling"
+Study Assay Measurement Type Term Accession Number	"http://purl.obolibrary.org/obo/OBI_0000366"
+Study Assay Measurement Type Term Source REF	""
+Study Assay Technology Type	"mass spectrometry"
+Study Assay Technology Type Term Accession Number	"http://purl.obolibrary.org/obo/OBI_0000470"
+Study Assay Technology Type Term Source REF	""
+Study Assay Technology Platform	"LTQ-Orbitrap"
+STUDY PROTOCOLS
+Study Protocol Name	"sample collection"	"sample preparation"	"chromatography"	"mass spectrometry"	"preprocessing"	"data analysis"	"Metabolite identification"
+Study Protocol Type	"sample collection"	"sample preparation"	"chromatography"	"mass spectrometry"	"preprocessing"	"data transformation"	"Metabolite identification"
+Study Protocol Type Term Accession Number	""	""	""	""	""	""	""
+Study Protocol Type Term Source REF	""	""	""	""	""	""	""
+Study Protocol Description	"Urine samples were collected from a cohort of 189 human adults during their routine examination as employees working at the CEA reseach center of Saclay. Sample collection was performed with informed consent of the subjects, in accordance with the 1964 Helsinki declaration and its later amendments. Five volunteers with high BMI values (from 32.9 to 41.3 kg/m2) were not included since these values were considered extreme (as confirmed by significant p-values with the Grubbs outlier test) and representative of too few subjects to provide robust statistical information. An additional sample was further discarded after normalization due to outlier values in the negative ionization mode, leading to 183 individual samples under study."	"The experimental protocol has been described previously ('439020'study; [1]). Briefly, urine samples were centrifuged (1430g for 5 min) and then diluted in deionized water (dilution 1/5, 20 µl of urine in 80 µl of water) before analysis. Samples were randomly analyzed. A quality control sample consisting of a pool of urine samples analyzed in the course of this study was injected every 10 samples to check for the performance of the analytical system in terms of retention times, accurate mass measurements, and signal intensities.</br>
+</p>
+Ref:</br>
+[1] Roux A, Xu Y, Heilier JF, Olivier MF, Ezan E, Tabet JC, Junot C. 2012. Annotation of the Human Adult Urinary Metabolome and Metabolite Identification Using Ultra High Performance Liquid Chromatography Coupled to a Linear Quadrupole Ion Trap-Orbitrap Mass Spectrometer. Anal Chem. Aug 7;84(15):6429-37. doi: 10.1021/ac300829f."	"An Accela liquid chromatographic system (Thermo Fisher Scientific, Villebon-sur-Yvette, France) was used. The ultrahigh performance liquid chromatographic (UHPLC) separation was performed on a Hypersil GOLD C18 1.9 µm, 2.1 mm x 150 mm column (Thermo Fisher Scientific, Villebon-sur-Yvette, France). The flow rate was 0.5 ml/min with mobile phases A (100% water) and B (100% acetonitrile), both containing 0.1% formic acid. The gradient consisted of an isocratic step of 2 min at 100% phase A, followed by a linear gradient from 0% to 100% of phase B for the next 11 min, before returning to 100% A in 0.5 min. The column was then allowed to equilibrate for 3.5 min."	"The liquid chromatographic system was coupled to an LTQ-Orbitrap Discovery (Thermo Fisher Scientific, Villebon-sur-Yvette, France) fitted with an electrospray (ESI) source. The mass resolution of the spectrometer was 30,000 (m/dm at 400 u) and he mass accuracy was within a 5 ppm range. In the negative ionization mode, samples were analyzed in two batches (ne1 and ne2). The ESI source was cleaned between ne1 and ne2. The same quality control (QC) sample for all batches (mix of urines from a subset of the cohort) was injected regularly throughout the run after every ten samples of interest."	"Peak detection, grouping, and retention time correction with the XCMS software resulted in two peak tables (one for each ionization mode). After metabolite identification, peak integration was performed with the Quan Browser module from the Xcalibur software (Thermo Fisher Scientific) after visual checking of the retention time limits, in order to refine signal quantitation and avoid any bias that may have occurred during the initial XCMS procedure. The few missing values in the pos and neg peak tables (less than 2%) were replaced by half the minimum of the non missing values (results without replacement of missing values were similar)."	"1) Signal Drift Correction and Batch Effect Removal: Within each peak table, intensities were corrected for signal drift and batch effect by fitting a locally quadratic (loess) regression model to the QC values. The parameter controlling the smoothing was set to 1 to avoid overfitting. Once the peak tables were normalized, metabolites with a coefficient of variation (CV) of their QC values >30% (which was the case for 10% and 4% of the features of the pos and neg tables, respectively) were filtered out.</br>
+2) Normalization and Quality Control: Each urine profile was normalized to the osmolality of the sample. The two peak tables were subsequently log10 transformed. One sample with both an extreme intensity distribution quantile (p < 10-15) and an extreme Hotelling's T2 distance in the PCA score plot (p < 10-15) in the negative ionization mode, was discarded.</br>
+3) Univariate Statistical Analysis: Correlations with age and BMI covariates were assessed with the Spearman rank correlation test, and the Wilcoxon (Mann-Whitney) test was used for the comparison of gender distributions. The p-values were adjusted for multiple comparison by controlling the false discovery rate (proportion of false positives among the metabolites called significant) at a 5% threshold.</br>
+4) Multivariate Modeling: The ropls R package implements the PCA, PLS(-DA) and OPLS(-DA) approaches with the original, NIPALS-based, versions of the algorithms. It includes the R2 and Q2 quality metrics, the permutation diagnostics, the computation of the VIP values, the score and orthogonal distances to detect outliers, as well as many graphics (scores, loadings, predictions, diagnostics, outliers, etc.). The ropls package is available from the Bioconductor repository. The number of orthogonal components of the OPLS models for the age, BMI, and gender responses, as assessed by the Q2Y metrics, was 1, 1, and 3, respectively. The variables were standardized (i.e., mean-centered and unit-variance scaled) prior to model building as it resulted in the highest Q2Y (results with Pareto scaling were similar).</br>
+5) Correlation Networks and Hierarchical Clustering: The Spearman correlation coefficient (cor_spe) was used as the measure of similarity between metabolite profiles among individuals. Only edges corresponding to an absolute correlation >0.5 are shown. Hierarchical clustering of individuals and metabolites were performed using 1-cor_spe as the dissimilarity, and the Ward's linkage method.</br> 
+6) Software: All computational modules (for data normalization, quality control, univariate testing and multivariate modeling) were written in R (version 3.0.2) and integrated into the Workflow4Metabolomics.org online resource for computational metabolomics."	"Annotation was performed by using our in-house ESI-mass spectra database, as well as the HMDB, KEGG, and METLIN public databases, and identities were confirmed with additional MS/MS experiments when required.</br>
+Regarding the provided MAF file, please note that:</br> 
+1) retention times are in minutes with a dead time of the chromatographic system of 0.8 min</br> 
+2) additional information regarding the other detected adducts and isotopes, and regarding the additional MS2 experiments can be found in the supporting information (including files 'ac300829f_si_003.xlsx', 'ac300829f_si_006.xlsx', 'ac300829f_si_010.xlsx', and 'ac300829f_si_008.xlsx') from Roux et al. [1].</br>
+</p>
+Ref:</br>
+[1] Roux A, Xu Y, Heilier JF, Olivier MF, Ezan E, Tabet JC, Junot C. 2012. Annotation of the Human Adult Urinary Metabolome and Metabolite Identification Using Ultra High Performance Liquid Chromatography Coupled to a Linear Quadrupole Ion Trap-Orbitrap Mass Spectrometer. Anal Chem. Aug 7;84(15):6429-37. doi: 10.1021/ac300829f."
+Study Protocol URI	""	""	""	""	""	""	""
+Study Protocol Version	""	""	""	""	""	""	""
+Study Protocol Parameters Name	""	""	"chromatography instrument;chromatography column;solvent A;solvent B;elution program"	"mass spectrometry instrument;acquisition mode;batch;injection order;subset;full;sampling"	""	"software"	""
+Study Protocol Parameters Name Term Accession Number	""	""	";;;;"	";;;;;;"	""	""	""
+Study Protocol Parameters Name Term Source REF	""	""	";;;;"	";;;;;;"	""	""	""
+Study Protocol Components Name	""	""	""	""	""	""	""
+Study Protocol Components Type	""	""	""	""	""	""	""
+Study Protocol Components Type Term Accession Number	""	""	""	""	""	""	""
+Study Protocol Components Type Term Source REF	""	""	""	""	""	""	""
+STUDY CONTACTS
+Study Person Last Name	"Thevenot"	"Junot"
+Study Person First Name	"Etienne"	"Christophe"
+Study Person Mid Initials	"A"	""
+Study Person Email	"etienne.thevenot@cea.fr"	"christophe.junot@cea.fr"
+Study Person Phone	"33-1-69-08-79-23"	"33-1-69-08-43-66"
+Study Person Fax	"33-1-69-08-89-65"	"33-1-69-08-59-07"
+Study Person Address	"CEA, LIST, Laboratory for Data Analysis and Systems' Intelligence, MetaboHUB, F-91191 Gif-sur-Yvette, France"	"Laboratoire d'Etude du Metabolisme des Medicaments, DSV/iBiTec-S/SPI, MetaboHUB, CEA-Saclay, Gif-Sur-Yvette, France"
+Study Person Affiliation	"Commissariat a l'Energie Atomique et aux Energies Alternatives (CEA)"	"Commissariat a l'Energie Atomique et aux Energies Alternatives (CEA)"
+Study Person Roles	"principal investigator"	"principal investigator"
+Study Person Roles Term Accession Number	""	""
+Study Person Roles Term Source REF	""	""
