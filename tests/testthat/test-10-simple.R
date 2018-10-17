@@ -185,38 +185,63 @@ test_w4m2isa_added_cols <- function() {
 test_w4m2isa_with_removed_samples <- function() {
 
 	# Load ISA
-	isa.ref <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
-	testthat::expect_is(isa.ref, "ISATab")
+	isa.input <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
+	testthat::expect_is(isa.input, "ISATab")
 
 	# Convert to W4M
-	w4m <- isa2w4m(isa.ref)
+	w4m <- isa2w4m(isa.input)
 
 	# Remove samples
-	samp.name.col <- 'Sample Name'
+	samp.name.col <- "Sample Name"
 	testthat::expect_true(samp.name.col %in% colnames(w4m$samp))
 	samp.to.remove <- w4m$samp[5, samp.name.col]
 	n.samp.to.remove <- sum(w4m$samp[[samp.name.col]] == samp.to.remove)
-	print('-------------------------------- test_w4m2isa_with_removed_samples 5')
-	print(samp.to.remove)
-	print('-------------------------------- test_w4m2isa_with_removed_samples 5.1')
-	print(n.samp.to.remove)
-	print('-------------------------------- test_w4m2isa_with_removed_samples 6')
 	w4m$samp <- w4m$samp[w4m$samp[[samp.name.col]] != samp.to.remove, ]
 	w4m$mat <- w4m$mat[ ! colnames(w4m$mat) %in% samp.to.remove]
 
 	# Convert back to ISA
-	isa <- w4m2isa(isa.ref, w4m)
-	study.name <- isa@study.identifiers[[1]]
-	testthat::expect_identical(isa.ref@study.files[[study.name]], isa@study.files[[study.name]])
-	print('-------------------------------- test_w4m2isa_with_removed_samples 10')
-	print(nrow(isa@assay.files.per.study[[study.name]][[1]]))
-	print('-------------------------------- test_w4m2isa_with_removed_samples 11')
-	print(nrow(isa.ref@assay.files.per.study[[study.name]][[1]]))
-	print('-------------------------------- test_w4m2isa_with_removed_samples 12')
-	testthat::expect_equal(nrow(isa@assay.files.per.study[[study.name]][[1]]), nrow(isa.ref@assay.files.per.study[[study.name]][[1]]) - n.samp.to.remove)
-	assay.filename <- isa@assay.filenames.per.study[[study.name]][[1]]
-	maf.files <- isa@maf.filenames.per.assay.filename[[assay.filename]]
-	testthat::expect_false(samp.to.remove %in% colnames(isa@maf.dataframes[[maf.files[[1]]]]))
+	isa.output <- w4m2isa(isa.input, w4m)
+	study.name <- isa.output@study.identifiers[[1]]
+	testthat::expect_equal(nrow(isa.output@study.files[[study.name]]), nrow(isa.input@study.files[[study.name]]) - length(samp.to.remove))
+	testthat::expect_true(samp.name.col %in% colnames(isa.output@study.files[[study.name]]))
+	testthat::expect_false(samp.to.remove %in% isa.output@study.files[[study.name]][[samp.name.col]])
+	testthat::expect_equal(nrow(isa.output@assay.files.per.study[[study.name]][[1]]), nrow(isa.input@assay.files.per.study[[study.name]][[1]]) - n.samp.to.remove)
+	testthat::expect_true(samp.name.col %in% colnames(isa.output@assay.files.per.study[[study.name]][[1]]))
+	testthat::expect_false(samp.to.remove %in% isa.output@assay.files.per.study[[study.name]][[1]][[samp.name.col]])
+	assay.filename <- isa.output@assay.filenames.per.study[[study.name]][[1]]
+	maf.files <- isa.output@maf.filenames.per.assay.filename[[assay.filename]]
+	testthat::expect_equal(ncol(isa.output@maf.dataframes[[maf.files[[1]]]]), ncol(isa.input@maf.dataframes[[maf.files[[1]]]]) - n.samp.to.remove)
+	testthat::expect_false(samp.to.remove %in% colnames(isa.output@maf.dataframes[[maf.files[[1]]]]))
+}
+
+# Test w4m2isa with removed variables {{{1
+################################################################
+
+test_w4m2isa_with_removed_variables <- function() {
+
+	# Load ISA
+	isa.input <- readISAtab(file.path(RES.DIR, 'MTBLS404'), na.strings = c('', 'NA'))
+	testthat::expect_is(isa.input, "ISATab")
+
+	# Convert to W4M
+	w4m <- isa2w4m(isa.input)
+
+	# Remove variables
+	var.name.col <- "Variable Name"
+	testthat::expect_true(var.name.col %in% colnames(w4m$var))
+	var.to.remove <- w4m$var[5, var.name.col]
+	n.var.to.remove <- sum(w4m$var[[var.name.col]] == var.to.remove)
+	w4m$var <- w4m$var[w4m$var[[var.name.col]] != var.to.remove, ]
+	w4m$mat <- w4m$mat[w4m$var[[var.name.col]] != var.to.remove, ]
+
+	# Convert back to ISA
+	isa.output <- w4m2isa(isa.input, w4m)
+	study.name <- isa.output@study.identifiers[[1]]
+	testthat::expect_identical(isa.output@study.files[[study.name]], isa.input@study.files[[study.name]])
+	testthat::expect_identical(isa.output@assay.files.per.study[[study.name]][[1]], isa.input@assay.files.per.study[[study.name]][[1]])
+	assay.filename <- isa.output@assay.filenames.per.study[[study.name]][[1]]
+	maf.files <- isa.output@maf.filenames.per.assay.filename[[assay.filename]]
+	testthat::expect_equal(nrow(isa.output@maf.dataframes[[maf.files[[1]]]]), nrow(isa.input@maf.dataframes[[maf.files[[1]]]]) - n.var.to.remove)
 }
 
 # Main {{{1
@@ -231,6 +256,5 @@ test_that("We can write ISA ?_*.txt files on disk.", test_isa_writing())
 test_that("w4m2isa runs on unmodified W4M data frames gives back the same ISA data frames.", test_w4m2isa())
 test_that("w4m2isa runs correctly when columns have been added.", test_w4m2isa_added_cols())
 test_that("w4m2isa runs correctly when samples have been removed.", test_w4m2isa_with_removed_samples())
-# TODO test w4m2isa when samples have been removed.
-# TODO test w4m2isa when variables have been removed.
+test_that("w4m2isa runs correctly when variables have been removed.", test_w4m2isa_with_removed_variables())
 # TODO test w4m2isa when both samples and variables have been removed.

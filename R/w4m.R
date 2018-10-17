@@ -115,22 +115,47 @@
 	return(measures)
 }
 
+# Get extract name column {{{1
+################################################################
+
+# TODO Document this method
+getExtractNameColumn <- function(w4m) {
+	"The extract name is like the sample name, but is unique for each extract analysed, even if a sample has been analysed twice."
+
+	samp.name.col <- NULL
+
+	# Get sample names
+	sample.names <- colnames(w4m$mat)
+
+	# Loop on all columns of sample data frame
+	for (c in colnames(w4m$samp))
+		if (all(w4m$samp[[c]] %in% sample.names) && all( ! duplicated(w4m$samp[[c]]))) {
+			samp.name.col <- c
+			break
+		}
+
+	return(samp.name.col)
+}
+
 # Get sample names {{{1
 ################################################################
 
-.get.sample.names <- function (assay, measures) {
+.get.sample.names <- function (assay.df, samp.name.col = NULL, maf.df = NULL) {
 
 	sample.names <- NULL
-	sample.names.field <- NULL
-	for (sample.field in colnames(assay$df)) {
-		if (all(assay$df[[sample.field]] %in% colnames(measures$df)) && all(! duplicated(assay$df[[sample.field]]))) {
-			sample.names.field <- sample.field
-			break
+
+	if ((is.null(samp.name.col) || ! samp.name.col %in% colnames(assay.df)) && ! is.null(maf.df))
+		for (sample.field in colnames(assay.df)) {
+			if (all(assay.df[[sample.field]] %in% colnames(maf.df)) && all(! duplicated(assay.df[[sample.field]]))) {
+				samp.name.col <- sample.field
+				break
+			}
 		}
-	}
-	if (is.null(sample.names.field))
+
+	if (is.null(samp.name.col))
 		stop(paste("Impossible to find a column for sample names. Either such a column does not exist, or it contains duplicates.", sep = ''))
-	sample.names <- assay$df[[sample.names.field]]
+
+	sample.names <- assay.df[[samp.name.col]]
 
 	return(sample.names)
 }
@@ -193,30 +218,31 @@
 # Update assay {{{1
 ################################################################
 
-.update.assay <- function(isa, study.name, assay.index, w4m.samp) {
+.update.assay <- function(isa, study.name, assay.index, w4m) {
 
 	# Get study and assay data frame
 	study.df <- isa@study.files[[study.name]]
 	study.assay.df <- isa@assay.files.per.study[[study.name]][[assay.index]]
 
-	# Check that the "Sample Name" column exists
-	if ( ! "Sample Name" %in% colnames(study.assay.df))
-		stop("Cannot find column \"Sample Name\" into ISA assay data frame.")
- 	if ( ! "Sample Name" %in% colnames(w4m.samp))
-		stop("Cannot find column \"Sample Name\" into W4M sample data frame.")
+	# Get real sample name column
+	real.samp.name.col <- getExtractNameColumn(w4m)
+	if ( ! real.samp.name.col %in% colnames(study.assay.df))
+		stop(paste0("Cannot find column \"", real.samp.name.col, "\" into ISA assay data frame."))
+ 	if ( ! real.samp.name.col %in% colnames(w4m$samp))
+		stop(paste0("Cannot find column \"", real.samp.name.col, "\" into W4M data frame."))
 
 	# Remove rows when some samples have been deleted
-	removed.samples = ! study.assay.df[["Sample Name"]] %in% w4m.samp[["Sample Name"]]
+	removed.samples = ! study.assay.df[[real.samp.name.col]] %in% w4m$samp[[real.samp.name.col]]
 	if (any(removed.samples))
 		study.assay.df <- study.assay.df[ ! removed.samples, ]
 
-	# Modify assay data frame
-	cols <- colnames(w4m.samp)
+	# Add new columns to assay data frame
+	cols <- colnames(w4m$samp)
 	cols <- cols[ ! cols %in% colnames(study.df)]
 	cols <- cols[ ! cols %in% colnames(study.assay.df)]
-	if ( ! identical(study.assay.df[["Sample Name"]], w4m.samp[["Sample Name"]]))
-		stop("\"Sample Name\" column of ISA assay data frame and \"Sample Name\" column of W4M sample data frame aren't identical.")
-	study.assay.df <- cbind(study.assay.df, w4m.samp[cols])
+	if ( ! identical(study.assay.df[[real.samp.name.col]], w4m$samp[[real.samp.name.col]]))
+		stop(paste0("\"", real.samp.name.col, "\" column of ISA assay data frame and \"", real.samp.name.col,"\" column of W4M sample data frame aren't identical."))
+	study.assay.df <- cbind(study.assay.df, w4m$samp[cols])
 
 	# Update assay data frame
 	isa@assay.files.per.study[[study.name]][[assay.index]] <- study.assay.df 
@@ -227,7 +253,7 @@
 # Update MAF {{{1
 ################################################################
 
-.update.maf <- function(isa, study.name, assay.index, w4m.var, w4m.samp) {
+.update.maf <- function(isa, study.name, assay.index, w4m) {
 
 	assay.filename <- isa@assay.filenames.per.study[[study.name]][[assay.index]]
 	# Get MAF data frame
@@ -241,38 +267,73 @@
 			# Get MAF data frame
 			maf.df <- isa@maf.dataframes[[maf.files[[1]]]]
 
+			# Get assay data frame
+			assay.df <- isa@assay.files.per.study[[study.name]][[assay.index]]
+
 			# Get variable names
 			maf.df.var.names <- if ('Variable Name' %in% colnames(maf.df)) maf.df[['Variable Name']] else .make.variable.names(maf.df)
-
-			# Check that the "Sample Name" column exists
- 			if ( ! "Sample Name" %in% colnames(w4m.samp))
-				stop("Cannot find column \"Sample Name\" into W4M sample data frame.")
-
-			# Remove sample columns
-			# TODO
-
-			# Remove variable rows
-			# TODO
-
-			# Add new columns from W4M variable data frame
-			cols <- colnames(w4m.var)
-			cols <- cols[ ! cols %in% 'Variable Name']
-			cols <- cols[ ! cols %in% colnames(maf.df)]
- 			if ( ! "Variable Name" %in% colnames(w4m.var))
+ 			if ( ! "Variable Name" %in% colnames(w4m$var))
 				stop("Cannot find column \"Variable Name\" into W4M variable data frame.")
 
+			# Get real sample name column
+			real.samp.name.col <- getExtractNameColumn(w4m)
+			if (is.null(real.samp.name.col))
+				stop("Cannot find a column that contains all sample names used in MAF data frame.")
+			if ( ! real.samp.name.col %in% colnames(assay.df))
+				stop(paste0("Cannot find column \"", real.samp.name.col, "\" into ISA assay data frame."))
+
+			# Remove sample columns
+			samp.name.to.remove <- assay.df[[real.samp.name.col]][ ! assay.df[[real.samp.name.col]] %in% w4m$samp[[real.samp.name.col ]]]
+			if (length(samp.name.to.remove) > 0)
+				maf.df <- maf.df[, ! colnames(maf.df) %in% samp.name.to.remove]
+
+			# Remove variable rows
+			var.name.to.remove <- maf.df.var.names[ ! maf.df.var.names %in% w4m$var[['Variable Name']]]
+			if (length(var.name.to.remove) > 0)
+				maf.df <- maf.df[ ! maf.df.var.names %in% var.name.to.remove, ]
+
+			# Add new columns from W4M variable data frame
+			cols <- colnames(w4m$var)
+			cols <- cols[ ! cols %in% 'Variable Name']
+			cols <- cols[ ! cols %in% colnames(maf.df)]
+
 			if (length(cols) > 0) {
-				if ( ! identical(maf.df.var.names, w4m.var[["Variable Name"]]))
+				if ( ! identical(maf.df.var.names, w4m$var[["Variable Name"]]))
 					stop("Variable names found for ISA MAF data frame and \"Variable Name\" column of W4M variable data frame aren't identical.")
 
 				# Append new columns found in variable data frame
-				maf.df <- cbind(maf.df, w4m.var[cols])
-
-				# Update MAF data frame
-				isa@maf.dataframes[[maf.files[[1]]]] <- maf.df 
+				maf.df <- cbind(maf.df, w4m$var[cols])
 			}
+
+			# Update MAF data frame
+			isa@maf.dataframes[[maf.files[[1]]]] <- maf.df 
 		}
 	}
+
+	return(isa)
+}
+
+# Update study {{{1
+################################################################
+
+.update.study <- function(isa, study.name, w4m) {
+
+	# Get study data frame
+	study.df <- isa@study.files[[study.name]]
+
+	# Check that "Sample Name" column exists
+	if ( ! "Sample Name" %in% colnames(study.df))
+		stop("Cannot find column \"Sample Name\" into ISA assay data frame.")
+ 	if ( ! "Sample Name" %in% colnames(w4m$samp))
+		stop("Cannot find column \"Sample Name\" into W4M sample data frame.")
+
+	# Remove rows when some samples have been deleted
+	removed.samples = ! study.df[["Sample Name"]] %in% w4m$samp[["Sample Name"]]
+	if (any(removed.samples))
+		study.df <- study.df[ ! removed.samples, ]
+
+	# Update study data frame
+	isa@study.files[[study.name]] <- study.df
 
 	return(isa)
 }
@@ -285,32 +346,28 @@ w4m2isa <- function(isa, w4m, study.filename = NULL, assays = NULL, assay.filena
 
 	# The existing ISA object is updated with W4M values.
 
+	# Transform w4m into a list of W4M inputs
+	if (all(c('samp', 'var', 'mat') %in% names(w4m)))
+		w4m <- list(w4m)
+
 	# Get study & assays
 	study <- .get.study(isa, study.filename = study.filename)
 	assay.indices <- if (is.null(assays)) seq(.get.nb.assays(isa, study$name)) else .get.chosen.assay.index(isa, study.name = study$name, assay.filename = assay.filename)
-	if ( ! (length(assay.indices) == length(w4m) || (length(assay.indices) == 1 && all(c('samp', 'var', 'mat') %in% names(w4m)))))
+	if (length(assay.indices) != length(w4m))
 		stop(paste0(length(assay.indices), ' assays selected, but only ', length(w4m), ' W4M inputs provided.'))
 
 	# Loop on assay indices
-	for (assay.index in (assay.indices)) {
+	for (i in seq_along(assay.indices)) {
 
-		if (all(c('samp', 'var', 'mat') %in% names(w4m))) {
-			w4m.samp <- w4m$samp
-			w4m.var <- w4m$var
-			w4m.mat <- w4m$mat
-		}
-		else {
-			w4m.samp <- w4m[[assay.index]]$samp
-			w4m.var <- w4m[[assay.index]]$var
-			w4m.mat <- w4m[[assay.index]]$mat
-		}
+		assay.index <- assay.indices[[i]]
 
 		# No need to update ISA study data frame. W4M tools only add new columns, and never modify values on existing columns. All new columns of W4M sample data frame will be added to ISA assay data frame.
 #		.update.study(isa, study.name = study$name, w4m.samp = w4m.samp)
 		# XXX Except when lines have been removed in W4M sample data frame.
 
-		isa <- .update.assay(isa, study.name = study$name, assay.index = assay.index, w4m.samp = w4m.samp)
-		isa <- .update.maf(isa, study.name = study$name, assay.index = assay.index, w4m.var = w4m.var, w4m.mat = w4m.mat)
+		isa <- .update.study(isa, study.name = study$name, w4m = w4m[[i]])
+		isa <- .update.maf(isa, study.name = study$name, assay.index = assay.index, w4m = w4m[[i]]) # Update MAF data frame before updating asssay data frame, since it uses the assay data frame.
+		isa <- .update.assay(isa, study.name = study$name, assay.index = assay.index, w4m = w4m[[i]])
 	}
 
 	return(isa)
@@ -342,7 +399,7 @@ isa2w4m <- function(isa, study.filename = NULL, assays = NULL, assay.filename = 
 		variable.names <- .make.variable.names(measures$df)
 
 		# Get sample names
-		sample.names <- .get.sample.names(assay, measures)
+		sample.names <- .get.sample.names(assay.df = assay$df, maf.df = measures$df)
 
 		# Extract sample metadata
 		sample.metadata <- .make.sample.metadata(study, assay, sample.names = sample.names, normalize = normalize)
